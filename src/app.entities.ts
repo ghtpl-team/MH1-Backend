@@ -9,7 +9,6 @@ import {
   Unique,
   Index,
   OneToOne,
-  BeforeCreate,
   DateType,
 } from '@mikro-orm/core';
 
@@ -140,7 +139,7 @@ export class JournalNotes extends BaseClass {
   date: DateType;
 
   @Property({ type: 'boolean' })
-  isShared: Boolean = false; // TODO: Don't need this.
+  isShared: boolean = false; // TODO: Don't need this.
 
   @OneToOne(() => Reminder, (reminder) => reminder.journalNote)
   reminder?: number;
@@ -152,13 +151,13 @@ export class JournalSecurity extends BaseClass {
   user!: User;
 
   @Property()
-  isLocked: Boolean = false;
+  isLocked: boolean = false;
 }
 
 @Entity({ tableName: 'mh_kick_counter' })
 export class KickCounter extends BaseClass {
   @Index()
-  @Property({type: 'date'})
+  @Property({ type: 'date' })
   date: string;
 
   @Property({ type: 'time' })
