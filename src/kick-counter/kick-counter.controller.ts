@@ -31,8 +31,12 @@ export class KickCounterController {
   }
 
   @Get('history')
-  async fetchKickSessions(@Req() req: Request, @Query('dateRange') dateRange: 'last_7_days' | 'last_30_days' | 'last_60_days') {
-    return this.kcService.fetchAllByDate(dateRange)
+  async fetchKickSessions(
+    @Req() req: Request,
+    @Query('dateRange')
+    dateRange: 'last_7_days' | 'last_30_days' | 'last_60_days',
+  ) {
+    return this.kcService.fetchAllByDate(dateRange);
   }
 
   @Patch(':id')
@@ -46,10 +50,7 @@ export class KickCounterController {
   }
 
   @Delete()
-  async deleteKickSession(
-    @Body() deleteKickSessionDto: DeleteKickSessionDto,
-    @Req() req: Request,
-  ) {
+  async deleteKickSession(@Body() deleteKickSessionDto: DeleteKickSessionDto) {
     return this.kcService.deleteByDate(deleteKickSessionDto.date);
   }
 }

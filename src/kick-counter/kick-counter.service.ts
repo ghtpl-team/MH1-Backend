@@ -1,4 +1,4 @@
-import { DateType, EntityManager, Loaded } from '@mikro-orm/mysql';
+import { EntityManager, Loaded } from '@mikro-orm/mysql';
 import { Injectable } from '@nestjs/common';
 import {
   CreateKickSessionDto,
@@ -118,15 +118,15 @@ export class KickCounterService {
         kickCount: kickSession.kickCount,
       });
 
-      return ksHistory;
-    }, {} as KickHistoryResponseObj);
+      return Object.values(ksHistory);
+    }, {} as KickHistoryResponseObj[]);
   }
 
   async fetchAllByDate(
     dateRange: 'last_7_days' | 'last_30_days' | 'last_60_days',
   ) {
     try {
-      let startDate: Date = this.getStartDateFromFilters(dateRange);
+      const startDate: Date = this.getStartDateFromFilters(dateRange);
 
       const kickSessionHistory = await this.em
         .createQueryBuilder(KickCounter)
