@@ -2,6 +2,7 @@ import { Options } from '@mikro-orm/core';
 import { Migrator } from '@mikro-orm/migrations';
 import { MySqlDriver } from '@mikro-orm/mysql';
 import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
+import 'dotenv/config';
 
 const config: Options = {
   host: process.env.DB_HOST,
