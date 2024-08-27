@@ -1,43 +1,41 @@
 {
-  "namespaces": [
-    "public"
-  ],
-  "name": "public",
+  "namespaces": [],
   "tables": [
     {
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "int",
           "unsigned": true,
           "autoincrement": true,
           "primary": true,
           "nullable": false,
+          "length": null,
           "mappedType": "integer"
         },
         "created_at": {
           "name": "created_at",
-          "type": "timestamptz",
+          "type": "datetime",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 6,
+          "length": null,
           "mappedType": "datetime"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "timestamptz",
+          "type": "datetime",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 6,
+          "length": null,
           "mappedType": "datetime"
         },
         "status": {
           "name": "status",
-          "type": "text",
+          "type": "enum('active','deleted','archived')",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
@@ -62,7 +60,6 @@
         }
       },
       "name": "mh_users",
-      "schema": "public",
       "indexes": [
         {
           "columnNames": [
@@ -85,7 +82,7 @@
           "unique": true
         },
         {
-          "keyName": "mh_users_pkey",
+          "keyName": "PRIMARY",
           "columnNames": [
             "id"
           ],
@@ -100,7 +97,6 @@
       "nativeEnums": {
         "reminder_type": {
           "name": "reminder_type",
-          "schema": "public",
           "items": [
             "0",
             "1"
@@ -112,36 +108,37 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "int",
           "unsigned": true,
           "autoincrement": true,
           "primary": true,
           "nullable": false,
+          "length": null,
           "mappedType": "integer"
         },
         "created_at": {
           "name": "created_at",
-          "type": "timestamptz",
+          "type": "datetime",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 6,
+          "length": null,
           "mappedType": "datetime"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "timestamptz",
+          "type": "datetime",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 6,
+          "length": null,
           "mappedType": "datetime"
         },
         "status": {
           "name": "status",
-          "type": "text",
+          "type": "enum('active','deleted','archived')",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
@@ -157,10 +154,11 @@
         "user_id": {
           "name": "user_id",
           "type": "int",
-          "unsigned": false,
+          "unsigned": true,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
+          "length": null,
           "mappedType": "integer"
         },
         "medication_name": {
@@ -175,7 +173,7 @@
         },
         "medication_type": {
           "name": "medication_type",
-          "type": "text",
+          "type": "enum('capsule','liquid','tablet','topical','cream','device','drops','foam','gel','inhaler','injection','lotion','ointment','patch','powder','spray','suppository')",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
@@ -213,7 +211,7 @@
         },
         "strength_unit": {
           "name": "strength_unit",
-          "type": "text",
+          "type": "enum('mg','mcg','g','ml','percentage')",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
@@ -229,7 +227,7 @@
         },
         "intake_type": {
           "name": "intake_type",
-          "type": "text",
+          "type": "enum('before_food','after_food')",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
@@ -242,11 +240,12 @@
         },
         "intake_time": {
           "name": "intake_time",
-          "type": "jsonb",
+          "type": "json",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
+          "length": null,
           "enumItems": [
             "breakfast",
             "lunch",
@@ -256,7 +255,7 @@
         },
         "frequency": {
           "name": "frequency",
-          "type": "text",
+          "type": "enum('daily','every_other_day','every_third_day','every_fourth_day','every_fifth_day','specific_days')",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
@@ -273,20 +272,22 @@
         },
         "selected_days": {
           "name": "selected_days",
-          "type": "jsonb",
+          "type": "json",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": true,
+          "length": null,
           "mappedType": "json"
         },
         "intake_times": {
           "name": "intake_times",
-          "type": "jsonb",
+          "type": "json",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
+          "length": null,
           "mappedType": "json"
         },
         "start_date": {
@@ -296,7 +297,7 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 0,
+          "length": null,
           "mappedType": "date"
         },
         "end_date": {
@@ -306,12 +307,11 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 0,
+          "length": null,
           "mappedType": "date"
         }
       },
       "name": "mh_medication_schedule",
-      "schema": "public",
       "indexes": [
         {
           "columnNames": [
@@ -319,6 +319,16 @@
           ],
           "composite": false,
           "keyName": "mh_medication_schedule_status_index",
+          "constraint": false,
+          "primary": false,
+          "unique": false
+        },
+        {
+          "columnNames": [
+            "user_id"
+          ],
+          "composite": false,
+          "keyName": "mh_medication_schedule_user_id_index",
           "constraint": false,
           "primary": false,
           "unique": false
@@ -355,7 +365,7 @@
           "unique": true
         },
         {
-          "keyName": "mh_medication_schedule_pkey",
+          "keyName": "PRIMARY",
           "columnNames": [
             "id"
           ],
@@ -372,18 +382,17 @@
           "columnNames": [
             "user_id"
           ],
-          "localTableName": "public.mh_medication_schedule",
+          "localTableName": "mh_medication_schedule",
           "referencedColumnNames": [
             "id"
           ],
-          "referencedTableName": "public.mh_users",
+          "referencedTableName": "mh_users",
           "updateRule": "cascade"
         }
       },
       "nativeEnums": {
         "reminder_type": {
           "name": "reminder_type",
-          "schema": "public",
           "items": [
             "0",
             "1"
@@ -395,36 +404,37 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "int",
           "unsigned": true,
           "autoincrement": true,
           "primary": true,
           "nullable": false,
+          "length": null,
           "mappedType": "integer"
         },
         "created_at": {
           "name": "created_at",
-          "type": "timestamptz",
+          "type": "datetime",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 6,
+          "length": null,
           "mappedType": "datetime"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "timestamptz",
+          "type": "datetime",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 6,
+          "length": null,
           "mappedType": "datetime"
         },
         "status": {
           "name": "status",
-          "type": "text",
+          "type": "enum('active','deleted','archived')",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
@@ -444,17 +454,17 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 0,
+          "length": null,
           "mappedType": "date"
         },
         "start_time": {
           "name": "start_time",
-          "type": "time(0)",
+          "type": "time",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 0,
+          "length": null,
           "mappedType": "time"
         },
         "duration_in_sec": {
@@ -464,6 +474,7 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
+          "length": null,
           "mappedType": "integer"
         },
         "kick_count": {
@@ -473,20 +484,21 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
+          "length": null,
           "mappedType": "integer"
         },
         "user_id": {
           "name": "user_id",
           "type": "int",
-          "unsigned": false,
+          "unsigned": true,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
+          "length": null,
           "mappedType": "integer"
         }
       },
       "name": "mh_kick_counter",
-      "schema": "public",
       "indexes": [
         {
           "columnNames": [
@@ -509,7 +521,17 @@
           "unique": false
         },
         {
-          "keyName": "mh_kick_counter_pkey",
+          "columnNames": [
+            "user_id"
+          ],
+          "composite": false,
+          "keyName": "mh_kick_counter_user_id_index",
+          "constraint": false,
+          "primary": false,
+          "unique": false
+        },
+        {
+          "keyName": "PRIMARY",
           "columnNames": [
             "id"
           ],
@@ -526,18 +548,17 @@
           "columnNames": [
             "user_id"
           ],
-          "localTableName": "public.mh_kick_counter",
+          "localTableName": "mh_kick_counter",
           "referencedColumnNames": [
             "id"
           ],
-          "referencedTableName": "public.mh_users",
+          "referencedTableName": "mh_users",
           "updateRule": "cascade"
         }
       },
       "nativeEnums": {
         "reminder_type": {
           "name": "reminder_type",
-          "schema": "public",
           "items": [
             "0",
             "1"
@@ -549,36 +570,37 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "int",
           "unsigned": true,
           "autoincrement": true,
           "primary": true,
           "nullable": false,
+          "length": null,
           "mappedType": "integer"
         },
         "created_at": {
           "name": "created_at",
-          "type": "timestamptz",
+          "type": "datetime",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 6,
+          "length": null,
           "mappedType": "datetime"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "timestamptz",
+          "type": "datetime",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 6,
+          "length": null,
           "mappedType": "datetime"
         },
         "status": {
           "name": "status",
-          "type": "text",
+          "type": "enum('active','deleted','archived')",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
@@ -594,25 +616,26 @@
         "user_id": {
           "name": "user_id",
           "type": "int",
-          "unsigned": false,
+          "unsigned": true,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
+          "length": null,
           "mappedType": "integer"
         },
         "is_locked": {
           "name": "is_locked",
-          "type": "boolean",
+          "type": "tinyint(1)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
+          "length": 1,
           "default": "false",
           "mappedType": "boolean"
         }
       },
       "name": "mh_journal_security",
-      "schema": "public",
       "indexes": [
         {
           "columnNames": [
@@ -635,7 +658,7 @@
           "unique": true
         },
         {
-          "keyName": "mh_journal_security_pkey",
+          "keyName": "PRIMARY",
           "columnNames": [
             "id"
           ],
@@ -652,18 +675,17 @@
           "columnNames": [
             "user_id"
           ],
-          "localTableName": "public.mh_journal_security",
+          "localTableName": "mh_journal_security",
           "referencedColumnNames": [
             "id"
           ],
-          "referencedTableName": "public.mh_users",
+          "referencedTableName": "mh_users",
           "updateRule": "cascade"
         }
       },
       "nativeEnums": {
         "reminder_type": {
           "name": "reminder_type",
-          "schema": "public",
           "items": [
             "0",
             "1"
@@ -675,36 +697,37 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "int",
           "unsigned": true,
           "autoincrement": true,
           "primary": true,
           "nullable": false,
+          "length": null,
           "mappedType": "integer"
         },
         "created_at": {
           "name": "created_at",
-          "type": "timestamptz",
+          "type": "datetime",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 6,
+          "length": null,
           "mappedType": "datetime"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "timestamptz",
+          "type": "datetime",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 6,
+          "length": null,
           "mappedType": "datetime"
         },
         "status": {
           "name": "status",
-          "type": "text",
+          "type": "enum('active','deleted','archived')",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
@@ -720,10 +743,11 @@
         "user_id": {
           "name": "user_id",
           "type": "int",
-          "unsigned": false,
+          "unsigned": true,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
+          "length": null,
           "mappedType": "integer"
         },
         "title": {
@@ -743,6 +767,7 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
+          "length": null,
           "mappedType": "text"
         },
         "date": {
@@ -752,22 +777,22 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 0,
+          "length": null,
           "mappedType": "date"
         },
         "is_shared": {
           "name": "is_shared",
-          "type": "boolean",
+          "type": "tinyint(1)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
+          "length": 1,
           "default": "false",
           "mappedType": "boolean"
         }
       },
       "name": "mh_journal_notes",
-      "schema": "public",
       "indexes": [
         {
           "columnNames": [
@@ -780,7 +805,17 @@
           "unique": false
         },
         {
-          "keyName": "mh_journal_notes_pkey",
+          "columnNames": [
+            "user_id"
+          ],
+          "composite": false,
+          "keyName": "mh_journal_notes_user_id_index",
+          "constraint": false,
+          "primary": false,
+          "unique": false
+        },
+        {
+          "keyName": "PRIMARY",
           "columnNames": [
             "id"
           ],
@@ -797,18 +832,17 @@
           "columnNames": [
             "user_id"
           ],
-          "localTableName": "public.mh_journal_notes",
+          "localTableName": "mh_journal_notes",
           "referencedColumnNames": [
             "id"
           ],
-          "referencedTableName": "public.mh_users",
+          "referencedTableName": "mh_users",
           "updateRule": "cascade"
         }
       },
       "nativeEnums": {
         "reminder_type": {
           "name": "reminder_type",
-          "schema": "public",
           "items": [
             "0",
             "1"
@@ -820,36 +854,37 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "int",
           "unsigned": true,
           "autoincrement": true,
           "primary": true,
           "nullable": false,
+          "length": null,
           "mappedType": "integer"
         },
         "created_at": {
           "name": "created_at",
-          "type": "timestamptz",
+          "type": "datetime",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 6,
+          "length": null,
           "mappedType": "datetime"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "timestamptz",
+          "type": "datetime",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 6,
+          "length": null,
           "mappedType": "datetime"
         },
         "status": {
           "name": "status",
-          "type": "text",
+          "type": "enum('active','deleted','archived')",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
@@ -865,34 +900,36 @@
         "medication_schedule_id": {
           "name": "medication_schedule_id",
           "type": "int",
-          "unsigned": false,
+          "unsigned": true,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
+          "length": null,
           "mappedType": "integer"
         },
         "journal_note_id": {
           "name": "journal_note_id",
           "type": "int",
-          "unsigned": false,
+          "unsigned": true,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
+          "length": null,
           "mappedType": "integer"
         },
         "reminder_time": {
           "name": "reminder_time",
-          "type": "timestamptz",
+          "type": "datetime",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 6,
+          "length": null,
           "mappedType": "datetime"
         },
         "reminder_status": {
           "name": "reminder_status",
-          "type": "text",
+          "type": "enum('pending','taken','missed')",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
@@ -912,6 +949,7 @@
           "primary": false,
           "nullable": false,
           "nativeEnumName": "reminder_type",
+          "length": null,
           "enumItems": [
             "0",
             "1"
@@ -920,7 +958,6 @@
         }
       },
       "name": "mh_reminders",
-      "schema": "public",
       "indexes": [
         {
           "columnNames": [
@@ -928,6 +965,16 @@
           ],
           "composite": false,
           "keyName": "mh_reminders_status_index",
+          "constraint": false,
+          "primary": false,
+          "unique": false
+        },
+        {
+          "columnNames": [
+            "medication_schedule_id"
+          ],
+          "composite": false,
+          "keyName": "mh_reminders_medication_schedule_id_index",
           "constraint": false,
           "primary": false,
           "unique": false
@@ -943,7 +990,7 @@
           "unique": true
         },
         {
-          "keyName": "mh_reminders_pkey",
+          "keyName": "PRIMARY",
           "columnNames": [
             "id"
           ],
@@ -960,11 +1007,11 @@
           "columnNames": [
             "medication_schedule_id"
           ],
-          "localTableName": "public.mh_reminders",
+          "localTableName": "mh_reminders",
           "referencedColumnNames": [
             "id"
           ],
-          "referencedTableName": "public.mh_medication_schedule",
+          "referencedTableName": "mh_medication_schedule",
           "updateRule": "cascade"
         },
         "mh_reminders_journal_note_id_foreign": {
@@ -972,18 +1019,17 @@
           "columnNames": [
             "journal_note_id"
           ],
-          "localTableName": "public.mh_reminders",
+          "localTableName": "mh_reminders",
           "referencedColumnNames": [
             "id"
           ],
-          "referencedTableName": "public.mh_journal_notes",
+          "referencedTableName": "mh_journal_notes",
           "updateRule": "cascade"
         }
       },
       "nativeEnums": {
         "reminder_type": {
           "name": "reminder_type",
-          "schema": "public",
           "items": [
             "0",
             "1"
@@ -995,36 +1041,37 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "int",
           "unsigned": true,
           "autoincrement": true,
           "primary": true,
           "nullable": false,
+          "length": null,
           "mappedType": "integer"
         },
         "created_at": {
           "name": "created_at",
-          "type": "timestamptz",
+          "type": "datetime",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 6,
+          "length": null,
           "mappedType": "datetime"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "timestamptz",
+          "type": "datetime",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 6,
+          "length": null,
           "mappedType": "datetime"
         },
         "status": {
           "name": "status",
-          "type": "text",
+          "type": "enum('active','deleted','archived')",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
@@ -1039,86 +1086,86 @@
         },
         "before_break_fast": {
           "name": "before_break_fast",
-          "type": "time(0)",
+          "type": "time",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 0,
+          "length": null,
           "mappedType": "time"
         },
         "after_break_fast": {
           "name": "after_break_fast",
-          "type": "time(0)",
+          "type": "time",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 0,
+          "length": null,
           "mappedType": "time"
         },
         "before_lunch": {
           "name": "before_lunch",
-          "type": "time(0)",
+          "type": "time",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 0,
+          "length": null,
           "mappedType": "time"
         },
         "after_lunch": {
           "name": "after_lunch",
-          "type": "time(0)",
+          "type": "time",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 0,
+          "length": null,
           "mappedType": "time"
         },
         "before_dinner": {
           "name": "before_dinner",
-          "type": "time(0)",
+          "type": "time",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 0,
+          "length": null,
           "mappedType": "time"
         },
         "after_dinner": {
           "name": "after_dinner",
-          "type": "time(0)",
+          "type": "time",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 0,
+          "length": null,
           "mappedType": "time"
         },
         "before_bed_time": {
           "name": "before_bed_time",
-          "type": "time(0)",
+          "type": "time",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 0,
+          "length": null,
           "mappedType": "time"
         },
         "user_id": {
           "name": "user_id",
           "type": "int",
-          "unsigned": false,
+          "unsigned": true,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
+          "length": null,
           "mappedType": "integer"
         }
       },
       "name": "mh_user_preferences",
-      "schema": "public",
       "indexes": [
         {
           "columnNames": [
@@ -1141,7 +1188,7 @@
           "unique": true
         },
         {
-          "keyName": "mh_user_preferences_pkey",
+          "keyName": "PRIMARY",
           "columnNames": [
             "id"
           ],
@@ -1158,18 +1205,17 @@
           "columnNames": [
             "user_id"
           ],
-          "localTableName": "public.mh_user_preferences",
+          "localTableName": "mh_user_preferences",
           "referencedColumnNames": [
             "id"
           ],
-          "referencedTableName": "public.mh_users",
+          "referencedTableName": "mh_users",
           "updateRule": "cascade"
         }
       },
       "nativeEnums": {
         "reminder_type": {
           "name": "reminder_type",
-          "schema": "public",
           "items": [
             "0",
             "1"
@@ -1181,7 +1227,6 @@
   "nativeEnums": {
     "reminder_type": {
       "name": "reminder_type",
-      "schema": "public",
       "items": [
         "0",
         "1"
