@@ -1,4 +1,4 @@
-import { DateType, EntityManager, Loaded } from '@mikro-orm/postgresql';
+import { DateType, EntityManager, Loaded } from '@mikro-orm/mysql';
 import { Injectable } from '@nestjs/common';
 import {
   CreateKickSessionDto,

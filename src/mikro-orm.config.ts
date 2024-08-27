@@ -1,21 +1,20 @@
 import { Options } from '@mikro-orm/core';
 import { Migrator } from '@mikro-orm/migrations';
-import { PostgreSqlDriver } from '@mikro-orm/postgresql';
+import { MySqlDriver } from '@mikro-orm/mysql';
 import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
 
 const config: Options = {
-    host: 'localhost',
-    port: 5432,
-    user: 'postgres',
-    password: 'postgres',
-    dbName: 'mh1_database',
-    driver: PostgreSqlDriver,
-    entities: ['./dist/*.entities.js'],
-    entitiesTs: ['./src/*.entities.ts'],
-    metadataProvider: TsMorphMetadataProvider,
-    debug: true,
-    extensions: [Migrator]
-    
-}
+  host: process.env.DB_HOST,
+  port: parseInt(process.env.DB_PORT, 10),
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  dbName: process.env.DB_NAME,
+  driver: MySqlDriver,
+  entities: ['./dist/*.entities.js'],
+  entitiesTs: ['./src/*.entities.ts'],
+  metadataProvider: TsMorphMetadataProvider,
+  debug: true,
+  extensions: [Migrator],
+};
 
 export default config;

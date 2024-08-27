@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
-import { EntityManager, EntityRepository, Loaded } from '@mikro-orm/postgresql';
+import { EntityManager, EntityRepository, Loaded } from '@mikro-orm/mysql';
 import { MedicationSchedule, Status, User } from 'src/app.entities';
 import { CreateMedicationScheduleDto } from './dto/medication-schedules.dto';
 import { capitalizeFirstLetterOfWords } from 'src/common/utils/string.utils';
@@ -41,22 +41,22 @@ export class MedicationSchedulesService {
               `${medication.intakeType.split('_')[0]} ${time}`,
             );
 
-            if (!groupedObj[intakeTimeType]){
+            if (!groupedObj[intakeTimeType]) {
               groupedObj[intakeTimeType] = {
                 intakeTiming: intakeTimeType,
-                schedule: []
-              }
+                schedule: [],
+              };
             }
 
             groupedObj[intakeTimeType].schedule.push({
               name: medication.medicationName,
               strength: medication.strength,
               strengthUnit: medication.strengthUnit,
-              isTaken: false
-            })
+              isTaken: false,
+            });
           }
           console.log(groupedObj);
-          
+
           return groupedObj;
         },
         {} as MedicationScheduleResponseObj,
@@ -64,7 +64,7 @@ export class MedicationSchedulesService {
       return Object.values(groupedData);
     } catch (error) {
       console.log(error);
-      
+
       throw error;
     }
   }

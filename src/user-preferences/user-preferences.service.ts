@@ -1,4 +1,4 @@
-import { EntityManager } from '@mikro-orm/postgresql';
+import { EntityManager } from '@mikro-orm/mysql';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UserPreferencesDto } from './dto/user-preferences.dto';
 import { User, UserPreferences } from 'src/app.entities';
@@ -11,7 +11,7 @@ export class UserPreferencesService {
   private dtoToUserPrefCreateObj(
     userPreferencesData: UserPreferencesDto,
     userId: number,
-  ): Partial<UserPreferences> | {user: number} {
+  ): Partial<UserPreferences> | { user: number } {
     const { breakfastTiming, lunchTiming, dinnerTiming } = userPreferencesData;
     return {
       beforeBreakFast: adjustTime(breakfastTiming, -30),
@@ -34,7 +34,10 @@ export class UserPreferencesService {
         userPreferencesData,
         userId,
       );
-      const userPreference = this.em.create(UserPreferences, createUserPreferencesObj);
+      const userPreference = this.em.create(
+        UserPreferences,
+        createUserPreferencesObj,
+      );
       await this.em.flush();
       return userPreference;
     } catch (error) {

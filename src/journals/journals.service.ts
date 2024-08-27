@@ -1,4 +1,4 @@
-import { EntityManager } from '@mikro-orm/postgresql';
+import { EntityManager } from '@mikro-orm/mysql';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateJournalEntryDTO } from './dto/journals.dto';
 import { JournalNotes } from 'src/app.entities';
