@@ -9,9 +9,19 @@ import { RemindersModule } from './reminders/reminders.module';
 import { UserPreferencesModule } from './user-preferences/user-preferences.module';
 import { JournalsModule } from './journals/journals.module';
 import { KickCounterModule } from './kick-counter/kick-counter.module';
+import { WeeklyInsightsModule } from './weekly-insights/weekly-insights.module';
 
 @Module({
-  imports: [MikroOrmModule.forRoot(config), UsersModule, MedicationSchedulesModule, RemindersModule, UserPreferencesModule, JournalsModule, KickCounterModule],
+  imports: [
+    MikroOrmModule.forRoot(config),
+    UsersModule,
+    MedicationSchedulesModule,
+    RemindersModule,
+    UserPreferencesModule,
+    JournalsModule,
+    KickCounterModule,
+    WeeklyInsightsModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
