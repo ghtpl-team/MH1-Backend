@@ -4,6 +4,6 @@ import { UserPreferencesService } from './user-preferences.service';
 
 @Module({
   controllers: [UserPreferencesController],
-  providers: [UserPreferencesService]
+  providers: [UserPreferencesService],
 })
 export class UserPreferencesModule {}
