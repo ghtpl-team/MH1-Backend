@@ -50,7 +50,11 @@ export class KickCounterController {
   }
 
   @Delete()
-  async deleteKickSession(@Body() deleteKickSessionDto: DeleteKickSessionDto) {
-    return this.kcService.deleteByDate(deleteKickSessionDto.date);
+  async deleteKickSession(
+    @Body() deleteKickSessionDto: DeleteKickSessionDto,
+    @Param('userId') mhUserId: string,
+  ) {
+    const userId = parseInt(mhUserId);
+    return this.kcService.deleteByDate(deleteKickSessionDto.date, userId);
   }
 }

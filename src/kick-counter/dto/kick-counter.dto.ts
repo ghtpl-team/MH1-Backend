@@ -1,5 +1,4 @@
-import { DateType } from '@mikro-orm/core';
-import { IsDateString, IsNumber, IsString, isNumber } from 'class-validator';
+import { IsDateString, IsNumber, IsString } from 'class-validator';
 
 export class CreateKickSessionDto {
   @IsDateString()
@@ -16,11 +15,11 @@ export class CreateKickSessionDto {
 }
 
 export class UpdateKickSessionDto {
-    @IsString()
-    startTime: string;
+  @IsString()
+  startTime: string;
 }
 
 export class DeleteKickSessionDto {
-    @IsDateString()
-    date: string;  
+  @IsDateString()
+  date: string;
 }
