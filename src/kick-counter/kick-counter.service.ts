@@ -41,12 +41,15 @@ export class KickCounterService {
     }
   }
 
-  async deleteByDate(date: string) {
+  async deleteByDate(date: string, userId: number) {
     try {
       const deletedKickSessions = this.em.nativeUpdate(
         KickCounter,
         {
           date,
+          user: {
+            id: userId,
+          },
         },
         {
           status: Status.DELETED,
