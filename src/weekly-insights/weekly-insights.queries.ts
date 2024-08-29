@@ -186,6 +186,14 @@ export const GET_PERSONALIZED_CARD_LISTING = gql`
     id
     title
     insightType
+    image {
+      data {
+        attributes {
+          url
+          previewUrl
+        }
+      }
+    }
     hms_doctor {
       data {
         attributes {

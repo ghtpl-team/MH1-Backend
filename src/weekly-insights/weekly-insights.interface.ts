@@ -134,6 +134,11 @@ export interface ComponentCardsNoteCard {
   id: string;
   title: string;
   insightType: string;
+  image: {
+    data: {
+      attributes: ImageAttributes;
+    };
+  };
   hms_doctor: {
     data: {
       attributes: HmsDoctorAttributes;
