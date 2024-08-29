@@ -11,9 +11,16 @@ export class WeeklyInsightsController {
     @Param('week') weekNumber: string,
     @Query('insightType') insightType: InsightType,
   ) {
-    return await this.weeklyInsightsService.fetch(
+    return await this.weeklyInsightsService.fetchInsights(
       parseInt(weekNumber),
       insightType,
+    );
+  }
+
+  @Get('notes/listing/:week')
+  async fetchNoteCards(@Param('week') weekNumber: string) {
+    return await this.weeklyInsightsService.fetchNoteCards(
+      parseInt(weekNumber),
     );
   }
 }
