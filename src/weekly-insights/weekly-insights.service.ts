@@ -208,7 +208,6 @@ export class WeeklyInsightsService {
         await this.graphqlClient.query(GET_PERSONALIZED_CARD_LISTING, {
           weekNumber,
         });
-      console.log(rawData);
 
       const { data } = rawData.personalisedNotesListings;
       if (data && data.length) {
