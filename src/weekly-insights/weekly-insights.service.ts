@@ -1,23 +1,23 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { getImageUrl } from 'src/common/utils/helper.utils';
 import { GraphQLClientService } from 'src/utils/graphql/graphql.service';
 import {
-  InsightCardType,
   GenericTitleImageColor,
   GenericTitleWithTitleColorList,
+  GetPersonalizedNotesListingResponse,
+  HmsDoctorAttributes,
+  InsightCardType,
   InsightType,
+  ParsedCard,
+  ParsedPersonalisedNotes,
+  PersonalizedNotesListingAttributes,
   WeeklyInsightAttributes,
   WeeklyInsightResponseRaw,
-  GetPersonalizedNotesListingResponse,
-  ParsedPersonalisedNotes,
-  HmsDoctorAttributes,
-  ParsedCard,
-  PersonalizedNotesListingAttributes,
 } from './weekly-insights.interface';
 import {
   GET_PERSONALIZED_CARD_LISTING,
   GET_WEEKLY_INSIGHTS,
 } from './weekly-insights.queries';
-import { getImageUrl } from 'src/common/utils/helper.utils';
 
 @Injectable()
 export class WeeklyInsightsService {
@@ -52,25 +52,28 @@ export class WeeklyInsightsService {
               length: {
                 color: babyGrowthInsight?.data?.attributes?.length?.color,
                 description: babyGrowthInsight?.data?.attributes?.length?.desc,
-                image:
+                image: getImageUrl(
                   babyGrowthInsight?.data?.attributes?.length?.image?.data
                     ?.attributes?.url,
+                ),
                 title: babyGrowthInsight?.data?.attributes?.length?.title,
               },
               size: {
                 color: babyGrowthInsight?.data?.attributes?.size?.color,
                 description: babyGrowthInsight?.data?.attributes?.size?.desc,
-                image:
+                image: getImageUrl(
                   babyGrowthInsight?.data?.attributes?.size?.image?.data
                     ?.attributes?.url,
+                ),
                 title: babyGrowthInsight?.data?.attributes?.size?.title,
               },
               weight: {
                 color: babyGrowthInsight?.data?.attributes?.weight?.color,
                 description: babyGrowthInsight?.data?.attributes?.weight?.desc,
-                image:
+                image: getImageUrl(
                   babyGrowthInsight?.data?.attributes?.weight?.image?.data
                     ?.attributes?.url,
+                ),
                 title: babyGrowthInsight?.data?.attributes?.weight?.title,
               },
             }
@@ -91,8 +94,9 @@ export class WeeklyInsightsService {
 
           if (parsedCard.type === InsightCardType.TITLE_IMAGE) {
             parsedCard.imageUrl = getImageUrl(
-              card.image?.data?.attributes?.url,
+              card.image?.data[0].attributes?.url,
             );
+            parsedCard.color = card.color;
           } else {
             parsedCard.titleColorList = card.titleColorList.map(
               (titleColor: any) => {
