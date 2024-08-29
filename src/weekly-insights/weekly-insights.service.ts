@@ -168,6 +168,7 @@ export class WeeklyInsightsService {
       } else if (card.__typename === 'ComponentCardsNoteCard') {
         return {
           ...baseCard,
+          image: getImageUrl(card.image.data.attributes.url),
           type: 'NOTE_CARD' as const,
           insightType: card.insightType,
         };
