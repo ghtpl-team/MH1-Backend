@@ -1,14 +1,23 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { GraphQLClientService } from 'src/utils/graphql/graphql.service';
 import {
-  CartType,
+  InsightCardType,
   GenericTitleImageColor,
   GenericTitleWithTitleColorList,
   InsightType,
   WeeklyInsightAttributes,
   WeeklyInsightResponseRaw,
+  GetPersonalizedNotesListingResponse,
+  ParsedPersonalisedNotes,
+  HmsDoctorAttributes,
+  ParsedCard,
+  PersonalizedNotesListingAttributes,
 } from './weekly-insights.interface';
-import { GET_WEEKLY_INSIGHTS } from './weekly-insights.queries';
+import {
+  GET_PERSONALIZED_CARD_LISTING,
+  GET_WEEKLY_INSIGHTS,
+} from './weekly-insights.queries';
+import { getImageUrl } from 'src/common/utils/helper.utils';
 
 @Injectable()
 export class WeeklyInsightsService {
@@ -17,7 +26,6 @@ export class WeeklyInsightsService {
   private parseWeeklyInsights(rawData: WeeklyInsightAttributes) {
     const { weekNumber, insightType, approvedBy, babyGrowthInsight, cards } =
       rawData;
-    console.log(approvedBy);
 
     const parsedData = {
       weekNumber,
@@ -29,10 +37,14 @@ export class WeeklyInsightsService {
         specialty: {
           name: approvedBy?.data?.attributes?.specialty?.data?.attributes?.name,
           imageUrl:
-            approvedBy?.data?.attributes?.specialty?.data?.attributes?.image
-              ?.data?.attributes?.url ?? null,
+            getImageUrl(
+              approvedBy?.data?.attributes?.specialty?.data?.attributes?.image
+                ?.data?.attributes?.url,
+            ) ?? null,
         },
-        docImage: approvedBy?.data?.attributes?.image?.data?.attributes?.url,
+        docImage: getImageUrl(
+          approvedBy?.data?.attributes?.image?.data?.attributes?.url,
+        ),
       },
       babyGrowthInsight:
         insightType === InsightType.BABY
@@ -71,14 +83,16 @@ export class WeeklyInsightsService {
         ) => {
           const parsedCard: any = {
             type: card?.image?.data
-              ? CartType.TITLE_IMAGE
-              : CartType.TITLE_COLOR_LIST,
+              ? InsightCardType.TITLE_IMAGE
+              : InsightCardType.TITLE_COLOR_LIST,
             id: card.id,
             title: card.title,
           };
 
-          if (parsedCard.type === CartType.TITLE_IMAGE) {
-            parsedCard.imageUrl = card.image?.data?.attributes?.url;
+          if (parsedCard.type === InsightCardType.TITLE_IMAGE) {
+            parsedCard.imageUrl = getImageUrl(
+              card.image?.data?.attributes?.url,
+            );
           } else {
             parsedCard.titleColorList = card.titleColorList.map(
               (titleColor: any) => {
@@ -97,7 +111,10 @@ export class WeeklyInsightsService {
     return parsedData;
   }
 
-  async fetch(weekNumber: number, insightType: InsightType): Promise<any> {
+  async fetchInsights(
+    weekNumber: number,
+    insightType: InsightType,
+  ): Promise<any> {
     try {
       const rawData: WeeklyInsightResponseRaw = await this.graphqlClient.query(
         GET_WEEKLY_INSIGHTS,
@@ -117,6 +134,88 @@ export class WeeklyInsightsService {
       } else {
         throw new HttpException(
           'No insights for given week',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  private parseNoteCards(
+    rawData: {
+      attributes: PersonalizedNotesListingAttributes;
+    }[],
+  ): ParsedPersonalisedNotes {
+    const data = rawData[0].attributes;
+
+    const parsedCards: ParsedCard[] = data.cards.map((card) => {
+      const baseCard = {
+        id: card.id,
+        title: card.title,
+        doctor: card.hms_doctor?.data
+          ? this.parseDoctorInfo(card.hms_doctor.data.attributes)
+          : null,
+      };
+
+      if (card.__typename === 'ComponentCardsTitleDocBtn') {
+        return {
+          ...baseCard,
+          type: 'TITLE_DOC_BTN' as const,
+          bgColor: card.bgColor,
+          ctaButton: card.ctaButton,
+        };
+      } else if (card.__typename === 'ComponentCardsNoteCard') {
+        return {
+          ...baseCard,
+          type: 'NOTE_CARD' as const,
+          insightType: card.insightType,
+        };
+      }
+
+      throw new Error(`Unknown card type: ${(card as any).__typename}`);
+    });
+
+    return {
+      heading: data.heading,
+      weekNumber: data.weekNumber,
+      cards: parsedCards,
+    };
+  }
+
+  private parseDoctorInfo(
+    doctorData: HmsDoctorAttributes,
+  ): ParsedCard['doctor'] {
+    const attributes = doctorData;
+    return {
+      name: attributes.name,
+      experienceYears: attributes.experienceYears,
+      hmsDoctorId: attributes.hmsDoctorId,
+      image: getImageUrl(attributes.image.data?.attributes.url) ?? null,
+      specialty: {
+        name: attributes.specialty.data.attributes.name,
+        image:
+          getImageUrl(
+            attributes.specialty.data.attributes.image.data?.attributes.url,
+          ) ?? null,
+      },
+    };
+  }
+
+  async fetchNoteCards(weekNumber: number): Promise<any> {
+    try {
+      const rawData: GetPersonalizedNotesListingResponse =
+        await this.graphqlClient.query(GET_PERSONALIZED_CARD_LISTING, {
+          weekNumber,
+        });
+
+      const { data } = rawData.personalisedNotesListings;
+      if (data && data.length) {
+        const parsedNoteCards = this.parseNoteCards(data);
+        return parsedNoteCards;
+      } else {
+        throw new HttpException(
+          'No cards for given week',
           HttpStatus.BAD_REQUEST,
         );
       }

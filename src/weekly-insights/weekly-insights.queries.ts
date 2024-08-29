@@ -122,3 +122,101 @@ export const GET_WEEKLY_INSIGHTS = gql`
     }
   }
 `;
+
+export const GET_PERSONALIZED_CARD_LISTING = gql`
+  query GetPersonalizedNotesListing($weekNumber: Int) {
+    personalisedNotesListings(filters: { weekNumber: { eq: $weekNumber } }) {
+      data {
+        attributes {
+          heading
+          weekNumber
+          cards {
+            ...GetNodeCardWithButton
+            ...GetNodeCard
+          }
+        }
+      }
+    }
+  }
+
+  fragment GetNodeCardWithButton on ComponentCardsTitleDocBtn {
+    id
+    title
+    bgColor
+    ctaButton {
+      textColor
+      btnText
+      bgColor
+    }
+    hms_doctor {
+      data {
+        attributes {
+          name
+          experienceYears
+          hmsDoctorId
+          image {
+            data {
+              attributes {
+                previewUrl
+                url
+              }
+            }
+          }
+          specialty {
+            data {
+              attributes {
+                name
+                image {
+                  data {
+                    attributes {
+                      url
+                      previewUrl
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  fragment GetNodeCard on ComponentCardsNoteCard {
+    id
+    title
+    insightType
+    hms_doctor {
+      data {
+        attributes {
+          name
+          image {
+            data {
+              attributes {
+                url
+                previewUrl
+              }
+            }
+          }
+          specialty {
+            data {
+              attributes {
+                name
+                image {
+                  data {
+                    attributes {
+                      url
+                      previewUrl
+                    }
+                  }
+                }
+              }
+            }
+          }
+          hmsDoctorId
+          experienceYears
+        }
+      }
+    }
+  }
+`;

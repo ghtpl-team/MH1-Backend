@@ -98,7 +98,118 @@ export enum InsightType {
   CHECKLIST = 'checklist',
 }
 
-export enum CartType {
+export interface GetPersonalizedNotesListingResponse {
+  personalisedNotesListings: {
+    data: Array<{
+      attributes: PersonalizedNotesListingAttributes;
+    }>;
+  };
+}
+
+export interface PersonalizedNotesListingAttributes {
+  heading: string;
+  weekNumber: number;
+  cards: Array<ComponentCardsTitleDocBtn | ComponentCardsNoteCard>;
+}
+
+export interface ComponentCardsTitleDocBtn {
+  __typename: 'ComponentCardsTitleDocBtn';
+  id: string;
+  title: string;
+  bgColor: string;
+  ctaButton: {
+    textColor: string;
+    btnText: string;
+    bgColor: string;
+  };
+  hms_doctor: {
+    data: {
+      attributes: HmsDoctorAttributes;
+    };
+  };
+}
+
+export interface ComponentCardsNoteCard {
+  __typename: 'ComponentCardsNoteCard';
+  id: string;
+  title: string;
+  insightType: string;
+  hms_doctor: {
+    data: {
+      attributes: HmsDoctorAttributes;
+    };
+  };
+}
+
+export interface HmsDoctorAttributes {
+  name: string;
+  experienceYears: number;
+  hmsDoctorId: string;
+  image: {
+    data: {
+      attributes: ImageAttributes;
+    };
+  };
+  specialty: {
+    data: {
+      attributes: SpecialtyAttributes;
+    };
+  };
+}
+
+export interface ImageAttributes {
+  previewUrl: string;
+  url: string;
+}
+
+export interface SpecialtyAttributes {
+  name: string;
+  image: {
+    data: {
+      attributes: ImageAttributes;
+    };
+  };
+}
+
+export interface GetPersonalizedNotesListingVariables {
+  weekNumber: number;
+}
+
+export interface ParsedCard {
+  id: string;
+  title: string;
+  type: 'TITLE_DOC_BTN' | 'NOTE_CARD';
+  bgColor?: string;
+  ctaButton?: {
+    textColor: string;
+    btnText: string;
+    bgColor: string;
+  };
+  insightType?: string;
+  doctor: {
+    name: string;
+    experienceYears: number;
+    hmsDoctorId: string;
+    image: string | null;
+    specialty: {
+      name: string;
+      image: string | null;
+    };
+  };
+}
+
+export interface ParsedPersonalisedNotes {
+  heading: string;
+  weekNumber: number;
+  cards: ParsedCard[];
+}
+
+export enum NotesCardType {
+  TITLE_DOC_BTN = 'note_card_with_button',
+  TITLE_DOC = 'note_card',
+}
+
+export enum InsightCardType {
   TITLE_COLOR_LIST = 'title_color_list',
   TITLE_IMAGE = 'title_image',
 }
