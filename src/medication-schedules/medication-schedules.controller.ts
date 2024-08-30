@@ -1,6 +1,18 @@
-import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Req,
+} from '@nestjs/common';
 import { MedicationSchedulesService } from './medication-schedules.service';
-import { CreateMedicationScheduleDto } from './dto/medication-schedules.dto';
+import {
+  CreateMedicationScheduleDto,
+  UpdateMedicationScheduleDto,
+} from './dto/medication-schedules.dto';
 
 @Controller('users/:userId/medication-schedule')
 export class MedicationSchedulesController {
@@ -30,9 +42,22 @@ export class MedicationSchedulesController {
     return await this.medicationScheduleService.findAll(userId);
   }
 
-  @Patch(':id')
+  @Delete(':id')
   async deleteMedicationEntry(@Req() req: Request, @Param('id') id: string) {
     const medicationScheduleId = parseInt(id);
     return this.medicationScheduleService.delete(medicationScheduleId);
+  }
+
+  @Patch(':id')
+  async updateMedicationEntry(
+    @Req() req: Request,
+    @Param('id') id: string,
+    @Body() updateMedicationScheduleDto: UpdateMedicationScheduleDto,
+  ) {
+    const medicationScheduleId = parseInt(id);
+    return this.medicationScheduleService.update(
+      medicationScheduleId,
+      updateMedicationScheduleDto,
+    );
   }
 }

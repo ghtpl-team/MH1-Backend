@@ -115,11 +115,11 @@ export class MedicationSchedule extends BaseClass {
 
   @Property({ type: 'date' })
   @Index()
-  startDate!: DateType;
+  startDate!: string;
 
   @Property({ type: 'date' })
   @Index()
-  endDate!: DateType;
+  endDate!: string;
   @OneToMany(() => Reminder, (reminder) => reminder.medicationSchedule)
   reminders = new Collection<Reminder>(this);
 }
