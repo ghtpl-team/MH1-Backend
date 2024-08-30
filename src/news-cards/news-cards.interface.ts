@@ -1,0 +1,30 @@
+export interface GetNewsCardRaw {
+  newsCards: {
+    data: Array<{
+      attributes: {
+        title: string;
+        date: string;
+        header: string;
+        bgImage: {
+          data: {
+            attributes: {
+              url: string;
+            };
+          };
+        };
+        content: string;
+        duration: string;
+      };
+    }>;
+  };
+}
+
+// Parsed NewsCard type
+export interface ParsedNewsCard {
+  title: string;
+  date: string;
+  header: string;
+  bgImageUrl: string | null;
+  content: string;
+  duration: string;
+}
