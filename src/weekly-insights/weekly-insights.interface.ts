@@ -218,3 +218,36 @@ export enum InsightCardType {
   TITLE_COLOR_LIST = 'title_color_list',
   TITLE_IMAGE = 'title_image',
 }
+
+export interface ParsedUnsubscribedHome {
+  pregnancyCoachPromo: Array<{
+    image: string | null;
+    title: string;
+    content: string;
+  }>;
+  pregnancyCoachAd: {
+    image: string | null;
+    title: string | null;
+    bgColor: string;
+    btnText: string;
+    btnBgColor: string;
+  };
+  dietPlanPromo: Array<{
+    image: string | null;
+    title: string;
+    content: string;
+    getMhSubBtn: {
+      btnText: string;
+      bgColor: string;
+    };
+    dietPromoBtn: {
+      btnText: string;
+      bgColor: string | null;
+    };
+  }>;
+  dietPlanAd: {
+    text: string;
+    bgImage: string | null;
+    animationText: string | null;
+  };
+}

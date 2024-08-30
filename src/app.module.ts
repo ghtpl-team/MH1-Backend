@@ -11,6 +11,7 @@ import { SubscriptionPageModule } from './subscription-page/subscription-page.mo
 import { UserPreferencesModule } from './user-preferences/user-preferences.module';
 import { UsersModule } from './user/users.module';
 import { WeeklyInsightsModule } from './weekly-insights/weekly-insights.module';
+import { UnsubscribedHomeModule } from './unsubscribed-home/unsubscribed-home.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { WeeklyInsightsModule } from './weekly-insights/weekly-insights.module';
     KickCounterModule,
     WeeklyInsightsModule,
     SubscriptionPageModule,
+    UnsubscribedHomeModule,
   ],
   controllers: [AppController],
   providers: [AppService],
