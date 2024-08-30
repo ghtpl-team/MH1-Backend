@@ -12,6 +12,7 @@ import { UserPreferencesModule } from './user-preferences/user-preferences.modul
 import { UsersModule } from './user/users.module';
 import { WeeklyInsightsModule } from './weekly-insights/weekly-insights.module';
 import { UnsubscribedHomeModule } from './unsubscribed-home/unsubscribed-home.module';
+import { NewsCardsModule } from './news-cards/news-cards.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { UnsubscribedHomeModule } from './unsubscribed-home/unsubscribed-home.mo
     WeeklyInsightsModule,
     SubscriptionPageModule,
     UnsubscribedHomeModule,
+    NewsCardsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
