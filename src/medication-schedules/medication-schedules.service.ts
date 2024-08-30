@@ -2,7 +2,10 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager, EntityRepository, Loaded } from '@mikro-orm/mysql';
 import { MedicationSchedule, Status } from 'src/app.entities';
-import { CreateMedicationScheduleDto } from './dto/medication-schedules.dto';
+import {
+  CreateMedicationScheduleDto,
+  UpdateMedicationScheduleDto,
+} from './dto/medication-schedules.dto';
 import { capitalizeFirstLetterOfWords } from 'src/common/utils/string.utils';
 import { MedicationScheduleResponseObj } from './medication-schedules.interface';
 
@@ -126,6 +129,21 @@ export class MedicationSchedulesService {
     } catch (error) {
       return error;
     }
+  }
+
+  async update(
+    id: number,
+    updateMedicationScheduleDto: UpdateMedicationScheduleDto,
+  ) {
+    return this.em.nativeUpdate(
+      MedicationSchedule,
+      {
+        id,
+      },
+      {
+        ...updateMedicationScheduleDto,
+      },
+    );
   }
 
   // async reminderPayload(timings: string[]){
