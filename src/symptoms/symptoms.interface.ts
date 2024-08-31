@@ -33,3 +33,62 @@ export interface GetSymptomListingRaw {
     }>;
   };
 }
+
+export interface LoggedSymptomsRaw {
+  symptoms: {
+    data: Array<{
+      attributes: {
+        name?: string;
+        image?: {
+          data?: {
+            attributes?: {
+              url?: string;
+            };
+          };
+        };
+        hms_doctor?: {
+          data?: {
+            attributes?: {
+              name?: string;
+              image?: {
+                data?: {
+                  attributes?: {
+                    url?: string;
+                  };
+                };
+              };
+              specialty?: {
+                data?: {
+                  attributes?: {
+                    name?: string;
+                  };
+                };
+              };
+              hmsDoctorId?: string;
+            };
+          };
+        };
+        description?: string;
+        symptom_story?: {
+          data?: {
+            attributes?: {
+              content?: Array<{
+                rank?: number;
+                title?: string;
+                image?: {
+                  data?: {
+                    attributes?: {
+                      url?: string;
+                    };
+                  };
+                };
+                bgColor?: string;
+                description?: string;
+              }>;
+            };
+          };
+        };
+      };
+    }>;
+  };
+}

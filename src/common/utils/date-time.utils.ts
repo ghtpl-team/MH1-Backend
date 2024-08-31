@@ -4,8 +4,8 @@ export function adjustTime(inputTime: string, offsetMinutes: number): string {
     throw new Error('Invalid time format. Please use HH:mm format.');
   }
 
-  let hours = parseInt(timeParts[0], 10);
-  let minutes = parseInt(timeParts[1], 10);
+  const hours = parseInt(timeParts[0], 10);
+  const minutes = parseInt(timeParts[1], 10);
 
   if (
     isNaN(hours) ||
@@ -29,8 +29,11 @@ export function adjustTime(inputTime: string, offsetMinutes: number): string {
   return formattedTime;
 }
 
-
 export function formatDurationInMinutes(durationInSec: number): string {
   const minutes = Math.ceil(durationInSec / 60);
   return `${minutes}m`;
+}
+
+export function formatDateFromDateTime(timestamp: Date) {
+  return timestamp.toISOString().slice(0, 10);
 }
