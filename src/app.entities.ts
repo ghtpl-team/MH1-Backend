@@ -47,6 +47,9 @@ export class User extends BaseClass {
   })
   journalNotes = new Collection<JournalNotes>(this);
 
+  @OneToMany(() => LoggedSymptoms, (logSymptom) => logSymptom.user)
+  loggedSymptoms = new Collection<LoggedSymptoms>(this);
+
   @OneToOne(() => JournalSecurity, (journalSecurity) => journalSecurity.user, {
     orphanRemoval: true,
   })
@@ -168,6 +171,19 @@ export class KickCounter extends BaseClass {
 
   @Property({ type: 'int' })
   kickCount: number;
+
+  @ManyToOne(() => User)
+  user!: User;
+}
+
+@Entity({ tableName: 'mh_logged_symptoms' })
+export class LoggedSymptoms extends BaseClass {
+  @Index()
+  @Property({ type: 'date' })
+  loggingDate: string = new Date().toISOString().slice(0, 10);
+
+  @Property({ type: 'array' })
+  symptoms: string[];
 
   @ManyToOne(() => User)
   user!: User;
