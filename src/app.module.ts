@@ -13,6 +13,7 @@ import { UsersModule } from './user/users.module';
 import { WeeklyInsightsModule } from './weekly-insights/weekly-insights.module';
 import { UnsubscribedHomeModule } from './unsubscribed-home/unsubscribed-home.module';
 import { NewsCardsModule } from './news-cards/news-cards.module';
+import { SymptomsModule } from './symptoms/symptoms.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { NewsCardsModule } from './news-cards/news-cards.module';
     SubscriptionPageModule,
     UnsubscribedHomeModule,
     NewsCardsModule,
+    SymptomsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

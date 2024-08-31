@@ -18,6 +18,7 @@ export class NewsCardsService {
         bgImageUrl: getImageUrl(attributes.bgImage.data?.attributes.url),
         content: attributes.content,
         duration: attributes.duration,
+        sourceLink: attributes.externalUrl,
       };
     });
   }

@@ -14,6 +14,7 @@ export interface GetNewsCardRaw {
         };
         content: string;
         duration: string;
+        externalUrl: string;
       };
     }>;
   };
@@ -27,4 +28,5 @@ export interface ParsedNewsCard {
   bgImageUrl: string | null;
   content: string;
   duration: string;
+  sourceLink: string;
 }

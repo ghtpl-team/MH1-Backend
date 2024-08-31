@@ -17,6 +17,7 @@ export const GET_NEWS_CARDS = gql`
           }
           content
           duration
+          externalUrl
         }
       }
     }
