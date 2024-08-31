@@ -14,6 +14,7 @@ import { WeeklyInsightsModule } from './weekly-insights/weekly-insights.module';
 import { UnsubscribedHomeModule } from './unsubscribed-home/unsubscribed-home.module';
 import { NewsCardsModule } from './news-cards/news-cards.module';
 import { SymptomsModule } from './symptoms/symptoms.module';
+import { ActivitiesModule } from './activities/activities.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { SymptomsModule } from './symptoms/symptoms.module';
     UnsubscribedHomeModule,
     NewsCardsModule,
     SymptomsModule,
+    ActivitiesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
