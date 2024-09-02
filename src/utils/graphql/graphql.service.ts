@@ -11,6 +11,14 @@ export class GraphQLClientService {
     this.client = new ApolloClient({
       link: new HttpLink({ uri: process.env.STRAPI_GRAPHQL_URL, fetch }),
       cache: new InMemoryCache(),
+      defaultOptions: {
+        watchQuery: {
+          fetchPolicy: 'no-cache',
+        },
+        query: {
+          fetchPolicy: 'no-cache',
+        },
+      },
     });
   }
 
