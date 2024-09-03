@@ -1,6 +1,7 @@
 export interface GetNewsCardRaw {
   newsCards: {
     data: Array<{
+      id: string;
       attributes: {
         title: string;
         date: string;
