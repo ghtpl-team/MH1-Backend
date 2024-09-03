@@ -16,7 +16,8 @@ export class SymptomsService {
   ) {}
 
   private parseSymptomListing(rawData: GetSymptomListingRaw) {
-    return rawData.symptomCategories?.data?.map((category) => ({
+    return rawData.symptomCategories?.data?.map((category, index: number) => ({
+      id: index,
       name: category.attributes.name,
       imageUrl: getImageUrl(category.attributes.image.data.attributes.url),
       bgColor: category.attributes.bgColor,
@@ -34,6 +35,8 @@ export class SymptomsService {
       );
       return this.parseSymptomListing(rawData);
     } catch (error) {
+      console.log(error);
+
       throw error;
     }
   }
