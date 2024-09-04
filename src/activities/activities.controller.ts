@@ -14,4 +14,9 @@ export class ActivitiesController {
   async fitnessActivities(@Query('week') weekNumber: string) {
     return this.activitiesService.fetchFitnessActivities(parseInt(weekNumber));
   }
+
+  @Get('overview')
+  async getPregnancyCoachCard(@Query('week') weekNumber: string) {
+    return this.activitiesService.fetchPersonalCoach(parseInt(weekNumber));
+  }
 }

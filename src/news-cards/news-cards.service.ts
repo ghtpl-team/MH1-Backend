@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { getImageUrl } from 'src/common/utils/helper.utils';
 import { GraphQLClientService } from 'src/utils/graphql/graphql.service';
 import { GetNewsCardRaw } from './news-cards.interface';
 import { GET_NEWS_CARDS } from './news-cards.queries';
-import { getImageUrl } from 'src/common/utils/helper.utils';
 
 @Injectable()
 export class NewsCardsService {
@@ -12,6 +12,7 @@ export class NewsCardsService {
     return rawData.newsCards.data.map((card) => {
       const attributes = card.attributes;
       return {
+        id: card.id,
         title: attributes.title,
         date: attributes.date,
         header: attributes.header,
