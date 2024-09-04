@@ -132,3 +132,58 @@ export const FITNESS_ACTIVITIES = gql`
     }
   }
 `;
+
+export const PREGNANCY_COACH = gql`
+  query GetPregnancyCoach($weekNumber: Int!) {
+    activities(filters: { week: { eq: $weekNumber } }) {
+      data {
+        attributes {
+          week
+          hms_doctor {
+            data {
+              attributes {
+                name
+                image {
+                  data {
+                    attributes {
+                      url
+                    }
+                  }
+                }
+                specialty {
+                  data {
+                    attributes {
+                      name
+                      hmsSpecialityId
+                    }
+                  }
+                }
+                experienceYears
+                hmsDoctorId
+              }
+            }
+          }
+          activityCardDynamic {
+            ...GetActivityCard
+          }
+        }
+      }
+    }
+  }
+
+  fragment GetActivityCard on ComponentStructuresActivityTracker {
+    label {
+      backgroundColor
+      text
+    }
+    title
+    image {
+      data {
+        attributes {
+          url
+        }
+      }
+    }
+    activityType
+  }
+`;

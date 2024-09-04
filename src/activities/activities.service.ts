@@ -1,11 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { GraphQLClientService } from 'src/utils/graphql/graphql.service';
-import { FITNESS_ACTIVITIES, MIND_ACTIVITIES } from './activities.query';
+import {
+  FITNESS_ACTIVITIES,
+  MIND_ACTIVITIES,
+  PREGNANCY_COACH,
+} from './activities.query';
 import {
   Button,
   ConsentForm,
   Doctor,
   FitnessActivitiesRaw,
+  GetPregnancyCoachRaw,
   MindActivitiesOverview,
   MindActivitiesRaw,
   ParsedConsentForm,
@@ -13,6 +18,7 @@ import {
   ParsedFitnessActivities,
 } from './activities.interface';
 import { getImageUrl } from 'src/common/utils/helper.utils';
+import { pregnancyCoachOverview } from 'src/common/content/activity.content';
 
 @Injectable()
 export class ActivitiesService {
@@ -151,6 +157,65 @@ export class ActivitiesService {
         });
 
       return this.parseFitnessActivities(fitnessActivityRaw);
+    } catch (error) {
+      console.log(error);
+
+      throw error;
+    }
+  }
+
+  private parsePregnancyCoachData(coachDataRaw: GetPregnancyCoachRaw) {
+    const ParsedDoctor = this.parseDoctorInfo(
+      coachDataRaw.activities.data[0]?.attributes?.hms_doctor?.data?.attributes,
+    );
+
+    const data = coachDataRaw.activities.data[0]?.attributes;
+    const staticContent = pregnancyCoachOverview();
+
+    const soulActivityCard = data.activityCardDynamic.filter((activity) => {
+      return activity.activityType === 'Soul';
+    });
+
+    const parsedSoulActivity = {
+      label: {
+        text: soulActivityCard[0]?.label?.text,
+        bgColor: soulActivityCard[0]?.label?.backgroundColor,
+      },
+      heading: soulActivityCard[0]?.title,
+      image: getImageUrl(soulActivityCard[0]?.image?.data?.attributes?.url),
+    };
+
+    const parsedActivityOverview = {
+      weekNumber: data.week,
+      docInfo: ParsedDoctor,
+      divider: staticContent.divider,
+      activities: [
+        staticContent.waterActivityCard,
+        staticContent.nutritionCard,
+        parsedSoulActivity,
+        staticContent.mindCard,
+        staticContent.fitnessCard,
+      ],
+    };
+    return parsedActivityOverview;
+  }
+
+  async fetchPersonalCoach(weekNumber: number) {
+    try {
+      const coachDataRaw: GetPregnancyCoachRaw = await this.graphqlClient.query(
+        PREGNANCY_COACH,
+        {
+          weekNumber: weekNumber,
+        },
+      );
+
+      console.log(coachDataRaw);
+
+      if (!coachDataRaw.activities?.data)
+        throw new HttpException('No Data Available', HttpStatus.NOT_FOUND);
+
+      const parsedData = this.parsePregnancyCoachData(coachDataRaw);
+      return parsedData;
     } catch (error) {
       console.log(error);
 

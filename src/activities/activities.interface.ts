@@ -130,6 +130,38 @@ interface FitnessActivity {
   };
 }
 
+export interface GetPregnancyCoachRaw {
+  activities: {
+    data: Array<{
+      attributes: {
+        week: number;
+        hms_doctor: {
+          data: {
+            attributes: Doctor;
+          };
+        };
+        activityCardDynamic: ActivityCard[];
+      };
+    }>;
+  };
+}
+
+type ActivityCard = {
+  label: {
+    backgroundColor: string;
+    text: string;
+  };
+  title: string;
+  image: {
+    data: {
+      attributes: {
+        url: string;
+      };
+    };
+  };
+  activityType: string;
+};
+
 export interface FitnessActivitiesRaw {
   fitnessActivities: {
     data: {
