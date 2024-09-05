@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  Req,
+} from '@nestjs/common';
 import { JournalsService } from './journals.service';
 import { CreateJournalEntryDTO } from './dto/journals.dto';
 
@@ -29,5 +38,11 @@ export class JournalsController {
   async fetchJournalEntry(@Param('id') id: string) {
     const journalId = parseInt(id);
     return this.journalService.findById(journalId);
+  }
+
+  @Patch()
+  async deleteJournalEntry(@Query('id') id: string) {
+    const journalId = parseInt(id);
+    return this.journalService.delete(journalId);
   }
 }

@@ -1,14 +1,23 @@
-import { DateType } from "@mikro-orm/core";
-import { IsDateString, IsNumber, IsString } from "class-validator";
+import { DateType } from '@mikro-orm/core';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsBoolean, IsDateString, IsString } from 'class-validator';
 
-export class CreateJournalEntryDTO{
+export class CreateJournalEntryDTO {
+  @IsString()
+  @ApiProperty()
+  title: string;
 
-    @IsString()
-    title: string;
+  @IsString()
+  @ApiProperty()
+  content: string;
 
-    @IsString()
-    content: string;
+  @IsDateString()
+  @ApiProperty()
+  date?: DateType;
+}
 
-    @IsDateString()
-    data?: DateType;
+export class UpdateJournalSecurityDto {
+  @IsBoolean()
+  @ApiProperty()
+  isLocked: boolean;
 }
