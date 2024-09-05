@@ -52,6 +52,7 @@ export class MedicationSchedulesService {
             }
 
             groupedObj[intakeTimeType].schedule.push({
+              id: medication.id,
               name: medication.medicationName,
               strength: medication.strength,
               strengthUnit: medication.strengthUnit,
