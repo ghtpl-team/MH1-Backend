@@ -1,7 +1,10 @@
 import { EntityManager } from '@mikro-orm/mysql';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateJournalEntryDTO } from './dto/journals.dto';
-import { JournalNotes, Status } from 'src/app.entities';
+import {
+  CreateJournalEntryDTO,
+  UpdateJournalSecurityDto,
+} from './dto/journals.dto';
+import { JournalNotes, Status, UserPreferences } from 'src/app.entities';
 
 @Injectable()
 export class JournalsService {
@@ -86,23 +89,23 @@ export class JournalsService {
     }
   }
 
-  // async toggleJournalLock(
-  //   updateData: UpdateJournalSecurityDto,
-  //   userId: number,
-  // ) {
-  //   try {
-  //     const updateResObj = this.em.nativeUpdate(
-  //       UserPreferences,
-  //       {
-  //         user: userId,
-  //       },
-  //       {
-  //         isJournalLocked: updateData.isLocked,
-  //       },
-  //     );
-  //     return updateResObj;
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }
+  async toggleJournalLock(
+    updateData: UpdateJournalSecurityDto,
+    userId: number,
+  ) {
+    try {
+      const updateResObj = this.em.nativeUpdate(
+        UserPreferences,
+        {
+          user: userId,
+        },
+        {
+          isJournalLocked: updateData.isLocked,
+        },
+      );
+      return updateResObj;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
