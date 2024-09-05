@@ -33,7 +33,7 @@ export const MIND_ACTIVITIES = gql`
 
 export const FITNESS_ACTIVITIES = gql`
   query GetFitnessActivities($weekNumber: Int!) {
-    fitnessActivities(filters: { week: { eq: $weekNumber } }) {
+    fitnessActivities(filters: { week: { lte: $weekNumber } }) {
       data {
         attributes {
           week
