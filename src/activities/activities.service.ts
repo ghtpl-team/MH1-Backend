@@ -15,7 +15,7 @@ import {
   MindActivitiesRaw,
   ParsedConsentForm,
   ParsedDoctor,
-  ParsedFitnessActivities,
+  ParsedFitnessActivity,
 } from './activities.interface';
 import { getImageUrl } from 'src/common/utils/helper.utils';
 import { pregnancyCoachOverview } from 'src/common/content/activity.content';
@@ -60,14 +60,18 @@ export class ActivitiesService {
       throw error;
     }
   }
-  private parseFitnessActivities(
-    response: FitnessActivitiesRaw,
-  ): ParsedFitnessActivities {
+  private parseFitnessActivities(response: FitnessActivitiesRaw): {
+    activities: ParsedFitnessActivity[];
+    consentForm: ParsedConsentForm;
+  } {
+    let consentForm;
     const activities = response.fitnessActivities?.data
       ?.map((item) => {
         const attrs = item?.attributes;
         if (!attrs) return null;
-
+        consentForm = this.parseConsentForm(
+          attrs.consent_form?.data?.attributes,
+        );
         return {
           week: attrs.week ?? 0,
           name: attrs.name ?? '',
@@ -78,9 +82,6 @@ export class ActivitiesService {
             benefits: attrs.description?.benefits ?? '',
             precautions: attrs.description?.precautions ?? '',
           },
-          consentForm: this.parseConsentForm(
-            attrs.consent_form?.data?.attributes,
-          ),
         };
       })
       .filter(
@@ -89,7 +90,11 @@ export class ActivitiesService {
       );
 
     return {
-      activities: activities ?? [],
+      activities:
+        activities.sort(
+          (activity1, activity2) => activity1.week - activity2.week,
+        ) ?? [],
+      consentForm,
     };
   }
 

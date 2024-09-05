@@ -181,7 +181,6 @@ export interface ParsedFitnessActivity {
   thumbnailUrl: string;
   subHeading: string;
   description: Description;
-  consentForm: ParsedConsentForm;
 }
 
 export interface ParsedConsentForm {
