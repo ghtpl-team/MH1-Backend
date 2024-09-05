@@ -9,7 +9,10 @@ import {
   Req,
 } from '@nestjs/common';
 import { JournalsService } from './journals.service';
-import { CreateJournalEntryDTO } from './dto/journals.dto';
+import {
+  CreateJournalEntryDTO,
+  UpdateJournalSecurityDto,
+} from './dto/journals.dto';
 
 @Controller('users/:userId/journals')
 export class JournalsController {
@@ -44,5 +47,16 @@ export class JournalsController {
   async deleteJournalEntry(@Query('id') id: string) {
     const journalId = parseInt(id);
     return this.journalService.delete(journalId);
+  }
+
+  @Patch('security')
+  async journalLock(
+    @Query('userId') userId: string,
+    @Body() updateJournalSecurityDto: UpdateJournalSecurityDto,
+  ) {
+    return this.journalService.toggleJournalLock(
+      updateJournalSecurityDto,
+      parseInt(userId),
+    );
   }
 }

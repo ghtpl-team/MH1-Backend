@@ -40,7 +40,7 @@ export class User extends BaseClass {
     cascade: [],
     fieldName: 'user_preference_id',
   })
-  public userPreferences?: any;
+  userPreferences = new UserPreferences();
 
   @OneToMany(() => JournalNotes, (journalNotes) => journalNotes.user, {
     orphanRemoval: true,
@@ -49,35 +49,42 @@ export class User extends BaseClass {
 
   @OneToMany(() => LoggedSymptoms, (logSymptom) => logSymptom.user)
   loggedSymptoms = new Collection<LoggedSymptoms>(this);
-
-  @OneToOne(() => JournalSecurity, (journalSecurity) => journalSecurity.user, {
-    orphanRemoval: true,
-  })
-  journalSecurity = new JournalSecurity();
 }
 
 @Entity({ tableName: 'mh_user_preferences' })
 export class UserPreferences extends BaseClass {
   @Property({ type: 'time' })
-  beforeBreakFast!: string;
+  beforeBreakFast?: string;
 
   @Property({ type: 'time' })
-  afterBreakFast!: string;
+  afterBreakFast?: string;
 
   @Property({ type: 'time' })
-  beforeLunch!: string;
+  beforeLunch?: string;
 
   @Property({ type: 'time' })
-  afterLunch!: string;
+  afterLunch?: string;
 
   @Property({ type: 'time' })
-  beforeDinner!: string;
+  beforeDinner?: string;
 
   @Property({ type: 'time' })
-  afterDinner!: string;
+  afterDinner?: string;
 
   @Property({ type: 'time' })
-  beforeBedTime!: string;
+  beforeBedTime?: string;
+
+  @Property({ type: 'time' })
+  wakeUpTime?: string;
+
+  @Property({ type: 'time' })
+  eveningSnacks?: string;
+
+  @Property({ type: 'boolean' })
+  isActivityLocked: boolean = false;
+
+  @Property({ type: 'boolean' })
+  isJournalLocked: boolean = false;
 
   @OneToOne(() => User)
   user!: User;
@@ -146,15 +153,6 @@ export class JournalNotes extends BaseClass {
 
   @OneToOne(() => Reminder, (reminder) => reminder.journalNote)
   reminder?: number;
-}
-
-@Entity({ tableName: 'mh_journal_security' })
-export class JournalSecurity extends BaseClass {
-  @OneToOne(() => User)
-  user!: User;
-
-  @Property()
-  isLocked: boolean = false;
 }
 
 @Entity({ tableName: 'mh_kick_counter' })

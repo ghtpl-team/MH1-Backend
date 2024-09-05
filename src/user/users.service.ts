@@ -17,21 +17,16 @@ export class UsersService {
 
   async find(id: number) {
     try {
-      return await this.em
-        .getKnex()
-        .select('*')
-        .from('mh_users')
-        .where({
-          'mh_users.id': id,
-        })
-        .leftJoin('mh_user_preferences', function () {
-          this.on('mh_user_preferences.user_id', '=', 'mh_users.id');
-        });
-      return this.em
-        .createQueryBuilder(User, 'user')
-        .select('*')
+      const userData = await this.em
+        .createQueryBuilder(User, 'u')
+        .select(['u.id', 'u.phone'])
+        .leftJoinAndSelect('u.userPreferences', 'up', {}, [
+          'isActivityLocked',
+          'isJournalLocked',
+        ])
         .where({ id })
-        .leftJoin('userPreferences', 'up', {});
+        .execute();
+      return userData;
     } catch (error) {
       throw error;
     }
