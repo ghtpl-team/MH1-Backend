@@ -100,29 +100,32 @@ export class KickCounterService {
   private groupKickSessionsByDate(
     kickSessionHistory: Loaded<KickCounter, never>[],
   ) {
-    return kickSessionHistory.reduce((ksHistory, kickSession) => {
-      const date = kickSession.date;
+    const groupedHistory = kickSessionHistory.reduce(
+      (ksHistory, kickSession) => {
+        const date = kickSession.date;
 
-      if (!ksHistory[date]) {
-        ksHistory[date] = {
-          date: date,
-          sessions: [],
-        };
-      }
+        if (!ksHistory[date]) {
+          ksHistory[date] = {
+            date: date,
+            sessions: [],
+          };
+        }
 
-      ksHistory[date].sessions.push({
-        id: kickSession.id,
-        startTime: kickSession.startTime,
-        endTime: this.calculateEndTime(
-          kickSession.startTime,
-          kickSession.durationInSec,
-        ),
-        duration: formatDurationInMinutes(kickSession.durationInSec),
-        kickCount: kickSession.kickCount,
-      });
-
-      return Object.values(ksHistory);
-    }, {} as KickHistoryResponseObj[]);
+        ksHistory[date].sessions.push({
+          id: kickSession.id,
+          startTime: kickSession.startTime,
+          endTime: this.calculateEndTime(
+            kickSession.startTime,
+            kickSession.durationInSec,
+          ),
+          duration: formatDurationInMinutes(kickSession.durationInSec),
+          kickCount: kickSession.kickCount,
+        });
+        return ksHistory;
+      },
+      {} as KickHistoryResponseObj[],
+    );
+    return Object.values(groupedHistory);
   }
 
   async fetchAllByDate(
