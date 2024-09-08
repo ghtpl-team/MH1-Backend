@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { GraphQLClientService } from 'src/utils/graphql/graphql.service';
 import {
+  FEEDBACK_FORM,
   FITNESS_ACTIVITIES,
   MIND_ACTIVITIES,
   PREGNANCY_COACH,
@@ -9,20 +10,28 @@ import {
   Button,
   ConsentForm,
   Doctor,
+  FeedbackFormData,
   FitnessActivitiesRaw,
   GetPregnancyCoachRaw,
   MindActivitiesOverview,
   MindActivitiesRaw,
   ParsedConsentForm,
   ParsedDoctor,
+  ParsedFeedbackForm,
   ParsedFitnessActivity,
 } from './activities.interface';
 import { getImageUrl } from 'src/common/utils/helper.utils';
 import { pregnancyCoachOverview } from 'src/common/content/activity.content';
+import { EntityManager } from '@mikro-orm/mysql';
+import { ActivityFeedBack, UserPreferences } from 'src/app.entities';
+import { FeedbackFromDto } from './dto/activities.dto';
 
 @Injectable()
 export class ActivitiesService {
-  constructor(private readonly graphqlClient: GraphQLClientService) {}
+  constructor(
+    private readonly graphqlClient: GraphQLClientService,
+    private readonly em: EntityManager,
+  ) {}
 
   private parseMindActivities(
     rawData: MindActivitiesRaw,
@@ -214,8 +223,6 @@ export class ActivitiesService {
         },
       );
 
-      console.log(coachDataRaw);
-
       if (!coachDataRaw.activities?.data)
         throw new HttpException('No Data Available', HttpStatus.NOT_FOUND);
 
@@ -224,6 +231,71 @@ export class ActivitiesService {
     } catch (error) {
       console.log(error);
 
+      throw error;
+    }
+  }
+
+  private parseFeedbackForm(rawData: FeedbackFormData): ParsedFeedbackForm {
+    const attributes = rawData.feedbackForm.data.attributes;
+
+    return {
+      heading: attributes.heading,
+      description: attributes.description,
+      questions: attributes.questionList.map((q) => ({
+        type: q.type,
+        question: q.question,
+        options: q.options || undefined,
+      })),
+      lockScreen: {
+        title: attributes.lockScreen.title,
+        text: attributes.lockScreen.text,
+        imageUrl:
+          getImageUrl(attributes.lockScreen.image.data[0]?.attributes.url) ||
+          '',
+        doctor: this.parseDoctorInfo(
+          attributes.lockScreen.hms_doctor.data.attributes,
+        ),
+      },
+    };
+  }
+
+  async getFeedbackForm() {
+    try {
+      const feedbackFromRaw: FeedbackFormData = await this.graphqlClient.query(
+        FEEDBACK_FORM,
+        {},
+      );
+
+      if (!feedbackFromRaw?.feedbackForm?.data)
+        throw new HttpException('No Data Available', HttpStatus.NOT_FOUND);
+
+      const parsedData = this.parseFeedbackForm(feedbackFromRaw);
+      return parsedData;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async recordFeedback(feedbackDto: FeedbackFromDto, userId: number) {
+    try {
+      const feedback = await this.em.create(ActivityFeedBack, {
+        ...feedbackDto,
+        user: userId,
+      });
+      this.em.flush();
+      if (feedback.discomfort) {
+        await this.em.nativeUpdate(
+          UserPreferences,
+          {
+            user: userId,
+          },
+          {
+            isActivityLocked: true,
+          },
+        );
+      }
+      return 'Recorded Successfully';
+    } catch (error) {
       throw error;
     }
   }

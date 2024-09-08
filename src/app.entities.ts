@@ -35,6 +35,9 @@ export class User extends BaseClass {
   @OneToMany(() => MedicationSchedule, (schedule) => schedule.user)
   medicationSchedules = new Collection<MedicationSchedule>(this);
 
+  @OneToMany(() => ActivityFeedBack, (feedback) => feedback.user)
+  activityFeedbacks = new Collection<ActivityFeedBack>(this);
+
   @OneToOne(() => UserPreferences, (userPreferences) => userPreferences.user, {
     orphanRemoval: true,
     cascade: [],
@@ -187,6 +190,23 @@ export class LoggedSymptoms extends BaseClass {
   user!: User;
 }
 
+@Entity({ tableName: 'mh_activity_feedbacks' })
+export class ActivityFeedBack extends BaseClass {
+  @ManyToOne(() => User)
+  user!: User;
+
+  @Property()
+  experienceRating: number;
+
+  @Property()
+  difficultyRating: number;
+
+  @Property()
+  instructionRating: number;
+
+  @Property()
+  discomfort: string;
+}
 @Entity({ tableName: 'mh_reminders' })
 export class Reminder extends BaseClass {
   @ManyToOne(() => MedicationSchedule)
