@@ -38,6 +38,8 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             cd ~/services/mh1-backend
+            export NVM_DIR=/home/${{ secrets.USER }}/.nvm
+            source /home/${{ secrets.USER }}/.nvm/nvm.sh
             git pull origin main
             npm ci --only=production
             npx mikro-orm migration:create
