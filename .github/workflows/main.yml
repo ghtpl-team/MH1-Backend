@@ -1,1 +1,41 @@
 name: Auto Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Deploy to Server
+        env:
+          HOST: ${{ secrets.HOST }}
+          USER: ${{ secrets.USER }}
+          PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
+
+          scp -i ~/.ssh/deploy_key -r dist package*.json $USER@$HOST:/services/mh1-backend
+          ssh -i ~/.ssh/deploy_key $USER@$HOST << EOF
+            cd /services/mh1-backend
+            npm ci --only=production
+            npx mikro-orm migration:create
+            npx mikro-orm migration:up
+            npm run build
+            pm2 restart 5
+          EOF
