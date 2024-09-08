@@ -221,3 +221,83 @@ export interface ParsedDoctor {
   specialty: string;
   experienceYears: number;
 }
+
+interface Option {
+  label: string;
+  value: string;
+}
+
+interface Question {
+  type: 'rating' | 'radio';
+  question: string;
+  options?: Option[];
+}
+
+interface ImageData {
+  attributes: {
+    url: string;
+  };
+}
+
+interface DoctorData {
+  attributes: {
+    name: string;
+    image: {
+      data: ImageData;
+    };
+    specialty: {
+      data: {
+        attributes: {
+          name: string;
+        };
+      };
+    };
+    experienceYears: number;
+  };
+}
+
+interface LockScreen {
+  text: string;
+  image: {
+    data: ImageData[];
+  };
+  title: string;
+  hms_doctor: {
+    data: DoctorData;
+  };
+}
+
+interface FeedbackFormAttributes {
+  questionList: Question[];
+  heading: string;
+  lockScreen: LockScreen;
+  description: string;
+}
+
+export interface FeedbackFormData {
+  feedbackForm: {
+    data: {
+      attributes: FeedbackFormAttributes;
+    };
+  };
+}
+
+interface ParsedQuestion {
+  type: 'rating' | 'radio';
+  question: string;
+  options: Option[];
+}
+
+interface ParsedLockScreen {
+  title: string;
+  text: string;
+  imageUrl: string;
+  doctor: ParsedDoctor;
+}
+
+export interface ParsedFeedbackForm {
+  heading: string;
+  description: string;
+  questions: ParsedQuestion[];
+  lockScreen: ParsedLockScreen;
+}

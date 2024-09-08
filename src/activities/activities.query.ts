@@ -187,3 +187,50 @@ export const PREGNANCY_COACH = gql`
     activityType
   }
 `;
+
+export const FEEDBACK_FORM = gql`
+  query GetFeedbackForm {
+    feedbackForm {
+      data {
+        attributes {
+          questionList
+          heading
+          lockScreen {
+            text
+            image {
+              data {
+                attributes {
+                  url
+                }
+              }
+            }
+            title
+            hms_doctor {
+              data {
+                attributes {
+                  name
+                  image {
+                    data {
+                      attributes {
+                        url
+                      }
+                    }
+                  }
+                  specialty {
+                    data {
+                      attributes {
+                        name
+                      }
+                    }
+                  }
+                  experienceYears
+                }
+              }
+            }
+          }
+          description
+        }
+      }
+    }
+  }
+`;
