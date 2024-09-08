@@ -1,4 +1,4 @@
-name: Auto Deployment
+name: Node Github CI
 
 on:
   push:
@@ -6,36 +6,45 @@ on:
       - main
 
 jobs:
-  deploy:
+  test:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x, 20.x]
+
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Use Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
         with:
-          node-version: "18"
+          node-version: ${{ matrix.node-version }}
+      - name: npm install
+        run: |
+          npm install
+        env:
+          CI: true
 
-      - name: Install dependencies
-        run: npm ci
+  deploy:
+    needs: [test]
+    runs-on: ubuntu-latest
 
-      - name: Deploy to Server
+    steps:
+      - name: SSH and deploy node app
         env:
           HOST: ${{ secrets.HOST }}
           USER: ${{ secrets.USER }}
           PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
-        run: |
-          mkdir -p ~/.ssh/
-          echo "$PRIVATE_KEY" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
-
-          scp -i ~/.ssh/deploy_key -r dist package*.json $USER@$HOST:/services/mh1-backend
-          ssh -i ~/.ssh/deploy_key $USER@$HOST << EOF
-            cd /services/mh1-backend
+        uses: appleboy/ssh-action@master
+        with:
+          host: $HOST
+          username: $USER
+          key: $PRIVATE_KEY
+          script: |
+            cd ~/services/mh1-backend
+            git pull origin main
             npm ci --only=production
             npx mikro-orm migration:create
             npx mikro-orm migration:up
             npm run build
-            pm2 restart 5
-          EOF
+            pm2 restart mh1_backend
