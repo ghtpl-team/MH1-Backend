@@ -11,7 +11,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x, 18.x, 20.x]
+        node-version: [18.x]
 
     steps:
       - uses: actions/checkout@v2
@@ -31,15 +31,11 @@ jobs:
 
     steps:
       - name: SSH and deploy node app
-        env:
-          HOST: ${{ secrets.HOST }}
-          USER: ${{ secrets.USER }}
-          PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
         uses: appleboy/ssh-action@master
         with:
-          host: $HOST
-          username: $USER
-          key: $PRIVATE_KEY
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             cd ~/services/mh1-backend
             git pull origin main
