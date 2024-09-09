@@ -175,6 +175,8 @@ export class WeeklyInsightsService {
           image: getImageUrl(card.image.data.attributes.url),
           type: 'NOTE_CARD' as const,
           insightType: card.insightType,
+          bgColor: card.bgColor,
+          bottomBgColor: card.bgBottomColor,
         };
       }
 

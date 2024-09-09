@@ -134,6 +134,8 @@ export interface ComponentCardsNoteCard {
   id: string;
   title: string;
   insightType: string;
+  bgColor: string;
+  bgBottomColor: string;
   image: {
     data: {
       attributes: ImageAttributes;
@@ -185,6 +187,7 @@ export interface ParsedCard {
   title: string;
   type: 'TITLE_DOC_BTN' | 'NOTE_CARD';
   bgColor?: string;
+  bottomBgColor?: string;
   ctaButton?: {
     textColor: string;
     btnText: string;

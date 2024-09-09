@@ -186,6 +186,8 @@ export const GET_PERSONALIZED_CARD_LISTING = gql`
     id
     title
     insightType
+    bgColor
+    bgBottomColor
     image {
       data {
         attributes {
