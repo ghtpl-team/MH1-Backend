@@ -38,6 +38,9 @@ export class User extends BaseClass {
   @OneToMany(() => ActivityFeedBack, (feedback) => feedback.user)
   activityFeedbacks = new Collection<ActivityFeedBack>(this);
 
+  @OneToMany(() => Schedule, (schedule) => schedule.user)
+  schedules = new Collection<Schedule>(this);
+
   @OneToOne(() => UserPreferences, (userPreferences) => userPreferences.user, {
     orphanRemoval: true,
     cascade: [],
@@ -133,8 +136,6 @@ export class MedicationSchedule extends BaseClass {
   @Property({ type: 'date' })
   @Index()
   endDate!: string;
-  @OneToMany(() => Reminder, (reminder) => reminder.medicationSchedule)
-  reminders = new Collection<Reminder>(this);
 }
 
 @Entity({ tableName: 'mh_journal_notes' })
@@ -153,9 +154,6 @@ export class JournalNotes extends BaseClass {
 
   @Property({ type: 'boolean' })
   isShared: boolean = false; // TODO: Don't need this.
-
-  @OneToOne(() => Reminder, (reminder) => reminder.journalNote)
-  reminder?: number;
 }
 
 @Entity({ tableName: 'mh_kick_counter' })
@@ -207,22 +205,38 @@ export class ActivityFeedBack extends BaseClass {
   @Property()
   discomfort: string;
 }
-@Entity({ tableName: 'mh_reminders' })
-export class Reminder extends BaseClass {
-  @ManyToOne(() => MedicationSchedule)
-  medicationSchedule!: MedicationSchedule;
+@Entity({ tableName: 'mh_schedules' })
+export class Schedule extends BaseClass {
+  @Property({ type: 'time' })
+  reminderTime!: string;
 
-  @OneToOne(() => JournalNotes)
-  journalNote!: JournalNotes;
-
-  @Property()
-  reminderTime!: Date;
-
-  @Enum(() => ReminderStatus)
-  reminderStatus!: ReminderStatus;
+  @Enum({ items: () => Frequency, nativeEnumName: 'frequency' })
+  recurrenceRule: Frequency = Frequency.DAILY;
 
   @Enum({ items: () => ReminderType, nativeEnumName: 'reminder_type' })
   type!: ReminderType;
+
+  @OneToMany(() => ScheduledTask, (scheduledTask) => scheduledTask.schedule)
+  scheduledTasks = new Collection<ScheduledTask>(this);
+
+  @ManyToOne(() => User)
+  user!: User;
+}
+
+@Entity({ tableName: 'mh_scheduled_tasks' })
+export class ScheduledTask extends BaseClass {
+  @ManyToOne(() => Schedule)
+  schedule!: Schedule;
+
+  @Enum({ items: () => ScheduledTaskStatus, nativeEnumName: 'task_status' })
+  taskStatus: ScheduledTaskStatus = ScheduledTaskStatus.PENDING;
+
+  @Enum({ items: () => ReminderType, nativeEnumName: 'reminder_type' })
+  type!: ReminderType;
+
+  @Index()
+  @Property({ type: 'date' })
+  date: string = new Date().toISOString().slice(0, 10);
 }
 
 export enum MedicationType {
@@ -265,7 +279,7 @@ export enum Frequency {
   SPECIFIC_DAYS = 'specific_days',
 }
 
-export enum ReminderStatus {
+export enum ScheduledTaskStatus {
   PENDING = 'pending',
   TAKEN = 'taken',
   MISSED = 'missed',
@@ -290,8 +304,13 @@ export enum MedicationStrengthUnit {
 }
 
 export enum ReminderType {
-  MEDICATION_SCHEDULE,
-  SHARING_JOURNAL,
+  MEDICATION_SCHEDULE = 'medication',
+  SHARING_JOURNAL = 'journal',
+  WATER_REMINDER = 'water',
+  DIET_REMINDER = 'diet',
+  SOUL_REMINDER = 'soul',
+  MIND_REMINDER = 'mind',
+  FITNESS_REMINDER = 'fitness',
 }
 
 export enum Status {
