@@ -24,6 +24,11 @@ export class UsersService {
           'isActivityLocked',
           'isJournalLocked',
         ])
+        .leftJoinAndSelect('schedules', 'sc', {}, [
+          'id',
+          'type',
+          'reminderTime',
+        ])
         .where({ id })
         .execute();
       return userData;

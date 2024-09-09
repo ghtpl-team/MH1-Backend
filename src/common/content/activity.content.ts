@@ -30,7 +30,7 @@ export function pregnancyCoachOverview() {
         bgColor: '#B7CCF0',
       },
       heading: 'Drink 8 glasses of water today',
-      image: getImageUrl('/uploads/image_82_1_6953936df8.png'),
+      image: getImageUrl('/uploads/water_point_930261ad44.png'),
     },
     nutritionCard: {
       label: {
@@ -38,7 +38,7 @@ export function pregnancyCoachOverview() {
         bgColor: '#B7CCF0',
       },
       heading: 'Follow the diet plan for today',
-      image: getImageUrl('/uploads/image_82_1_6953936df8.png'),
+      image: getImageUrl('/uploads/nutrition_point_30e0c4b11a.png'),
     },
     mindCard: {
       label: {
@@ -46,7 +46,7 @@ export function pregnancyCoachOverview() {
         bgColor: '#B7CCF0',
       },
       heading: 'Begin your mind activities for today',
-      image: getImageUrl('/uploads/image_82_1_6953936df8.png'),
+      image: getImageUrl('/uploads/mind_point_da25677bed.png'),
     },
     fitnessCard: {
       label: {
@@ -54,7 +54,7 @@ export function pregnancyCoachOverview() {
         bgColor: '#CBC8F4',
       },
       heading: 'Complete your fitness regime for the day',
-      image: getImageUrl('/uploads/image_82_1_6953936df8.png'),
+      image: getImageUrl('/uploads/fitness_point_c95ec3d648.png'),
     },
   };
 }

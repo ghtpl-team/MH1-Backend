@@ -6,7 +6,6 @@ import { JournalsModule } from './journals/journals.module';
 import { KickCounterModule } from './kick-counter/kick-counter.module';
 import { MedicationSchedulesModule } from './medication-schedules/medication-schedules.module';
 import config from './mikro-orm.config';
-import { RemindersModule } from './reminders/reminders.module';
 import { SubscriptionPageModule } from './subscription-page/subscription-page.module';
 import { UserPreferencesModule } from './user-preferences/user-preferences.module';
 import { UsersModule } from './user/users.module';
@@ -15,13 +14,13 @@ import { UnsubscribedHomeModule } from './unsubscribed-home/unsubscribed-home.mo
 import { NewsCardsModule } from './news-cards/news-cards.module';
 import { SymptomsModule } from './symptoms/symptoms.module';
 import { ActivitiesModule } from './activities/activities.module';
+import { SchedulesModule } from './schedules/schedules.module';
 
 @Module({
   imports: [
     MikroOrmModule.forRoot(config),
     UsersModule,
     MedicationSchedulesModule,
-    RemindersModule,
     UserPreferencesModule,
     JournalsModule,
     KickCounterModule,
@@ -31,6 +30,7 @@ import { ActivitiesModule } from './activities/activities.module';
     NewsCardsModule,
     SymptomsModule,
     ActivitiesModule,
+    SchedulesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
