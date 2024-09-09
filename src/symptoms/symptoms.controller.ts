@@ -4,6 +4,7 @@ import {
   Get,
   HttpException,
   HttpStatus,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
@@ -36,5 +37,16 @@ export class SymptomsController {
       parseInt(userId),
     );
     return symptoms;
+  }
+
+  @Patch()
+  async updateLoggedSymptoms(
+    @Body() logSymptomsDto: LogSymptomsDto,
+    @Query('id') id: string,
+  ) {
+    if (!id) {
+      throw new HttpException('id is required!', HttpStatus.BAD_REQUEST);
+    }
+    return this.symptomsService.updateSymptoms(logSymptomsDto, parseInt(id));
   }
 }

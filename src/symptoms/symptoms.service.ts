@@ -118,4 +118,24 @@ export class SymptomsService {
       throw error;
     }
   }
+
+  async updateSymptoms(updateData: LogSymptomsDto, id: number) {
+    try {
+      const updatedSymptoms = await this.em.nativeUpdate(
+        LoggedSymptoms,
+        {
+          id: id,
+        },
+        {
+          symptoms: updateData.symptoms,
+        },
+      );
+      return {
+        msg: `modified ${updatedSymptoms} entry successfully.`,
+        loggedSymptoms: updateData.symptoms,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
 }

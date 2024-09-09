@@ -1,5 +1,5 @@
 import { EntityManager } from '@mikro-orm/mysql';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Status, User } from 'src/app.entities';
 @Injectable()
 export class UsersService {
@@ -13,6 +13,29 @@ export class UsersService {
 
   async findAll(): Promise<User[]> {
     return await this.em.find(User, { status: Status.ACTIVE });
+  }
+
+  private parseUserData(userData: User[]) {
+    return {
+      id: userData[0].id,
+      phone: userData[0].phone,
+      userPreferences: userData[0].userPreferences
+        ? {
+            id: userData[0].userPreferences.id,
+            isActivityLocked: userData[0].userPreferences.isActivityLocked,
+            isJournalLocked: userData[0].userPreferences.isJournalLocked,
+          }
+        : null,
+      schedules: userData[0].schedules.length
+        ? userData[0].schedules.map((schedule) => {
+            return {
+              id: schedule.id,
+              reminderTime: schedule.reminderTime,
+              type: schedule.type,
+            };
+          })
+        : [],
+    };
   }
 
   async find(id: number) {
@@ -31,7 +54,13 @@ export class UsersService {
         ])
         .where({ id })
         .execute();
-      return userData;
+      if (userData && userData.length) {
+        return this.parseUserData(userData);
+      }
+      throw new HttpException(
+        'No user exists for given id',
+        HttpStatus.NOT_FOUND,
+      );
     } catch (error) {
       throw error;
     }
