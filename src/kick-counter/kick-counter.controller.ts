@@ -35,8 +35,10 @@ export class KickCounterController {
     @Req() req: Request,
     @Query('dateRange')
     dateRange: 'last_7_days' | 'last_30_days' | 'last_60_days',
+    @Param('userId')
+    mhUserId: string,
   ) {
-    return this.kcService.fetchAllByDate(dateRange);
+    return this.kcService.fetchAllByDate(dateRange, parseInt(mhUserId));
   }
 
   @Patch(':id')

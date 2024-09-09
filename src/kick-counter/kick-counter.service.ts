@@ -130,6 +130,7 @@ export class KickCounterService {
 
   async fetchAllByDate(
     dateRange: 'last_7_days' | 'last_30_days' | 'last_60_days',
+    userId: number,
   ) {
     try {
       const startDate: Date = this.getStartDateFromFilters(dateRange);
@@ -142,6 +143,7 @@ export class KickCounterService {
           date: {
             $gte: startDate,
           },
+          user: userId,
         })
         .orderBy({ date: 'DESC' });
 
