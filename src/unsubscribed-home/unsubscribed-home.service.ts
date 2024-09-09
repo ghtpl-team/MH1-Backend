@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { GraphQLClientService } from 'src/utils/graphql/graphql.service';
 import { GET_UNSUBSCRIBED_HOME } from './unsubscribed-home.queries';
 import { GetUnsubscribedHome } from './unsubscribed-home.interface';
-import { getImageUrl } from 'src/common/utils/helper.utils';
+import { generateId, getImageUrl } from 'src/common/utils/helper.utils';
 import { ParsedUnsubscribedHome } from 'src/weekly-insights/weekly-insights.interface';
 
 @Injectable()
@@ -19,6 +19,7 @@ export class UnsubscribedHomeService {
 
     return {
       pregnancyCoachPromo: attributes.pregnancyCoachPromo.map((promo) => ({
+        id: generateId(),
         image: getImageUrl(promo.image.data?.attributes.url),
         title: promo.title,
         content: promo.content,
@@ -33,6 +34,7 @@ export class UnsubscribedHomeService {
         btnBgColor: attributes.pregnancyCoachAd.btnBgColor,
       },
       dietPlanPromo: attributes.dietPlanPromo.map((promo) => ({
+        id: generateId(),
         image: getImageUrl(promo.image.data?.attributes.url),
         title: promo.title,
         content: promo.content,
