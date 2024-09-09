@@ -109,7 +109,10 @@ export class SymptomsService {
             loggedSymptoms: loggedSymptoms[0].symptoms,
           },
         );
-        return this.parsedLoggedSymptomData(symptomsWithStory);
+        return {
+          id: loggedSymptoms[0].id,
+          loggedSymptoms: this.parsedLoggedSymptomData(symptomsWithStory),
+        };
       }
       return [];
     } catch (error) {
