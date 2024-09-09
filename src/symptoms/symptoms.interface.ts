@@ -64,6 +64,7 @@ export interface LoggedSymptomsRaw {
                   };
                 };
               };
+              experienceYears: string;
               hmsDoctorId?: string;
             };
           };

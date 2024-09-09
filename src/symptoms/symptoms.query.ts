@@ -58,6 +58,7 @@ export const GET_LOGGED_SYMPTOMS = gql`
                     }
                   }
                 }
+                experienceYears
                 hmsDoctorId
               }
             }
