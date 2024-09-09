@@ -1,4 +1,12 @@
-import { Body, Controller, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpException,
+  HttpStatus,
+  Post,
+  Query,
+  Req,
+} from '@nestjs/common';
 import { UserPreferencesService } from './user-preferences.service';
 import { UserPreferencesDto } from './dto/user-preferences.dto';
 
@@ -12,8 +20,14 @@ export class UserPreferencesController {
   async setUserPreferences(
     @Body() userPreferencesDto: UserPreferencesDto,
     @Req() req: Request,
+    @Query() userId: string,
   ) {
-    const userId = parseInt(req.headers['x-mh-user-id']);
-    return this.userPreferencesService.create(userPreferencesDto, userId);
+    if (!userId) {
+      throw new HttpException('user id is required!', HttpStatus.BAD_REQUEST);
+    }
+    return this.userPreferencesService.create(
+      userPreferencesDto,
+      parseInt(userId),
+    );
   }
 }
