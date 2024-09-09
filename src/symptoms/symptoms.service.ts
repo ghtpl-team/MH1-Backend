@@ -75,6 +75,7 @@ export class SymptomsService {
           imageUrl: getImageUrl(docInfo?.image?.data?.attributes?.url) ?? '',
           specialty: docInfo?.specialty?.data?.attributes?.name ?? '',
           hmsDoctorId: docInfo?.hmsDoctorId ?? '',
+          experienceYears: docInfo?.experienceYears ?? 0,
         },
         description: symptomData.attributes?.description ?? '',
         symptomStories:
