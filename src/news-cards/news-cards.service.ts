@@ -15,7 +15,10 @@ export class NewsCardsService {
         id: card.id,
         title: attributes.title,
         date: attributes.date,
-        header: attributes.header,
+        header:
+          attributes?.date === new Date().toISOString().slice(0, 10)
+            ? 'Today’s Highlights'
+            : '',
         bgImageUrl: getImageUrl(attributes.bgImage.data?.attributes.url),
         content: attributes.content,
         duration: attributes.duration,
