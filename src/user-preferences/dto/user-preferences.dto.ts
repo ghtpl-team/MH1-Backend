@@ -1,13 +1,16 @@
-import { DateTimeType } from "@mikro-orm/core";
-import { IsDateString } from "class-validator";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsDateString } from 'class-validator';
 
-export class UserPreferencesDto{
-    @IsDateString()
-    breakfastTiming: string;
+export class UserPreferencesDto {
+  @ApiProperty()
+  @IsDateString()
+  breakfastTiming: string;
 
-    @IsDateString()
-    lunchTiming: string;
+  @ApiProperty()
+  @IsDateString()
+  lunchTiming: string;
 
-    @IsDateString()
-    dinnerTiming: string;
+  @ApiProperty()
+  @IsDateString()
+  dinnerTiming: string;
 }

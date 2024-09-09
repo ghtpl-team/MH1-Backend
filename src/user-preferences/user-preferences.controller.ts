@@ -5,7 +5,6 @@ import {
   HttpStatus,
   Post,
   Query,
-  Req,
 } from '@nestjs/common';
 import { UserPreferencesService } from './user-preferences.service';
 import { UserPreferencesDto } from './dto/user-preferences.dto';
@@ -18,9 +17,8 @@ export class UserPreferencesController {
 
   @Post()
   async setUserPreferences(
+    @Query('userId') userId: string,
     @Body() userPreferencesDto: UserPreferencesDto,
-    @Req() req: Request,
-    @Query() userId: string,
   ) {
     if (!userId) {
       throw new HttpException('user id is required!', HttpStatus.BAD_REQUEST);
