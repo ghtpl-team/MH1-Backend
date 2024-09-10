@@ -191,6 +191,7 @@ export class ActivitiesService {
     const data = activityHistory.find((history) => history.type === type);
     return {
       taskId: data.id,
+      scheduleId: data.schedule,
       taskStatus: data.taskStatus,
     };
   }
@@ -350,7 +351,7 @@ export class ActivitiesService {
     try {
       const activityHistory = await this.em
         .createQueryBuilder(ScheduledTask)
-        .select(['date', 'id', 'type', 'taskStatus'])
+        .select(['date', 'id', 'type', 'taskStatus', 'schedule'])
         .where({
           date: new Date().toISOString().slice(0, 10),
           status: Status.ACTIVE,

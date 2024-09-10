@@ -1,24 +1,32 @@
 import { EntityManager } from '@mikro-orm/mysql';
 import { Injectable } from '@nestjs/common';
 import { ReminderCreateReqDto } from './dto/schedules.dto';
-import { Schedule } from 'src/app.entities';
+import { Schedule, ScheduledBy } from 'src/app.entities';
 
 @Injectable()
 export class SchedulesService {
   constructor(private readonly em: EntityManager) {}
 
-  async create(reminderCreateDto: ReminderCreateReqDto, userId: number) {
+  async upsert(
+    reminderCreateDto: ReminderCreateReqDto,
+    userId: number,
+    scheduleId: number,
+  ) {
     try {
-      const reminder = this.em.create(Schedule, {
-        user: userId,
-        ...reminderCreateDto,
-        scheduledTasks: {
-          type: reminderCreateDto.type,
+      const schedule = this.em.nativeUpdate(
+        Schedule,
+        { id: scheduleId },
+        {
+          user: userId,
+          reminderTime: reminderCreateDto.reminderTime,
+          scheduledBy: reminderCreateDto.isActive
+            ? ScheduledBy.USER
+            : ScheduledBy.SYSTEM,
         },
-      });
+      );
 
       await this.em.flush();
-      return reminder;
+      return schedule;
     } catch (error) {
       throw error;
     }

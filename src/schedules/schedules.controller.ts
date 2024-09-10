@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Query } from '@nestjs/common';
+import { Body, Controller, Put, Query } from '@nestjs/common';
 import { SchedulesService } from './schedules.service';
 import { ReminderCreateReqDto } from './dto/schedules.dto';
 
@@ -6,11 +6,16 @@ import { ReminderCreateReqDto } from './dto/schedules.dto';
 export class SchedulesController {
   constructor(private readonly schedulingService: SchedulesService) {}
 
-  @Post()
+  @Put()
   async createReminder(
     @Body() createReminderDto: ReminderCreateReqDto,
     @Query('userId') userId: string,
+    @Query('scheduleId') scheduleId: string,
   ) {
-    return this.schedulingService.create(createReminderDto, parseInt(userId));
+    return this.schedulingService.upsert(
+      createReminderDto,
+      parseInt(userId),
+      parseInt(scheduleId),
+    );
   }
 }
