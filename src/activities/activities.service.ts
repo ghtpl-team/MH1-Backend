@@ -191,7 +191,7 @@ export class ActivitiesService {
     const data = activityHistory.find((history) => history.type === type);
     return {
       taskId: data.id,
-      scheduleId: data.schedule,
+      scheduleId: data.schedule.id,
       taskStatus: data.taskStatus,
     };
   }
