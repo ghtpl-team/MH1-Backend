@@ -1,12 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { GraphQLClientService } from 'src/utils/graphql/graphql.service';
 import {
+  ACTIVITY_HISTORY,
   FEEDBACK_FORM,
   FITNESS_ACTIVITIES,
   MIND_ACTIVITIES,
   PREGNANCY_COACH,
 } from './activities.query';
 import {
+  ActivityHistoryRaw,
   Button,
   ConsentForm,
   Doctor,
@@ -15,6 +17,7 @@ import {
   GetPregnancyCoachRaw,
   MindActivitiesOverview,
   MindActivitiesRaw,
+  ParsedActivityHistory,
   ParsedConsentForm,
   ParsedDoctor,
   ParsedFeedbackForm,
@@ -266,14 +269,14 @@ export class ActivitiesService {
         },
       );
 
-      const activityHistory = await this.fetchActivityHistory(userId);
+      const activityHistory = await this.fetchActivityHistory(userId, true);
 
       if (!coachDataRaw.activities?.data)
         throw new HttpException('No Data Available', HttpStatus.NOT_FOUND);
 
       const parsedData = this.parsePregnancyCoachData(
         coachDataRaw,
-        activityHistory,
+        activityHistory as ScheduledTask[],
       );
       return parsedData;
     } catch (error) {
@@ -348,7 +351,48 @@ export class ActivitiesService {
     }
   }
 
-  async fetchActivityHistory(userId: number) {
+  private parseActivityHistory(
+    activityHistoryContent: ActivityHistoryRaw,
+    activityHistory: Partial<ScheduledTask>[],
+  ): ParsedActivityHistory {
+    const attributes =
+      activityHistoryContent?.activityHistory?.data?.attributes;
+    return {
+      header: attributes.header,
+      headerImgUrl: getImageUrl(attributes.headerImg?.data?.attributes?.url),
+      pointsCards: attributes?.pointsCard?.map((card) => {
+        return {
+          id: card.id,
+          bgImgUrl: getImageUrl(card.bgImg?.data?.attributes?.url),
+          title: card.title,
+          points: 125, //TODO: static rn
+        };
+      }),
+      historyHeader: attributes.historyHeader,
+      historyCards: activityHistory
+        .map((history) => {
+          const data = attributes.historyCards.find((card) => {
+            return (
+              card.activityType.toLocaleLowerCase() ===
+              history.type.toLocaleLowerCase()
+            );
+          });
+          if (data) {
+            return {
+              id: data.id,
+              activityType: history.type,
+              imageUrl: getImageUrl(data.image?.data?.attributes?.url),
+              label: data.label,
+              title: data.title,
+              pointEarned: 10, //TODO: static rn
+            };
+          }
+        })
+        .filter(Boolean),
+    };
+  }
+
+  async fetchActivityHistory(userId: number, isHelper: boolean = false) {
     try {
       const activityHistory = await this.em
         .createQueryBuilder(ScheduledTask)
@@ -367,7 +411,14 @@ export class ActivitiesService {
             ],
           },
         });
-      return activityHistory;
+
+      if (isHelper) return activityHistory;
+      const activityHistoryContent = await this.graphqlClient.query(
+        ACTIVITY_HISTORY,
+        {},
+      );
+
+      return this.parseActivityHistory(activityHistoryContent, activityHistory);
     } catch (error) {
       throw error;
     }

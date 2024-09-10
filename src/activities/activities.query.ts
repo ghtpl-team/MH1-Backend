@@ -234,3 +234,50 @@ export const FEEDBACK_FORM = gql`
     }
   }
 `;
+
+export const ACTIVITY_HISTORY = gql`
+  query GetActivityHistory {
+    activityHistory {
+      data {
+        attributes {
+          header
+          headerImg {
+            data {
+              attributes {
+                url
+              }
+            }
+          }
+          pointsCard {
+            id
+            title
+            bgImg {
+              data {
+                attributes {
+                  url
+                }
+              }
+            }
+          }
+          historyHeader
+          historyCards {
+            label {
+              text
+              backgroundColor
+            }
+            id
+            title
+            image {
+              data {
+                attributes {
+                  url
+                }
+              }
+            }
+            activityType
+          }
+        }
+      }
+    }
+  }
+`;
