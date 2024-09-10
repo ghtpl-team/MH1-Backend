@@ -4,6 +4,7 @@ import {
   Get,
   HttpException,
   HttpStatus,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
@@ -57,5 +58,18 @@ export class ActivitiesController {
   @Get('history')
   async dailyActivityHistory(@Query('userId') userId: string) {
     return this.activitiesService.fetchActivityHistory(parseInt(userId));
+  }
+
+  @Patch('status')
+  async updateActivityStatus(
+    @Query('userId') userId: string,
+    @Query('taskId') taskId: string,
+  ) {
+    if (!taskId || !userId)
+      throw new HttpException('task id is required', HttpStatus.BAD_REQUEST);
+    return this.activitiesService.updateActivityStatus(
+      parseInt(userId),
+      parseInt(taskId),
+    );
   }
 }
