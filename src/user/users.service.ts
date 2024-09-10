@@ -1,14 +1,43 @@
 import { EntityManager } from '@mikro-orm/mysql';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { Status, User } from 'src/app.entities';
+import {
+  ReminderType,
+  Schedule,
+  ScheduledBy,
+  Status,
+  User,
+} from 'src/app.entities';
 @Injectable()
 export class UsersService {
   constructor(private readonly em: EntityManager) {}
 
-  async create(userData: Partial<User>): Promise<User> {
+  async create(
+    userData: Partial<User>,
+  ): Promise<Pick<User, 'id' | 'phone' | 'status'>> {
+    const activityTasks = [
+      ReminderType.WATER_REMINDER,
+      ReminderType.DIET_REMINDER,
+      ReminderType.SOUL_REMINDER,
+      ReminderType.MIND_REMINDER,
+      ReminderType.FITNESS_REMINDER,
+    ];
+
     const user = this.em.create(User, userData);
-    await this.em.persistAndFlush(user);
-    return user;
+
+    const schedules = activityTasks.map((task) => {
+      return this.em.create(Schedule, {
+        type: task,
+        scheduledTasks: {
+          type: task,
+          user: user,
+        },
+        user: user,
+      });
+    });
+
+    await this.em.persistAndFlush([user, ...schedules]);
+
+    return { id: user.id, phone: user.phone, status: user.status };
   }
 
   async findAll(): Promise<User[]> {
@@ -19,7 +48,10 @@ export class UsersService {
     return {
       id: userData[0].id,
       phone: userData[0].phone,
-      userPreferences: userData[0].userPreferences
+      isPreferencesLogged: userData[0].userPreferences?.afterLunch
+        ? true
+        : false,
+      userSettings: userData[0].userPreferences
         ? {
             id: userData[0].userPreferences.id,
             isActivityLocked: userData[0].userPreferences.isActivityLocked,
@@ -30,8 +62,9 @@ export class UsersService {
         ? userData[0].schedules.map((schedule) => {
             return {
               id: schedule.id,
-              reminderTime: schedule.reminderTime,
+              scheduledBy: schedule.scheduledBy,
               type: schedule.type,
+              time: ScheduledBy.SYSTEM ? null : schedule.reminderTime,
             };
           })
         : [],
@@ -51,6 +84,7 @@ export class UsersService {
           'id',
           'type',
           'reminderTime',
+          'scheduledBy',
         ])
         .where({ id })
         .execute();

@@ -23,7 +23,13 @@ import {
 import { getImageUrl } from 'src/common/utils/helper.utils';
 import { pregnancyCoachOverview } from 'src/common/content/activity.content';
 import { EntityManager } from '@mikro-orm/mysql';
-import { ActivityFeedBack, UserPreferences } from 'src/app.entities';
+import {
+  ActivityFeedBack,
+  ReminderType,
+  ScheduledTask,
+  Status,
+  UserPreferences,
+} from 'src/app.entities';
 import { FeedbackFromDto } from './dto/activities.dto';
 
 @Injectable()
@@ -178,7 +184,21 @@ export class ActivitiesService {
     }
   }
 
-  private parsePregnancyCoachData(coachDataRaw: GetPregnancyCoachRaw) {
+  private findStatusByType(
+    activityHistory: Partial<ScheduledTask>[],
+    type: ReminderType,
+  ) {
+    const data = activityHistory.find((history) => history.type === type);
+    return {
+      taskId: data.id,
+      taskStatus: data.taskStatus,
+    };
+  }
+
+  private parsePregnancyCoachData(
+    coachDataRaw: GetPregnancyCoachRaw,
+    activityHistory: Partial<ScheduledTask>[],
+  ) {
     const ParsedDoctor = this.parseDoctorInfo(
       coachDataRaw.activities.data[0]?.attributes?.hms_doctor?.data?.attributes,
     );
@@ -204,17 +224,38 @@ export class ActivitiesService {
       docInfo: ParsedDoctor,
       divider: staticContent.divider,
       activities: [
-        staticContent.waterActivityCard,
-        staticContent.nutritionCard,
-        parsedSoulActivity,
-        staticContent.mindCard,
-        staticContent.fitnessCard,
+        {
+          ...staticContent.waterActivityCard,
+          ...this.findStatusByType(
+            activityHistory,
+            ReminderType.WATER_REMINDER,
+          ),
+        },
+        {
+          ...staticContent.nutritionCard,
+          ...this.findStatusByType(activityHistory, ReminderType.DIET_REMINDER),
+        },
+        {
+          ...parsedSoulActivity,
+          ...this.findStatusByType(activityHistory, ReminderType.SOUL_REMINDER),
+        },
+        {
+          ...staticContent.mindCard,
+          ...this.findStatusByType(activityHistory, ReminderType.MIND_REMINDER),
+        },
+        {
+          ...staticContent.fitnessCard,
+          ...this.findStatusByType(
+            activityHistory,
+            ReminderType.FITNESS_REMINDER,
+          ),
+        },
       ],
     };
     return parsedActivityOverview;
   }
 
-  async fetchPersonalCoach(weekNumber: number) {
+  async fetchPersonalCoach(weekNumber: number, userId: number) {
     try {
       const coachDataRaw: GetPregnancyCoachRaw = await this.graphqlClient.query(
         PREGNANCY_COACH,
@@ -223,10 +264,15 @@ export class ActivitiesService {
         },
       );
 
+      const activityHistory = await this.fetchActivityHistory(userId);
+
       if (!coachDataRaw.activities?.data)
         throw new HttpException('No Data Available', HttpStatus.NOT_FOUND);
 
-      const parsedData = this.parsePregnancyCoachData(coachDataRaw);
+      const parsedData = this.parsePregnancyCoachData(
+        coachDataRaw,
+        activityHistory,
+      );
       return parsedData;
     } catch (error) {
       console.log(error);
@@ -295,6 +341,31 @@ export class ActivitiesService {
         );
       }
       return 'Recorded Successfully';
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async fetchActivityHistory(userId: number) {
+    try {
+      const activityHistory = await this.em
+        .createQueryBuilder(ScheduledTask)
+        .select(['date', 'id', 'type', 'taskStatus'])
+        .where({
+          date: new Date().toISOString().slice(0, 10),
+          status: Status.ACTIVE,
+          user: userId,
+          type: {
+            $in: [
+              ReminderType.WATER_REMINDER,
+              ReminderType.DIET_REMINDER,
+              ReminderType.SOUL_REMINDER,
+              ReminderType.MIND_REMINDER,
+              ReminderType.FITNESS_REMINDER,
+            ],
+          },
+        });
+      return activityHistory;
     } catch (error) {
       throw error;
     }

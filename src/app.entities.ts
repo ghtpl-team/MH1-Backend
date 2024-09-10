@@ -41,6 +41,9 @@ export class User extends BaseClass {
   @OneToMany(() => Schedule, (schedule) => schedule.user)
   schedules = new Collection<Schedule>(this);
 
+  @OneToMany(() => ScheduledTask, (scheduleTask) => scheduleTask.user)
+  scheduledTasks = new Collection<Schedule>(this);
+
   @OneToOne(() => UserPreferences, (userPreferences) => userPreferences.user, {
     orphanRemoval: true,
     cascade: [],
@@ -102,6 +105,9 @@ export class MedicationSchedule extends BaseClass {
   @ManyToOne(() => User)
   user!: User;
 
+  @OneToOne(() => Schedule, (schedule) => schedule.medicationSchedule, {})
+  schedule = new Schedule();
+
   @Property()
   medicationName!: string;
 
@@ -142,6 +148,9 @@ export class MedicationSchedule extends BaseClass {
 export class JournalNotes extends BaseClass {
   @ManyToOne(() => User)
   user!: User;
+
+  @OneToOne(() => Schedule, (schedule) => schedule.journalNote, {})
+  schedule = new Schedule();
 
   @Property({ type: 'varchar(255)' })
   title!: string;
@@ -207,11 +216,23 @@ export class ActivityFeedBack extends BaseClass {
 }
 @Entity({ tableName: 'mh_schedules' })
 export class Schedule extends BaseClass {
+  @OneToOne(() => MedicationSchedule)
+  medicationSchedule?: MedicationSchedule;
+
+  @OneToOne(() => JournalNotes)
+  journalNote?: JournalNotes;
+
+  @OneToMany(() => CronStatus, (cronJobStatus) => cronJobStatus.schedule)
+  cronJobStatuses = new Collection<CronStatus>(this);
+
   @Property({ type: 'time' })
-  reminderTime!: string;
+  reminderTime: string = '00:00:00';
 
   @Enum({ items: () => Frequency, nativeEnumName: 'frequency' })
   recurrenceRule: Frequency = Frequency.DAILY;
+
+  @Enum({ items: () => ScheduledBy, nativeEnumName: 'scheduled_by' })
+  scheduledBy: ScheduledBy = ScheduledBy.SYSTEM;
 
   @Enum({ items: () => ReminderType, nativeEnumName: 'reminder_type' })
   type!: ReminderType;
@@ -237,6 +258,30 @@ export class ScheduledTask extends BaseClass {
   @Index()
   @Property({ type: 'date' })
   date: string = new Date().toISOString().slice(0, 10);
+
+  @ManyToOne(() => User)
+  user!: User;
+}
+
+@Entity({ tableName: 'mh_cron_job_status' })
+export class CronStatus extends BaseClass {
+  @ManyToOne(() => Schedule)
+  schedule!: Schedule;
+
+  @Index()
+  @Property({ type: 'date' })
+  date: string = new Date().toISOString().slice(0, 10);
+
+  @Enum({ items: () => CronJobStatus, nativeEnumName: 'cron_job_status' })
+  cronStatus: CronJobStatus = CronJobStatus.SUCCESS;
+
+  @Property({ type: 'text', nullable: true })
+  errorMessage?: string;
+}
+
+export enum CronJobStatus {
+  SUCCESS = 'success',
+  FAILURE = 'failure',
 }
 
 export enum MedicationType {
@@ -281,7 +326,7 @@ export enum Frequency {
 
 export enum ScheduledTaskStatus {
   PENDING = 'pending',
-  TAKEN = 'taken',
+  DONE = 'done',
   MISSED = 'missed',
 }
 
@@ -317,4 +362,9 @@ export enum Status {
   ACTIVE = 'active',
   DELETED = 'deleted',
   ARCHIVED = 'archived',
+}
+
+export enum ScheduledBy {
+  USER = 'user',
+  SYSTEM = 'system',
 }

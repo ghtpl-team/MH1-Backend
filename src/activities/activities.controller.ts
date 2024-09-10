@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ActivitiesService } from './activities.service';
 import { FeedbackFromDto } from './dto/activities.dto';
 
@@ -17,8 +25,17 @@ export class ActivitiesController {
   }
 
   @Get('overview')
-  async getPregnancyCoachCard(@Query('week') weekNumber: string) {
-    return this.activitiesService.fetchPersonalCoach(parseInt(weekNumber));
+  async getPregnancyCoachCard(
+    @Query('week') weekNumber: string,
+    @Query('userId') userId: string,
+  ) {
+    if (!userId) {
+      throw new HttpException('user id is required!', HttpStatus.BAD_REQUEST);
+    }
+    return this.activitiesService.fetchPersonalCoach(
+      parseInt(weekNumber),
+      parseInt(userId),
+    );
   }
 
   @Get('feedback')
@@ -35,5 +52,10 @@ export class ActivitiesController {
       feedbackFormDto,
       parseInt(userId),
     );
+  }
+
+  @Get('history')
+  async dailyActivityHistory(@Query('userId') userId: string) {
+    return this.activitiesService.fetchActivityHistory(parseInt(userId));
   }
 }
