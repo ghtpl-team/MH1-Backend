@@ -15,6 +15,7 @@ import { NewsCardsModule } from './news-cards/news-cards.module';
 import { SymptomsModule } from './symptoms/symptoms.module';
 import { ActivitiesModule } from './activities/activities.module';
 import { SchedulesModule } from './schedules/schedules.module';
+import { DietPlansModule } from './diet-plans/diet-plans.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { SchedulesModule } from './schedules/schedules.module';
     SymptomsModule,
     ActivitiesModule,
     SchedulesModule,
+    DietPlansModule,
   ],
   controllers: [AppController],
   providers: [AppService],
