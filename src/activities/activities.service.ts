@@ -27,6 +27,7 @@ import {
   ActivityFeedBack,
   ReminderType,
   ScheduledTask,
+  ScheduledTaskStatus,
   Status,
   UserPreferences,
 } from 'src/app.entities';
@@ -367,6 +368,24 @@ export class ActivitiesService {
           },
         });
       return activityHistory;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateActivityStatus(userId: number, taskId: number) {
+    try {
+      const updatedStatus = await this.em.nativeUpdate(
+        ScheduledTask,
+        {
+          id: taskId,
+          user: userId,
+        },
+        {
+          taskStatus: ScheduledTaskStatus.DONE,
+        },
+      );
+      return `Task status updated for ${updatedStatus} entries`;
     } catch (error) {
       throw error;
     }
