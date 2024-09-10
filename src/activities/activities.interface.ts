@@ -301,3 +301,71 @@ export interface ParsedFeedbackForm {
   questions: ParsedQuestion[];
   lockScreen: ParsedLockScreen;
 }
+
+export interface ActivityHistoryRaw {
+  activityHistory: {
+    data: {
+      attributes: {
+        header: string;
+        headerImg: {
+          data: {
+            attributes: {
+              url: string;
+            };
+          };
+        };
+        pointsCard: {
+          id: string;
+          title: string;
+          bgImg: {
+            data: {
+              attributes: {
+                url: string;
+              };
+            };
+          };
+        }[];
+        historyHeader: string;
+        historyCards: Array<{
+          id: string;
+          label: {
+            text: string;
+            backgroundColor: string;
+          };
+          title: string;
+          image: {
+            data: {
+              attributes: {
+                url: string;
+              };
+            };
+          };
+          activityType: string;
+        }>;
+      };
+    };
+  };
+}
+
+export interface ParsedActivityHistory {
+  header: string;
+  headerImgUrl: string;
+  pointsCards: Array<{
+    id: string;
+    title: string;
+    bgImgUrl: string;
+    points: number;
+  }>;
+  historyHeader: string;
+  historyCards: Array<{
+    id: string;
+    label: {
+      text: string;
+      backgroundColor: string;
+    };
+    title: string;
+    imageUrl: string;
+    pointEarned: number;
+    activityType: string;
+  }>;
+}
