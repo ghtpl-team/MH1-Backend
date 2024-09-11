@@ -38,7 +38,7 @@ export class DietPlansService {
       return {
         id: info.id,
         title: info.title,
-        imageUrl: getImageUrl(info?.image?.data?.attributes?.url),
+        imageUrl: getImageUrl(info?.image?.data[0]?.attributes?.url),
         color: info.color,
       };
     }
