@@ -1,7 +1,15 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager, EntityRepository, Loaded } from '@mikro-orm/mysql';
-import { MedicationSchedule, Status } from 'src/app.entities';
+import {
+  MedicationSchedule,
+  ReminderType,
+  Schedule,
+  ScheduledBy,
+  ScheduledTask,
+  ScheduledTaskStatus,
+  Status,
+} from 'src/app.entities';
 import {
   CreateMedicationScheduleDto,
   UpdateMedicationScheduleDto,
@@ -26,9 +34,41 @@ export class MedicationSchedulesService {
         user: userId,
         ...medicationScheduleData,
       });
-      await this.em.flush();
+
+      const schedules = medicationScheduleData.intakeTimes.map(
+        (medicationTime) => {
+          return this.em.create(Schedule, {
+            medicationSchedule: medicationSchedule,
+            recurrenceRule: medicationSchedule.frequency,
+            scheduledBy: ScheduledBy.USER,
+            type: ReminderType.MEDICATION_SCHEDULE,
+            reminderTime: medicationTime,
+            user: userId,
+          });
+        },
+      );
+
+      const scheduledTasks = [];
+      if (new Date(medicationSchedule.startDate) <= new Date()) {
+        schedules.forEach((schedule) => {
+          scheduledTasks.push(
+            this.em.create(ScheduledTask, {
+              type: ReminderType.MEDICATION_SCHEDULE,
+              schedule: schedule,
+              user: userId,
+            }),
+          );
+        });
+      }
+      await this.em.persistAndFlush([
+        medicationSchedule,
+        ...schedules,
+        ...scheduledTasks,
+      ]);
       return medicationSchedule;
     } catch (error) {
+      console.log(error);
+
       throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -39,6 +79,7 @@ export class MedicationSchedulesService {
     try {
       const groupedData = medicationSchedule.reduce(
         (groupedObj, medication) => {
+          let index = 0;
           for (const time of medication.intakeTime) {
             const intakeTimeType = capitalizeFirstLetterOfWords(
               `${medication.intakeType.split('_')[0]} ${time}`,
@@ -56,8 +97,17 @@ export class MedicationSchedulesService {
               name: medication.medicationName,
               strength: medication.strength,
               strengthUnit: medication.strengthUnit,
-              isTaken: false,
+              isTaken:
+                medication.schedule[index]?.scheduledTasks[0]?.taskStatus ===
+                ScheduledTaskStatus.DONE,
+              timing: {
+                id: medication.schedule[index].id,
+                reminderTime: medication.schedule[index].reminderTime,
+                scheduledTaskId:
+                  medication.schedule[index].scheduledTasks[0].id,
+              },
             });
+            index += 1;
           }
 
           return groupedObj;
@@ -75,21 +125,33 @@ export class MedicationSchedulesService {
   async findAll(userId: number) {
     try {
       const medicationList = await this.em
-        .createQueryBuilder(MedicationSchedule)
+        .createQueryBuilder(MedicationSchedule, 'ms')
         .select(
           [
-            'id',
-            'medicationName',
-            'frequency',
-            'strength',
-            'strengthUnit',
-            'endDate',
-            'intakeTime',
-            'intakeType',
-            'selectedDays',
-            'medicationType',
+            'ms.id',
+            'ms.medicationName',
+            'ms.frequency',
+            'ms.strength',
+            'ms.strengthUnit',
+            'ms.endDate',
+            'ms.intakeTime',
+            'ms.intakeType',
+            'ms.selectedDays',
+            'ms.medicationType',
           ],
           true,
+        )
+        .leftJoinAndSelect('ms.schedule', 'sc', {}, [
+          'sc.id',
+          'sc.reminderTime',
+        ])
+        .leftJoinAndSelect(
+          'sc.scheduledTasks',
+          'st',
+          {
+            date: { $gte: new Date().toISOString().split('T')[0] },
+          },
+          ['st.id', 'st.taskStatus'],
         )
         .where({
           user: {
@@ -103,6 +165,8 @@ export class MedicationSchedulesService {
             $lte: new Date(),
           },
         });
+
+      console.log(JSON.stringify(medicationList, null, 2));
 
       const groupedSchedule = this.groupByIntakeTime(medicationList);
 
@@ -146,12 +210,4 @@ export class MedicationSchedulesService {
       },
     );
   }
-
-  // async reminderPayload(timings: string[]){
-  //   try {
-  //     const reminderData =
-  //   } catch (error) {
-  //     throw new HttpException('Unable to parse reminder payload', HttpStatus.INTERNAL_SERVER_ERROR);
-  //   }
-  // }
 }
