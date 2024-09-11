@@ -3,7 +3,7 @@ import {
   Controller,
   HttpException,
   HttpStatus,
-  Post,
+  Patch,
   Query,
 } from '@nestjs/common';
 import { UserPreferencesService } from './user-preferences.service';
@@ -15,17 +15,19 @@ export class UserPreferencesController {
     private readonly userPreferencesService: UserPreferencesService,
   ) {}
 
-  @Post()
+  @Patch()
   async setUserPreferences(
     @Query('userId') userId: string,
+    @Query('preferencesId') preferencesId: string,
     @Body() userPreferencesDto: UserPreferencesDto,
   ) {
-    if (!userId) {
+    if (!userId || !preferencesId) {
       throw new HttpException('user id is required!', HttpStatus.BAD_REQUEST);
     }
-    return this.userPreferencesService.create(
+    return this.userPreferencesService.update(
       userPreferencesDto,
       parseInt(userId),
+      parseInt(preferencesId),
     );
   }
 }
