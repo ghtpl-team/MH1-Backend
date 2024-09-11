@@ -105,8 +105,8 @@ export class MedicationSchedule extends BaseClass {
   @ManyToOne(() => User)
   user!: User;
 
-  @OneToOne(() => Schedule, (schedule) => schedule.medicationSchedule, {})
-  schedule = new Schedule();
+  @OneToMany(() => Schedule, (schedule) => schedule.medicationSchedule, {})
+  schedule = new Collection<Schedule>(this);
 
   @Property()
   medicationName!: string;
@@ -216,7 +216,7 @@ export class ActivityFeedBack extends BaseClass {
 }
 @Entity({ tableName: 'mh_schedules' })
 export class Schedule extends BaseClass {
-  @OneToOne(() => MedicationSchedule)
+  @ManyToOne(() => MedicationSchedule)
   medicationSchedule?: MedicationSchedule;
 
   @OneToOne(() => JournalNotes)

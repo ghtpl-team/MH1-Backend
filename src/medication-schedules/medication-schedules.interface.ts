@@ -9,6 +9,7 @@ export interface MedicationScheduleResponseObj {
       strength: string;
       strengthUnit: MedicationStrengthUnit;
       isTaken: boolean;
+      timing: any;
     }>;
   };
 }
