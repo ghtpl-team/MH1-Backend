@@ -16,9 +16,13 @@ import { SymptomsModule } from './symptoms/symptoms.module';
 import { ActivitiesModule } from './activities/activities.module';
 import { SchedulesModule } from './schedules/schedules.module';
 import { DietPlansModule } from './diet-plans/diet-plans.module';
+import { WebhooksModule } from './webhooks/webhooks.module';
+import { RazorpayModule } from './utils/razorpay/razorpay.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     MikroOrmModule.forRoot(config),
     UsersModule,
     MedicationSchedulesModule,
@@ -33,6 +37,8 @@ import { DietPlansModule } from './diet-plans/diet-plans.module';
     ActivitiesModule,
     SchedulesModule,
     DietPlansModule,
+    WebhooksModule,
+    RazorpayModule,
   ],
   controllers: [AppController],
   providers: [AppService],
