@@ -158,12 +158,12 @@ export class MedicationSchedulesService {
             id: userId,
           },
           status: Status.ACTIVE,
-          // endDate: {
-          //   $gte: new Date(),
-          // },
-          // startDate: {
-          //   $lte: new Date(),
-          // },
+          endDate: {
+            $gte: new Date(),
+          },
+          startDate: {
+            $lte: new Date(),
+          },
         });
 
       console.log(JSON.stringify(medicationList, null, 2));
