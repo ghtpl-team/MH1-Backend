@@ -1,7 +1,7 @@
 import { EntityManager } from '@mikro-orm/mysql';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UserPreferencesDto } from './dto/user-preferences.dto';
-import { User, UserPreferences } from 'src/app.entities';
+import { UserPreferences } from 'src/app.entities';
 import { adjustTime } from 'src/common/utils/date-time.utils';
 
 @Injectable()
@@ -10,7 +10,6 @@ export class UserPreferencesService {
 
   private dtoToUserPrefCreateObj(
     userPreferencesData: UserPreferencesDto,
-    userId: number,
   ): Partial<UserPreferences> | { user: number } {
     const { breakfastTiming, lunchTiming, dinnerTiming } = userPreferencesData;
     return {
@@ -21,25 +20,29 @@ export class UserPreferencesService {
       beforeDinner: adjustTime(dinnerTiming, -30),
       afterDinner: adjustTime(dinnerTiming, 30),
       beforeBedTime: adjustTime(dinnerTiming, 90),
-      user: userId,
     };
   }
 
-  async create(
+  async update(
     userPreferencesData: UserPreferencesDto,
     userId: number,
-  ): Promise<UserPreferences> {
+    id: number,
+  ): Promise<string> {
     try {
-      const createUserPreferencesObj = this.dtoToUserPrefCreateObj(
-        userPreferencesData,
-        userId,
-      );
-      const userPreference = this.em.create(
+      const createUserPreferencesObj =
+        this.dtoToUserPrefCreateObj(userPreferencesData);
+
+      const userPreference = await this.em.nativeUpdate(
         UserPreferences,
-        createUserPreferencesObj,
+        {
+          id,
+          user: userId,
+        },
+        {
+          ...createUserPreferencesObj,
+        },
       );
-      await this.em.flush();
-      return userPreference;
+      return `user preference updated for ${userPreference} users.`;
     } catch (error) {
       throw new HttpException(
         'Unable to set user preferences',
