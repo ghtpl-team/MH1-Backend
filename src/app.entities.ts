@@ -149,8 +149,8 @@ export class JournalNotes extends BaseClass {
   @ManyToOne(() => User)
   user!: User;
 
-  @OneToOne(() => Schedule, (schedule) => schedule.journalNote, {})
-  schedule = new Schedule();
+  @OneToMany(() => Schedule, (schedule) => schedule.journalNote, {})
+  schedule = new Collection<Schedule>(this);
 
   @Property({ type: 'varchar(255)' })
   title!: string;
@@ -219,7 +219,7 @@ export class Schedule extends BaseClass {
   @ManyToOne(() => MedicationSchedule)
   medicationSchedule?: MedicationSchedule;
 
-  @OneToOne(() => JournalNotes)
+  @ManyToOne(() => JournalNotes)
   journalNote?: JournalNotes;
 
   @OneToMany(() => CronStatus, (cronJobStatus) => cronJobStatus.schedule)
@@ -367,4 +367,10 @@ export enum Status {
 export enum ScheduledBy {
   USER = 'user',
   SYSTEM = 'system',
+}
+
+export enum SubscriptionPlanPeriod {
+  MONTHLY = 'monthly',
+  QUARTERLY = 'quarterly',
+  YEARLY = 'yearly',
 }
