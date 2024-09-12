@@ -16,9 +16,13 @@ import { SymptomsModule } from './symptoms/symptoms.module';
 import { ActivitiesModule } from './activities/activities.module';
 import { SchedulesModule } from './schedules/schedules.module';
 import { DietPlansModule } from './diet-plans/diet-plans.module';
+import { APP_FILTER } from '@nestjs/core';
+import { ExceptionsLoggerFilter } from './utils/exceptions-logger/exceptions-logger.filter';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     MikroOrmModule.forRoot(config),
     UsersModule,
     MedicationSchedulesModule,
@@ -35,6 +39,12 @@ import { DietPlansModule } from './diet-plans/diet-plans.module';
     DietPlansModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_FILTER,
+      useClass: ExceptionsLoggerFilter,
+    },
+  ],
 })
 export class AppModule {}

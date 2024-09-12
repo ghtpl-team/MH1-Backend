@@ -1,5 +1,5 @@
 import { EntityManager } from '@mikro-orm/mysql';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { GraphQLClientService } from 'src/utils/graphql/graphql.service';
 import { GetSymptomListingRaw, LoggedSymptomsRaw } from './symptoms.interface';
 import { GET_LOGGED_SYMPTOMS, GET_SYMPTOM_CATEGORIES } from './symptoms.query';
@@ -48,11 +48,7 @@ export class SymptomsService {
         user: userId,
       });
       await this.em.flush();
-      if (loggedSymptoms) return 'logged successfully';
-      throw new HttpException(
-        'Something Went Wrong!',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      return `logged successfully, logged symptom id: ${loggedSymptoms.id}`;
     } catch (error) {
       throw error;
     }
