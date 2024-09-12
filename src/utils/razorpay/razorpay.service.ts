@@ -33,4 +33,17 @@ export class RazorpayService {
       return false;
     }
   }
+
+  async createWebhook(
+    url: string,
+    events: string[],
+    alertEmail: string = this.configService.get<string>('ALERT_EMAIL'),
+  ) {
+    return await this.razorpayInstance.webhooks.create({
+      url,
+      events,
+      alert_email: alertEmail,
+      secret: this.configService.get<string>('SECRET'),
+    });
+  }
 }
