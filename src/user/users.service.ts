@@ -83,12 +83,23 @@ export class UsersService {
           'isActivityLocked',
           'isJournalLocked',
         ])
-        .leftJoinAndSelect('schedules', 'sc', {}, [
-          'id',
-          'type',
-          'reminderTime',
-          'scheduledBy',
-        ])
+        .leftJoinAndSelect(
+          'schedules',
+          'sc',
+          {
+            type: {
+              $in: [
+                ReminderType.WATER_REMINDER,
+                ReminderType.DIET_REMINDER,
+                ReminderType.SOUL_REMINDER,
+                ReminderType.MIND_REMINDER,
+                ReminderType.FITNESS_REMINDER,
+                ReminderType.MEDICATION_SCHEDULE,
+              ],
+            },
+          },
+          ['id', 'type', 'reminderTime', 'scheduledBy'],
+        )
         .where({ id })
         .execute();
       if (userData && userData.length) {

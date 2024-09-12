@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsEnum, IsString } from 'class-validator';
-import { Frequency, ReminderType } from 'src/app.entities';
+import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
+import { DaysOfWeek } from 'src/app.entities';
 
 export class ReminderCreateReqDto {
   @ApiProperty()
@@ -8,14 +8,15 @@ export class ReminderCreateReqDto {
   reminderTime: string;
 
   @ApiProperty()
-  @IsEnum(Frequency)
-  recurrenceRule?: Frequency;
-
-  @ApiProperty()
-  @IsEnum(ReminderType)
-  type: ReminderType;
-
-  @ApiProperty()
   @IsBoolean()
   isActive: boolean;
+
+  @ApiProperty({
+    isArray: true,
+    enum: DaysOfWeek,
+    required: false,
+  })
+  @IsOptional()
+  @IsEnum(DaysOfWeek, { each: true })
+  selectedDays?: DaysOfWeek[];
 }
