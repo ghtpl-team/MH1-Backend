@@ -1,5 +1,5 @@
 import { EntityManager, Loaded } from '@mikro-orm/mysql';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import {
   CreateKickSessionDto,
   UpdateKickSessionDto,
@@ -18,8 +18,8 @@ export class KickCounterService {
         ...createKickSessionDto,
         user: userId,
       });
-      this.em.flush();
-      return kickSession;
+      await this.em.flush();
+      return `Kick session recorded successfully. session id: ${kickSession.id}`;
     } catch (error) {
       throw error;
     }
@@ -43,7 +43,7 @@ export class KickCounterService {
 
   async deleteByDate(date: string, userId: number) {
     try {
-      const deletedKickSessions = this.em.nativeUpdate(
+      const deletedKickSessions = await this.em.nativeUpdate(
         KickCounter,
         {
           date,
@@ -55,7 +55,10 @@ export class KickCounterService {
           status: Status.DELETED,
         },
       );
-      return deletedKickSessions;
+
+      if (deletedKickSessions === 0)
+        throw new HttpException('Nothing to deleted', HttpStatus.BAD_REQUEST);
+      return `${deletedKickSessions} session deleted successfully`;
     } catch (error) {
       throw error;
     }

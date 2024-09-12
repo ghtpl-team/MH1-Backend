@@ -333,7 +333,7 @@ export class ActivitiesService {
         ...feedbackDto,
         user: userId,
       });
-      this.em.flush();
+      await this.em.flush();
       if (feedback.discomfort) {
         await this.em.nativeUpdate(
           UserPreferences,
