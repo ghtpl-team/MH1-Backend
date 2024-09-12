@@ -48,7 +48,7 @@ export class SchedulesService {
         reminderTime: reminderCreateDto.reminderTime,
         scheduledBy: ScheduledBy.USER,
         status: reminderCreateDto.isActive ? Status.ACTIVE : Status.DELETED,
-        type: ReminderType.MEDICATION_SCHEDULE,
+        type: ReminderType.JOURNAL_SCHEDULE,
         recurrenceRule: Frequency.SPECIFIC_DAYS,
         selectedDays: reminderCreateDto.selectedDays,
       });

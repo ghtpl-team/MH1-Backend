@@ -347,7 +347,7 @@ export enum MedicationStrengthUnit {
 
 export enum ReminderType {
   MEDICATION_SCHEDULE = 'medication',
-  SHARING_JOURNAL = 'journal',
+  JOURNAL_SCHEDULE = 'journal',
   WATER_REMINDER = 'water',
   DIET_REMINDER = 'diet',
   SOUL_REMINDER = 'soul',
