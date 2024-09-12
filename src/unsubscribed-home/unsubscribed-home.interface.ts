@@ -2,12 +2,44 @@ export interface GetUnsubscribedHome {
   unsubscribedHome: {
     data: {
       attributes: {
+        unsubNotes: UnsubscribedPregnancyNotes;
         pregnancyCoachPromo: PregnancyCoachPromo[];
         pregnancyCoachAd: PregnancyCoachAd;
         dietPlanPromo: DietPlanPromo[];
         dietPlanAd: DietPlanAd;
+        unsubSymptom: UnsubscribedSymptoms;
       };
     };
+  };
+}
+
+interface UnsubscribedSymptoms {
+  id: string;
+  heading: string;
+  symptomCard: Array<{
+    id: string;
+    image: ImageData;
+    title: string;
+  }>;
+  description: string;
+  image: ImageData;
+  getSubBtn: {
+    id: string;
+    btnText: string;
+    textColor: string;
+    bfColor: string;
+  };
+}
+
+interface UnsubscribedPregnancyNotes {
+  heading: string;
+  id: string;
+  noteGifs: {
+    data: Array<{
+      attributes: {
+        url: string;
+      };
+    }>;
   };
 }
 
