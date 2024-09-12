@@ -5,6 +5,17 @@ export const GET_UNSUBSCRIBED_HOME = gql`
     unsubscribedHome {
       data {
         attributes {
+          unsubNotes {
+            id
+            heading
+            noteGifs {
+              data {
+                attributes {
+                  url
+                }
+              }
+            }
+          }
           pregnancyCoachPromo {
             image {
               data {
@@ -58,6 +69,35 @@ export const GET_UNSUBSCRIBED_HOME = gql`
               }
             }
             animationText
+          }
+          unsubSymptom {
+            id
+            heading
+            symptomCard {
+              title
+              image {
+                data {
+                  attributes {
+                    url
+                  }
+                }
+              }
+              id
+            }
+            description
+            image {
+              data {
+                attributes {
+                  url
+                }
+              }
+            }
+            getSubBtn {
+              id
+              btnText
+              textColor
+              bgColor
+            }
           }
         }
       }

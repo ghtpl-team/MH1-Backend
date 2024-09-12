@@ -41,6 +41,7 @@ export class MedicationSchedulesService {
             medicationSchedule: medicationSchedule,
             recurrenceRule: medicationSchedule.frequency,
             scheduledBy: ScheduledBy.USER,
+            selectedDays: medicationSchedule?.selectedDays ?? undefined,
             type: ReminderType.MEDICATION_SCHEDULE,
             reminderTime: medicationTime,
             user: userId,
