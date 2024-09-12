@@ -94,7 +94,7 @@ export class UsersService {
                 ReminderType.SOUL_REMINDER,
                 ReminderType.MIND_REMINDER,
                 ReminderType.FITNESS_REMINDER,
-                ReminderType.MEDICATION_SCHEDULE,
+                ReminderType.JOURNAL_SCHEDULE,
               ],
             },
           },
