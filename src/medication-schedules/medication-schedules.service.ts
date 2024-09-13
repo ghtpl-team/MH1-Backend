@@ -41,6 +41,7 @@ export class MedicationSchedulesService {
             medicationSchedule: medicationSchedule,
             recurrenceRule: medicationSchedule.frequency,
             scheduledBy: ScheduledBy.USER,
+            selectedDays: medicationSchedule?.selectedDays ?? undefined,
             type: ReminderType.MEDICATION_SCHEDULE,
             reminderTime: medicationTime,
             user: userId,
@@ -200,7 +201,7 @@ export class MedicationSchedulesService {
     id: number,
     updateMedicationScheduleDto: UpdateMedicationScheduleDto,
   ) {
-    return this.em.nativeUpdate(
+    return await this.em.nativeUpdate(
       MedicationSchedule,
       {
         id,

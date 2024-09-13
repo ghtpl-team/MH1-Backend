@@ -1,7 +1,13 @@
 import { EntityManager } from '@mikro-orm/mysql';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ReminderCreateReqDto } from './dto/schedules.dto';
-import { Schedule, ScheduledBy } from 'src/app.entities';
+import {
+  Frequency,
+  ReminderType,
+  Schedule,
+  ScheduledBy,
+  Status,
+} from 'src/app.entities';
 
 @Injectable()
 export class SchedulesService {
@@ -13,7 +19,7 @@ export class SchedulesService {
     scheduleId: number,
   ) {
     try {
-      const schedule = this.em.nativeUpdate(
+      const schedule = await this.em.nativeUpdate(
         Schedule,
         { id: scheduleId },
         {
@@ -24,9 +30,31 @@ export class SchedulesService {
             : ScheduledBy.SYSTEM,
         },
       );
+      return `${schedule} schedule updated successfully`;
+    } catch (error) {
+      throw error;
+    }
+  }
 
+  async create(reminderCreateDto: ReminderCreateReqDto, userId: number) {
+    try {
+      if (!reminderCreateDto?.selectedDays)
+        throw new HttpException(
+          'Please select days for reminder',
+          HttpStatus.BAD_REQUEST,
+        );
+      const schedule = this.em.create(Schedule, {
+        user: userId,
+        reminderTime: reminderCreateDto.reminderTime,
+        scheduledBy: ScheduledBy.USER,
+        status: reminderCreateDto.isActive ? Status.ACTIVE : Status.DELETED,
+        type: ReminderType.JOURNAL_SCHEDULE,
+        recurrenceRule: Frequency.SPECIFIC_DAYS,
+        selectedDays: reminderCreateDto.selectedDays,
+      });
       await this.em.flush();
-      return schedule;
+
+      return `Schedule with id ${schedule.id} is created.`;
     } catch (error) {
       throw error;
     }

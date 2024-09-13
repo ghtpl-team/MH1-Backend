@@ -153,9 +153,6 @@ export class JournalNotes extends BaseClass {
   @ManyToOne(() => User)
   user!: User;
 
-  @OneToMany(() => Schedule, (schedule) => schedule.journalNote, {})
-  schedule = new Collection<Schedule>(this);
-
   @Property({ type: 'varchar(255)' })
   title!: string;
 
@@ -223,9 +220,6 @@ export class Schedule extends BaseClass {
   @ManyToOne(() => MedicationSchedule)
   medicationSchedule?: MedicationSchedule;
 
-  @ManyToOne(() => JournalNotes)
-  journalNote?: JournalNotes;
-
   @OneToMany(() => CronStatus, (cronJobStatus) => cronJobStatus.schedule)
   cronJobStatuses = new Collection<CronStatus>(this);
 
@@ -234,6 +228,9 @@ export class Schedule extends BaseClass {
 
   @Enum({ items: () => Frequency, nativeEnumName: 'frequency' })
   recurrenceRule: Frequency = Frequency.DAILY;
+
+  @Property({ type: 'json', nullable: true })
+  selectedDays?: DaysOfWeek[];
 
   @Enum({ items: () => ScheduledBy, nativeEnumName: 'scheduled_by' })
   scheduledBy: ScheduledBy = ScheduledBy.SYSTEM;
@@ -429,7 +426,7 @@ export enum MedicationStrengthUnit {
 
 export enum ReminderType {
   MEDICATION_SCHEDULE = 'medication',
-  SHARING_JOURNAL = 'journal',
+  JOURNAL_SCHEDULE = 'journal',
   WATER_REMINDER = 'water',
   DIET_REMINDER = 'diet',
   SOUL_REMINDER = 'soul',

@@ -18,6 +18,16 @@ export class UnsubscribedHomeService {
       throw new HttpException('No Data Available', HttpStatus.BAD_REQUEST);
 
     return {
+      personalisedNotes: {
+        heading: attributes.unsubNotes.heading,
+        notes:
+          attributes.unsubNotes?.noteGifs?.data?.map((note) => {
+            return {
+              id: generateId(),
+              imageUrl: getImageUrl(note.attributes.url),
+            };
+          }) ?? [],
+      },
       pregnancyCoachPromo: attributes.pregnancyCoachPromo.map((promo) => ({
         id: generateId(),
         image: getImageUrl(promo.image.data?.attributes.url),
@@ -53,6 +63,20 @@ export class UnsubscribedHomeService {
           attributes.dietPlanAd.bgImage?.data?.attributes.url,
         ),
         animationText: attributes.dietPlanAd.animationText,
+      },
+      symptoms: {
+        heading: attributes.unsubSymptom.heading,
+        description: attributes.unsubSymptom.description,
+        image: getImageUrl(
+          attributes.unsubSymptom.image?.data?.attributes?.url,
+        ),
+        cards: attributes.unsubSymptom.symptomCard.map((card) => {
+          return {
+            id: card.id,
+            imageUrl: getImageUrl(card.image?.data?.attributes?.url),
+            title: card.title,
+          };
+        }),
       },
     };
   }

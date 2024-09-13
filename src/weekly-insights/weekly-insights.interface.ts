@@ -223,6 +223,13 @@ export enum InsightCardType {
 }
 
 export interface ParsedUnsubscribedHome {
+  personalisedNotes: {
+    heading: string;
+    notes: Array<{
+      id: string;
+      imageUrl: string;
+    }>;
+  };
   pregnancyCoachPromo: Array<{
     image: string | null;
     title: string;
@@ -252,5 +259,11 @@ export interface ParsedUnsubscribedHome {
     text: string;
     bgImage: string | null;
     animationText: string | null;
+  };
+  symptoms: {
+    heading: string;
+    cards: Array<{ title: string; imageUrl: string; id: string }>;
+    description: string;
+    image: string;
   };
 }

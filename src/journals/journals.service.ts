@@ -12,16 +12,13 @@ export class JournalsService {
 
   async createEntry(
     journalData: CreateJournalEntryDTO & { user: number },
-  ): Promise<JournalNotes> {
+  ): Promise<string> {
     try {
       const journalEntry = this.em.create(JournalNotes, journalData);
       await this.em.flush();
-      return journalEntry;
+      return `journal entry with id ${journalEntry.id} created successfully.`;
     } catch (error) {
-      throw new HttpException(
-        'request failed',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw error;
     }
   }
 
@@ -83,7 +80,7 @@ export class JournalsService {
           status: Status.DELETED,
         },
       );
-      return updateResponse;
+      return `${updateResponse} journal entry deleted successfully`;
     } catch (error) {
       throw error;
     }
@@ -94,7 +91,7 @@ export class JournalsService {
     userId: number,
   ) {
     try {
-      const updateResObj = this.em.nativeUpdate(
+      const updateResObj = await this.em.nativeUpdate(
         UserPreferences,
         {
           user: userId,
@@ -103,7 +100,9 @@ export class JournalsService {
           isJournalLocked: updateData.isLocked,
         },
       );
-      return updateResObj;
+      if (updateResObj === 0)
+        throw new HttpException('Nothing to update', HttpStatus.BAD_REQUEST);
+      return `lock toggled successfully`;
     } catch (error) {
       throw error;
     }
