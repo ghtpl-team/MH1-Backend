@@ -19,6 +19,7 @@ import { DietPlansModule } from './diet-plans/diet-plans.module';
 import { APP_FILTER } from '@nestjs/core';
 import { ExceptionsLoggerFilter } from './utils/exceptions-logger/exceptions-logger.filter';
 import { ConfigModule } from '@nestjs/config';
+import { ArticlesModule } from './articles/articles.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { ConfigModule } from '@nestjs/config';
     ActivitiesModule,
     SchedulesModule,
     DietPlansModule,
+    ArticlesModule,
   ],
   controllers: [AppController],
   providers: [
