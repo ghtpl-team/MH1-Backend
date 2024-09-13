@@ -43,6 +43,7 @@ jobs:
             source /home/${{ secrets.USER }}/.nvm/nvm.sh
             git pull origin main
             npm ci
+            npm run test
             npx mikro-orm migration:create
             npx mikro-orm migration:up
             npm run build
@@ -53,7 +54,7 @@ jobs:
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
-          fields: repo,message,commit,author,action,eventName,ref,workflow
+          fields: repo,message,commit,author
           author_name: Deployment Successful
           text: ':white_check_mark: Successfully deployed to production'
         env:
@@ -64,7 +65,7 @@ jobs:
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
-          fields: repo,message,commit,author,action,eventName,ref,workflow
+          fields: repo,message,commit,author
           author_name: Deployment Failed
           text: ':x: Failed to deploy to production'
         env:
