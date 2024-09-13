@@ -10,7 +10,6 @@ import {
   Index,
   OneToOne,
   DateType,
-  FloatType,
 } from '@mikro-orm/core';
 import { CurrencyCode } from './common/enums/razorpay.enums';
 
@@ -285,7 +284,7 @@ export class SubscriptionPlans extends BaseClass {
   planName!: string;
 
   @Property()
-  amount!: FloatType;
+  amountX100!: number;
 
   @Enum({
     items: () => CurrencyCode,
@@ -299,6 +298,9 @@ export class SubscriptionPlans extends BaseClass {
 
   @Property({ type: 'jsonb', nullable: true })
   notes?: Record<string, string>;
+
+  @Property({ type: 'jsonb' })
+  apiResponse: Record<string, string>;
 
   @Property({ nullable: true })
   razorPayPlanId?: string;
@@ -329,6 +331,9 @@ export class Subscriptions extends BaseClass {
 
   @Property({ nullable: false })
   razorPaySubscriptionId: string;
+
+  @Property({ type: 'jsonb' })
+  apiResponse: Record<string, string>;
 
   @Property({ nullable: false })
   subscriptionUrl: string;
@@ -444,6 +449,7 @@ export enum ScheduledBy {
 }
 
 export enum SubscriptionPlanPeriod {
+  DAILY = 'daily',
   MONTHLY = 'monthly',
   QUARTERLY = 'quarterly',
   YEARLY = 'yearly',

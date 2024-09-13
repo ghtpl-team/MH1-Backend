@@ -19,9 +19,12 @@ import { DietPlansModule } from './diet-plans/diet-plans.module';
 import { WebhooksModule } from './webhooks/webhooks.module';
 import { RazorpayModule } from './utils/razorpay/razorpay.module';
 import { ConfigModule } from '@nestjs/config';
+import { SubscriptionModule } from './subscriptions/subscription.module';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
+    CacheModule.register({ isGlobal: true }),
     ConfigModule.forRoot(),
     MikroOrmModule.forRoot(config),
     UsersModule,
@@ -39,6 +42,7 @@ import { ConfigModule } from '@nestjs/config';
     DietPlansModule,
     WebhooksModule,
     RazorpayModule,
+    SubscriptionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,15 +1,22 @@
-import { EntityManager } from '@mikro-orm/mysql';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { EntityManager, QueryOrder } from '@mikro-orm/mysql';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { Cache } from 'cache-manager';
 import {
   ReminderType,
   Schedule,
   ScheduledBy,
   Status,
+  Subscriptions,
+  SubscriptionStatus,
   User,
 } from 'src/app.entities';
 @Injectable()
 export class UsersService {
-  constructor(private readonly em: EntityManager) {}
+  constructor(
+    private readonly em: EntityManager,
+    @Inject(CACHE_MANAGER) private readonly cacheService: Cache,
+  ) {}
 
   async create(
     userData: Partial<User>,
@@ -44,13 +51,15 @@ export class UsersService {
     return await this.em.find(User, { status: Status.ACTIVE });
   }
 
-  private parseUserData(userData: User[]) {
+  private parseUserData(userData: User[], subscriptionStatus: string) {
     return {
       id: userData[0].id,
       phone: userData[0].phone,
       isPreferencesLogged: userData[0].userPreferences?.afterLunch
         ? true
         : false,
+      isSubscribed:
+        subscriptionStatus === SubscriptionStatus.ACTIVE ? true : false,
       userSettings: userData[0].userPreferences
         ? {
             id: userData[0].userPreferences.id,
@@ -74,6 +83,36 @@ export class UsersService {
     };
   }
 
+  private async userSubscriptionStatus(userId: number) {
+    try {
+      const subscriptionInfo = await this.em.findOne(
+        Subscriptions,
+        {
+          user: userId,
+        },
+        {
+          populate: ['id', 'subscriptionStatus'],
+          orderBy: {
+            updatedAt: QueryOrder.DESC,
+            createdAt: QueryOrder.DESC,
+          },
+        },
+      );
+      if (!subscriptionInfo) {
+        await this.cacheService.set(userId.toString(), 'missing');
+        return 'missing';
+      }
+
+      await this.cacheService.set(
+        userId.toString(),
+        subscriptionInfo.subscriptionStatus,
+      );
+      return subscriptionInfo.subscriptionStatus;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async find(id: number) {
     try {
       const userData = await this.em
@@ -91,8 +130,13 @@ export class UsersService {
         ])
         .where({ id })
         .execute();
+
       if (userData && userData.length) {
-        return this.parseUserData(userData);
+        let subscriptionStatus = await this.cacheService.get(id.toString());
+        if (!subscriptionStatus) {
+          subscriptionStatus = await this.userSubscriptionStatus(id);
+        }
+        return this.parseUserData(userData, subscriptionStatus as string);
       }
       throw new HttpException(
         'No user exists for given id',

@@ -1,14 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import Razorpay from 'razorpay';
+import RazorpayInstance from 'razorpay';
 import { ConfigService } from '@nestjs/config';
 import { SubscriptionWebhookPayload } from 'src/webhooks/webhooks.interface';
+import {
+  CreateSubscriptionDto,
+  SubscriptionPlanDto,
+} from 'src/subscriptions/dto/subscriptions.dto';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { validateWebhookSignature } = require('razorpay');
-
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const Razorpay = require('razorpay');
 @Injectable()
 export class RazorpayService {
-  private readonly razorpayInstance: Razorpay;
+  private readonly razorpayInstance: RazorpayInstance;
 
   constructor(private configService: ConfigService) {
     this.razorpayInstance = new Razorpay({
@@ -17,8 +22,35 @@ export class RazorpayService {
     });
   }
 
-  getInstance(): Razorpay {
+  getInstance() {
     return this.razorpayInstance;
+  }
+
+  async createPlan(createPlanDto: SubscriptionPlanDto) {
+    try {
+      return await this.razorpayInstance.plans.create({
+        period: createPlanDto.period,
+        interval: createPlanDto.interval,
+        item: {
+          amount: createPlanDto.amountX100,
+          currency: createPlanDto.currency,
+          name: createPlanDto.name,
+        },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async createSubscription(createSubscriptionDto: CreateSubscriptionDto) {
+    try {
+      return this.razorpayInstance.subscriptions.create({
+        plan_id: createSubscriptionDto.planId,
+        total_count: createSubscriptionDto.totalBillingCycle,
+      });
+    } catch (error) {
+      throw error;
+    }
   }
 
   verifyWebhookSignature(body: SubscriptionWebhookPayload, signature: string) {
@@ -35,12 +67,11 @@ export class RazorpayService {
   }
 
   async createWebhook(
-    url: string,
-    events: string[],
+    events: Record<string, 0 | 1>,
     alertEmail: string = this.configService.get<string>('ALERT_EMAIL'),
   ) {
     return await this.razorpayInstance.webhooks.create({
-      url,
+      url: this.configService.get<string>('RAZORPAY_WEBHOOK_URL'),
       events,
       alert_email: alertEmail,
       secret: this.configService.get<string>('SECRET'),
