@@ -42,7 +42,6 @@ export class ArticlesService {
           trimester: trimester,
         },
       );
-      console.log(JSON.stringify(filteredArticlesRaw, null, 2));
 
       return this.parseFilteredArticles(filteredArticlesRaw);
     } catch (error) {

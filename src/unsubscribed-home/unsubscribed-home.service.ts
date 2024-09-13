@@ -16,7 +16,6 @@ export class UnsubscribedHomeService {
 
     if (!attributes)
       throw new HttpException('No Data Available', HttpStatus.BAD_REQUEST);
-    console.log(JSON.stringify(attributes, null, 2));
 
     return {
       personalisedNotes: {
