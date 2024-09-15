@@ -23,4 +23,9 @@ export class UserController {
   async find(@Query('userId') userId: string) {
     return this.usersService.find(parseInt(userId));
   }
+
+  @Get('info/form')
+  async getInfoForm() {
+    return this.usersService.fetchUserInfoForm();
+  }
 }
