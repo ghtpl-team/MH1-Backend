@@ -104,3 +104,26 @@ export const GET_UNSUBSCRIBED_HOME = gql`
     }
   }
 `;
+
+export const INTRO_CARDS = gql`
+  query GetIntroCards {
+    introCard {
+      data {
+        attributes {
+          cards {
+            id
+            header
+            subHeader
+            image {
+              data {
+                attributes {
+                  url
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;

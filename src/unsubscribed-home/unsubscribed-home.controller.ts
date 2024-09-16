@@ -11,4 +11,9 @@ export class UnsubscribedHomeController {
   async getUnsubscribedHome() {
     return await this.unsubscribedHomeService.fetchUnsubscribedHome();
   }
+
+  @Get('introduction')
+  async introCards() {
+    return await this.unsubscribedHomeService.fetchIntroCards();
+  }
 }
