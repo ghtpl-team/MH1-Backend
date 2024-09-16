@@ -16,7 +16,10 @@ import {
   UpdateMedicationScheduleDto,
 } from './dto/medication-schedules.dto';
 import { capitalizeFirstLetterOfWords } from 'src/common/utils/string.utils';
-import { MedicationScheduleResponseObj } from './medication-schedules.interface';
+import {
+  MedicationScheduleResponseObj,
+  TimeSlot,
+} from './medication-schedules.interface';
 
 @Injectable()
 export class MedicationSchedulesService {
@@ -89,6 +92,7 @@ export class MedicationSchedulesService {
 
             if (!groupedObj[intakeTimeType]) {
               groupedObj[intakeTimeType] = {
+                rank: TimeSlot[intakeTimeType],
                 intakeTiming: intakeTimeType,
                 schedule: [],
               };
@@ -118,10 +122,8 @@ export class MedicationSchedulesService {
         },
         {} as MedicationScheduleResponseObj,
       );
-      return Object.values(groupedData);
+      return Object.values(groupedData).sort((a, b) => a.rank - b.rank);
     } catch (error) {
-      console.log(error);
-
       throw error;
     }
   }
