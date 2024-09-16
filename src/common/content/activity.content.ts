@@ -12,16 +12,20 @@ export function pregnancyCoachOverview() {
         label: 'Nutrition',
       },
       {
-        color: '#6750A4',
+        color: '#F4DD95',
         label: 'Soul',
       },
       {
-        color: '#6750A4',
+        color: '#F6BDDE',
         label: 'Mind',
       },
       {
-        color: '#6750A4',
+        color: '#CBC8F4',
         label: 'Fitness',
+      },
+      {
+        color: '#6750A4',
+        label: 'Common',
       },
     ],
     waterActivityCard: {
