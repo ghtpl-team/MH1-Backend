@@ -1,4 +1,4 @@
-import { MedicationStrengthUnit } from 'src/app.entities';
+import { IntakeTime, MedicationStrengthUnit } from 'src/app.entities';
 
 export interface MedicationScheduleResponseObj {
   [key: string]: {
@@ -10,6 +10,8 @@ export interface MedicationScheduleResponseObj {
       strengthUnit: MedicationStrengthUnit;
       isTaken: boolean;
       timing: any;
+      intakeTime: IntakeTime[];
+      intakeTimes: string[];
     }>;
   };
 }
