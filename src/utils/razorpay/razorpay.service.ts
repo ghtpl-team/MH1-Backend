@@ -77,4 +77,13 @@ export class RazorpayService {
       secret: this.configService.get<string>('SECRET'),
     });
   }
+
+  async cancelSubscription(id: string) {
+    try {
+      const response = await this.razorpayInstance.subscriptions.cancel(id);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

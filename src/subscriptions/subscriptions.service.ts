@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { RazorpayService } from 'src/utils/razorpay/razorpay.service';
 import {
   CreateSubscriptionDto,
@@ -92,6 +92,28 @@ export class SubscriptionsService {
       return subscriptionInfo;
     } catch (error) {
       throw error;
+    }
+  }
+
+  async cancel(userId: number, subscriptionId: number) {
+    try {
+      const subscriptionData = await this.em.findOne(Subscriptions, {
+        id: subscriptionId,
+        user: userId,
+        subscriptionStatus: SubscriptionStatus.ACTIVE,
+      });
+
+      if (!subscriptionData)
+        throw new HttpException('No active subscription', HttpStatus.NOT_FOUND);
+
+      const updateRpSubscription =
+        await this.razorPayService.cancelSubscription(
+          subscriptionData.razorPaySubscriptionId,
+        );
+
+      return updateRpSubscription;
+    } catch (error) {
+      return error;
     }
   }
 }

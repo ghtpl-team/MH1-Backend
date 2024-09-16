@@ -3,6 +3,7 @@ import {
   Controller,
   HttpException,
   HttpStatus,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
@@ -30,6 +31,22 @@ export class SubscriptionsController {
       throw new HttpException('userId is required', HttpStatus.BAD_REQUEST);
     return this.subscriptionService.subscribe(
       createSubscriptionDto,
+      parseInt(userId),
+    );
+  }
+
+  @Patch('cancel')
+  async cancelSubscription(
+    @Query('userId') userId: string,
+    @Query('subscriptionId') subscriptionId: string,
+  ) {
+    if (!userId || !subscriptionId)
+      throw new HttpException(
+        'required params are missing',
+        HttpStatus.BAD_REQUEST,
+      );
+    return this.subscriptionService.cancel(
+      parseInt(subscriptionId),
       parseInt(userId),
     );
   }
