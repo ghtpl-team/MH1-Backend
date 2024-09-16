@@ -97,3 +97,13 @@ export class UpdateMedicationScheduleDto {
   @IsDateString()
   endDate: string;
 }
+
+export class DeleteMedicationScheduleDto {
+  @ApiProperty()
+  @IsArray()
+  intakeTime: IntakeTime[];
+
+  @ApiProperty()
+  @IsArray()
+  intakeTimes: string[];
+}
