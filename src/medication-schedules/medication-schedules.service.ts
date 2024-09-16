@@ -99,6 +99,8 @@ export class MedicationSchedulesService {
               name: medication.medicationName,
               strength: medication.strength,
               strengthUnit: medication.strengthUnit,
+              intakeTime: medication.intakeTime,
+              intakeTimes: medication.intakeTimes,
               isTaken:
                 medication.schedule[index]?.scheduledTasks[0]?.taskStatus ===
                 ScheduledTaskStatus.DONE,
