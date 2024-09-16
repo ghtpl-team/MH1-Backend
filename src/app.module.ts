@@ -16,13 +16,18 @@ import { SymptomsModule } from './symptoms/symptoms.module';
 import { ActivitiesModule } from './activities/activities.module';
 import { SchedulesModule } from './schedules/schedules.module';
 import { DietPlansModule } from './diet-plans/diet-plans.module';
+import { WebhooksModule } from './webhooks/webhooks.module';
+import { RazorpayModule } from './utils/razorpay/razorpay.module';
+import { ConfigModule } from '@nestjs/config';
+import { SubscriptionModule } from './subscriptions/subscription.module';
+import { CacheModule } from '@nestjs/cache-manager';
 import { APP_FILTER } from '@nestjs/core';
 import { ExceptionsLoggerFilter } from './utils/exceptions-logger/exceptions-logger.filter';
-import { ConfigModule } from '@nestjs/config';
 import { ArticlesModule } from './articles/articles.module';
 
 @Module({
   imports: [
+    CacheModule.register({ isGlobal: true }),
     ConfigModule.forRoot(),
     MikroOrmModule.forRoot(config),
     UsersModule,
@@ -38,6 +43,9 @@ import { ArticlesModule } from './articles/articles.module';
     ActivitiesModule,
     SchedulesModule,
     DietPlansModule,
+    WebhooksModule,
+    RazorpayModule,
+    SubscriptionModule,
     ArticlesModule,
   ],
   controllers: [AppController],

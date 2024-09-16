@@ -11,6 +11,7 @@ import {
   OneToOne,
   DateType,
 } from '@mikro-orm/core';
+import { CurrencyCode } from './common/enums/razorpay.enums';
 
 class BaseClass {
   @PrimaryKey()
@@ -58,6 +59,9 @@ export class User extends BaseClass {
 
   @OneToMany(() => LoggedSymptoms, (logSymptom) => logSymptom.user)
   loggedSymptoms = new Collection<LoggedSymptoms>(this);
+
+  @OneToMany(() => Subscriptions, (subscription) => subscription.user)
+  subscription = new Collection<Subscriptions>(this);
 }
 
 @Entity({ tableName: 'mh_user_preferences' })
@@ -260,6 +264,81 @@ export class ScheduledTask extends BaseClass {
   user!: User;
 }
 
+@Entity({ tableName: 'mh_subscription_plans' })
+export class SubscriptionPlans extends BaseClass {
+  @Enum({
+    items: () => SubscriptionPlanPeriod,
+    nativeEnumName: 'plan_period',
+    nullable: false,
+  })
+  period: SubscriptionPlanPeriod;
+
+  //This, combined with period, defines the frequency of the plan. If the billing cycle is 2 months, the value should be 2. For daily plans, the minimum value should be 7.
+  @Property({ type: 'numeric', nullable: false })
+  paymentInterval: number;
+
+  @Property({ length: 150 })
+  planName!: string;
+
+  @Property()
+  amountX100!: number;
+
+  @Enum({
+    items: () => CurrencyCode,
+    nativeEnumName: 'currency_codes',
+    nullable: false,
+  })
+  currencyCode!: CurrencyCode;
+
+  @Property({ nullable: true, length: 300 })
+  description?: string;
+
+  @Property({ type: 'jsonb', nullable: true })
+  notes?: Record<string, string>;
+
+  @Property({ type: 'jsonb' })
+  apiResponse: Record<string, string>;
+
+  @Property({ nullable: true })
+  razorPayPlanId?: string;
+
+  @OneToMany(() => Subscriptions, (subscriptions) => subscriptions.plan)
+  subscriptions = new Collection<Subscriptions>(this);
+}
+
+@Entity({ tableName: 'mh_subscriptions' })
+export class Subscriptions extends BaseClass {
+  @ManyToOne(() => SubscriptionPlans)
+  plan!: SubscriptionPlans;
+
+  @Property({ type: 'numeric' })
+  totalBillingCycle!: number;
+
+  @Property()
+  notifyCustomer?: boolean;
+
+  @Property({ type: 'jsonb', nullable: true })
+  notes?: Record<string, string>;
+
+  @Enum({
+    items: () => SubscriptionStatus,
+    nativeEnumName: 'subscription_status',
+  })
+  subscriptionStatus: SubscriptionStatus = SubscriptionStatus.ACTIVE;
+
+  @Property({ nullable: false })
+  razorPaySubscriptionId: string;
+
+  @Property({ type: 'jsonb' })
+  apiResponse: Record<string, string>;
+
+  @Property({ nullable: false })
+  subscriptionUrl: string;
+
+  @ManyToOne(() => User)
+  user: User;
+}
+
 @Entity({ tableName: 'mh_cron_job_status' })
 export class CronStatus extends BaseClass {
   @ManyToOne(() => Schedule)
@@ -367,7 +446,20 @@ export enum ScheduledBy {
 }
 
 export enum SubscriptionPlanPeriod {
+  DAILY = 'daily',
   MONTHLY = 'monthly',
   QUARTERLY = 'quarterly',
   YEARLY = 'yearly',
+}
+
+export enum SubscriptionStatus {
+  CREATED = 'created',
+  AUTHENTICATED = 'authenticated',
+  ACTIVE = 'active',
+  PENDING = 'pending',
+  HALTED = 'halted',
+  CANCELLED = 'cancelled',
+  PAUSED = 'paused',
+  EXPIRED = 'expired',
+  COMPLETED = 'completed',
 }
