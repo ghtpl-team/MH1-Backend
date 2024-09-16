@@ -12,6 +12,7 @@ import {
 } from 'src/app.entities';
 import {
   CreateMedicationScheduleDto,
+  DeleteMedicationScheduleDto,
   UpdateMedicationScheduleDto,
 } from './dto/medication-schedules.dto';
 import { capitalizeFirstLetterOfWords } from 'src/common/utils/string.utils';
@@ -182,12 +183,18 @@ export class MedicationSchedulesService {
 
   // async parseMedicalSchedule(medicalScheduleData: )
 
-  async delete(id: number) {
+  async delete(
+    id: number,
+    deleteMedicationScheduleDto: DeleteMedicationScheduleDto,
+  ) {
     try {
       return await this.em
         .createQueryBuilder(MedicationSchedule)
         .update({
-          status: Status.DELETED,
+          ...deleteMedicationScheduleDto,
+          status: deleteMedicationScheduleDto.intakeTimes.length
+            ? Status.ACTIVE
+            : Status.DELETED,
         })
         .where({
           id,
