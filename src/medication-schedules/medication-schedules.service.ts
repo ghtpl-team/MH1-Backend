@@ -139,6 +139,7 @@ export class MedicationSchedulesService {
             'ms.strengthUnit',
             'ms.endDate',
             'ms.intakeTime',
+            'ms.intakeTimes',
             'ms.intakeType',
             'ms.selectedDays',
             'ms.medicationType',
