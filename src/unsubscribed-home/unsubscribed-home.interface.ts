@@ -84,3 +84,27 @@ interface DietPlanAd {
   bgImage: ImageData;
   animationText: string;
 }
+
+export interface IntroCardResRaw {
+  introCard: {
+    data: {
+      attributes: {
+        cards: IntroCard[];
+      };
+    };
+  };
+}
+
+interface IntroCard {
+  id: string;
+  header?: string;
+  subHeader: string;
+  image: ImageData;
+}
+
+export interface ParsedIntroCard {
+  id: string;
+  header?: string;
+  subHeader: string;
+  image: string;
+}
