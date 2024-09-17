@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { GraphQLClientService } from 'src/utils/graphql/graphql.service';
 import {
   ACTIVITY_HISTORY,
@@ -38,6 +38,8 @@ import { FeedbackFromDto } from './dto/activities.dto';
 
 @Injectable()
 export class ActivitiesService {
+  private readonly logger = new Logger(ActivitiesService.name);
+
   constructor(
     private readonly graphqlClient: GraphQLClientService,
     private readonly em: EntityManager,
@@ -46,25 +48,32 @@ export class ActivitiesService {
   private parseMindActivities(
     rawData: MindActivitiesRaw,
   ): MindActivitiesOverview {
-    const { heading, subHeading, mind_activities } =
-      rawData.mindActivitiesOverview.data.attributes;
+    try {
+      const { heading, subHeading, mind_activities } =
+        rawData.mindActivitiesOverview.data.attributes;
 
-    const parsedData: MindActivitiesOverview = {
-      heading: heading || '',
-      subHeading: subHeading || '',
-      mindActivities: mind_activities.data.map((activity) => ({
-        name: activity.attributes.name || '',
-        duration: activity.attributes.duration || '',
-        benefits: activity.attributes.benefits || '',
-        thumbnail: getImageUrl(
-          activity.attributes.thumbnail?.data?.attributes?.url,
-        ),
-        description: activity.attributes.description || '',
-        videoUrl: activity.attributes.videoUrl || '',
-      })),
-    };
-
-    return parsedData;
+      const parsedData: MindActivitiesOverview = {
+        heading: heading || '',
+        subHeading: subHeading || '',
+        mindActivities: mind_activities.data.map((activity) => ({
+          name: activity.attributes.name || '',
+          duration: activity.attributes.duration || '',
+          benefits: activity.attributes.benefits || '',
+          thumbnail: getImageUrl(
+            activity.attributes.thumbnail?.data?.attributes?.url,
+          ),
+          description: activity.attributes.description || '',
+          videoUrl: activity.attributes.videoUrl || '',
+        })),
+      };
+      return parsedData;
+    } catch (error) {
+      this.logger.error(
+        "Can't parse mind activity data.",
+        error.stack || error,
+      );
+      throw error;
+    }
   }
 
   async fetchMindActivities() {
@@ -76,9 +85,14 @@ export class ActivitiesService {
         this.parseMindActivities(mindActivitiesRaw);
       return parsedMindActivityOverview;
     } catch (error) {
+      this.logger.error(
+        'unable to fetch data from strapi',
+        error.stack || error,
+      );
       throw error;
     }
   }
+
   private parseFitnessActivities(response: FitnessActivitiesRaw): {
     activities: ParsedFitnessActivity[];
     consentForm: ParsedConsentForm;
@@ -118,42 +132,49 @@ export class ActivitiesService {
   }
 
   private parseConsentForm(consentForm?: ConsentForm): ParsedConsentForm {
-    return {
-      weekConfirmation: {
-        heading: consentForm?.weekConfirmation?.heading ?? '',
-        subHeading1: consentForm?.weekConfirmation?.subHeading1 ?? '',
-        subHeading2: consentForm?.weekConfirmation?.subHeading2 ?? '',
-        button: this.parseButton(consentForm?.weekConfirmation?.button),
-      },
-      docInfo: {
-        heading: consentForm?.docInfo?.heading ?? '',
-        subHeading: consentForm?.docInfo?.subHeading ?? '',
-        doctor: this.parseDoctorInfo(
-          consentForm?.docInfo?.hms_doctor?.data?.attributes,
-        ),
-        button: this.parseButton(consentForm?.docInfo?.button),
-      },
-      consentForm: {
-        heading: consentForm?.consentForm?.heading ?? '',
-        subHeading: consentForm?.consentForm?.subHeading ?? '',
-        consentText: consentForm?.consentForm?.consentText ?? '',
-        button: this.parseButton(consentForm?.consentForm?.button),
-      },
-      disclaimer:
-        consentForm?.disclaimer?.map((disclaimer: any) => {
-          return {
-            heading: disclaimer?.heading ?? '',
-            heading2: disclaimer?.heading2 ?? '',
-            subHeading: disclaimer?.subHeading ?? '',
-            button: this.parseButton(disclaimer?.button),
-          };
-        }) ?? [],
-      unlockActivityCard: {
-        heading: consentForm?.unlockActivityCard?.heading ?? '',
-        subHeading: consentForm?.unlockActivityCard?.subHeading ?? '',
-        button: this.parseButton(consentForm?.unlockActivityCard?.button),
-      },
-    };
+    try {
+      return {
+        weekConfirmation: {
+          heading: consentForm?.weekConfirmation?.heading ?? '',
+          subHeading1: consentForm?.weekConfirmation?.subHeading1 ?? '',
+          subHeading2: consentForm?.weekConfirmation?.subHeading2 ?? '',
+          button: this.parseButton(consentForm?.weekConfirmation?.button),
+        },
+        docInfo: {
+          heading: consentForm?.docInfo?.heading ?? '',
+          subHeading: consentForm?.docInfo?.subHeading ?? '',
+          doctor: this.parseDoctorInfo(
+            consentForm?.docInfo?.hms_doctor?.data?.attributes,
+          ),
+          button: this.parseButton(consentForm?.docInfo?.button),
+        },
+        consentForm: {
+          heading: consentForm?.consentForm?.heading ?? '',
+          subHeading: consentForm?.consentForm?.subHeading ?? '',
+          consentText: consentForm?.consentForm?.consentText ?? '',
+          button: this.parseButton(consentForm?.consentForm?.button),
+        },
+        disclaimer:
+          consentForm?.disclaimer?.map((disclaimer: any) => {
+            return {
+              heading: disclaimer?.heading ?? '',
+              heading2: disclaimer?.heading2 ?? '',
+              subHeading: disclaimer?.subHeading ?? '',
+              button: this.parseButton(disclaimer?.button),
+            };
+          }) ?? [],
+        unlockActivityCard: {
+          heading: consentForm?.unlockActivityCard?.heading ?? '',
+          subHeading: consentForm?.unlockActivityCard?.subHeading ?? '',
+          button: this.parseButton(consentForm?.unlockActivityCard?.button),
+        },
+      };
+    } catch (error) {
+      this.logger.error(
+        'Error occurred while paring consent form',
+        error.stack || error,
+      );
+    }
   }
 
   private parseDoctorInfo(doctor?: Doctor): ParsedDoctor {
@@ -182,8 +203,10 @@ export class ActivitiesService {
 
       return this.parseFitnessActivities(fitnessActivityRaw);
     } catch (error) {
-      console.log(error);
-
+      this.logger.error(
+        'Error occurred while fetching fitness activities data',
+        error.stack || error,
+      );
       throw error;
     }
   }
@@ -280,34 +303,41 @@ export class ActivitiesService {
       );
       return parsedData;
     } catch (error) {
-      console.log(error);
-
+      this.logger.error(
+        'Not able to fetch pregnancy/personal coach data',
+        error.stack || error,
+      );
       throw error;
     }
   }
 
   private parseFeedbackForm(rawData: FeedbackFormData): ParsedFeedbackForm {
-    const attributes = rawData.feedbackForm.data.attributes;
+    try {
+      const attributes = rawData.feedbackForm.data.attributes;
 
-    return {
-      heading: attributes.heading,
-      description: attributes.description,
-      questions: attributes.questionList.map((q) => ({
-        type: q.type,
-        question: q.question,
-        options: q.options || undefined,
-      })),
-      lockScreen: {
-        title: attributes.lockScreen.title,
-        text: attributes.lockScreen.text,
-        imageUrl:
-          getImageUrl(attributes.lockScreen.image.data[0]?.attributes.url) ||
-          '',
-        doctor: this.parseDoctorInfo(
-          attributes.lockScreen.hms_doctor.data.attributes,
-        ),
-      },
-    };
+      return {
+        heading: attributes.heading,
+        description: attributes.description,
+        questions: attributes.questionList.map((q) => ({
+          type: q.type,
+          question: q.question,
+          options: q.options || undefined,
+        })),
+        lockScreen: {
+          title: attributes.lockScreen.title,
+          text: attributes.lockScreen.text,
+          imageUrl:
+            getImageUrl(attributes.lockScreen.image.data[0]?.attributes.url) ||
+            '',
+          doctor: this.parseDoctorInfo(
+            attributes.lockScreen.hms_doctor.data.attributes,
+          ),
+        },
+      };
+    } catch (error) {
+      this.logger.error('Cant parse feedback form data', error.stack || error);
+      throw error;
+    }
   }
 
   async getFeedbackForm() {
@@ -323,6 +353,7 @@ export class ActivitiesService {
       const parsedData = this.parseFeedbackForm(feedbackFromRaw);
       return parsedData;
     } catch (error) {
+      this.logger.error('No data for feedback form', error.stack || error);
       throw error;
     }
   }
@@ -347,6 +378,10 @@ export class ActivitiesService {
       }
       return 'Recorded Successfully';
     } catch (error) {
+      this.logger.error(
+        'Symptom logging operation failed',
+        error.stack || error,
+      );
       throw error;
     }
   }

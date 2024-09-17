@@ -66,8 +66,33 @@ interface ComponentGenericConsultDoc {
     bgColor: string;
     goTo: string;
   }[];
+  hmsDoctor: DoctorRaw;
 }
 
+interface ImageRaw {
+  data: {
+    attributes: {
+      url: string;
+    };
+  };
+}
+
+interface DoctorRaw {
+  data: {
+    attributes: {
+      name: string;
+      image: ImageRaw;
+      specialty: {
+        data: {
+          attributes: {
+            name: string;
+          };
+        };
+      };
+      experienceYears: string;
+    };
+  };
+}
 export interface ParsedDynamicForm {
   cards: (
     | ParsedSliderCard
@@ -128,4 +153,10 @@ export interface ParsedDocCard {
     bgColor: string;
     goTo: string;
   }[];
+  docInfo: {
+    name: string;
+    image: string;
+    specialty: string;
+    experienceYears: string;
+  };
 }

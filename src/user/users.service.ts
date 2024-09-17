@@ -20,6 +20,7 @@ import {
 } from './user.interface';
 import { GraphQLClientService } from 'src/utils/graphql/graphql.service';
 import { DYNAMIC_FORM } from './user.query';
+import { getImageUrl } from 'src/common/utils/helper.utils';
 @Injectable()
 export class UsersService {
   constructor(
@@ -219,6 +220,8 @@ export class UsersService {
             goTo: card.multiPollGoto,
           } as ParsedMultiPoll;
         } else {
+          console.log(card);
+
           return {
             id: card.id,
             heading: card.heading,
@@ -233,6 +236,15 @@ export class UsersService {
               bgColor: button.bgColor,
               goTo: button.goTo,
             })),
+            docInfo: {
+              name: card.hmsDoctor.data.attributes.name,
+              image: getImageUrl(
+                card.hmsDoctor.data.attributes.image.data.attributes.url,
+              ),
+              specialty:
+                card.hmsDoctor.data.attributes.specialty.data.attributes.name,
+              experienceYears: card.hmsDoctor.data.attributes.experienceYears,
+            },
           } as ParsedDocCard;
         }
       }),

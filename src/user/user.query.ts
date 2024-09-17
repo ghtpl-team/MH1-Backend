@@ -67,5 +67,27 @@ export const DYNAMIC_FORM = gql`
       bgColor
       goTo
     }
+    hmsDoctor: hms_doctor {
+      data {
+        attributes {
+          name
+          image {
+            data {
+              attributes {
+                url
+              }
+            }
+          }
+          specialty {
+            data {
+              attributes {
+                name
+              }
+            }
+          }
+          experienceYears
+        }
+      }
+    }
   }
 `;
