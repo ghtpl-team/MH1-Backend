@@ -131,6 +131,7 @@ export class UsersService {
         .leftJoinAndSelect('u.userPreferences', 'up', {}, [
           'isActivityLocked',
           'isJournalLocked',
+          'afterLunch',
         ])
         .leftJoinAndSelect(
           'schedules',
