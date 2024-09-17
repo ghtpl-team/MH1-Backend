@@ -1,3 +1,5 @@
+import { LogLevel } from '@nestjs/common/services/logger.service';
+
 export function getImageUrl(str: string) {
   return str ? `${process.env.STRAPI_BASE_URL}${str}` : null;
 }
@@ -13,4 +15,11 @@ export function generateId(length: number = 12) {
     counter += 1;
   }
   return result;
+}
+
+export function getLogLevels(isProduction: boolean): LogLevel[] {
+  if (isProduction) {
+    return ['warn', 'error'];
+  }
+  return ['error', 'warn', 'log', 'verbose', 'debug'];
 }
