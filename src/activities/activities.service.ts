@@ -377,9 +377,11 @@ export class ActivitiesService {
               history.type.toLocaleLowerCase()
             );
           });
-          if (data) {
+
+          if (data && history.taskStatus === ScheduledTaskStatus.DONE) {
             return {
               id: data.id,
+              date: history.date,
               activityType: history.type,
               imageUrl: getImageUrl(data.image?.data?.attributes?.url),
               label: data.label,
