@@ -25,6 +25,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { ExceptionsLoggerFilter } from './utils/exceptions-logger/exceptions-logger.filter';
 import { ArticlesModule } from './articles/articles.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { AppHealthModule } from './app-health/app-health.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     RazorpayModule,
     SubscriptionModule,
     ArticlesModule,
+    AppHealthModule,
   ],
   controllers: [AppController],
   providers: [
