@@ -1,4 +1,4 @@
-import { EntityManager } from '@mikro-orm/mysql';
+import { EntityManager, QueryOrder } from '@mikro-orm/mysql';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ReminderCreateReqDto } from './dto/schedules.dto';
 import {
@@ -6,8 +6,11 @@ import {
   ReminderType,
   Schedule,
   ScheduledBy,
+  ScheduledTask,
+  ScheduledTaskStatus,
   Status,
 } from 'src/app.entities';
+import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class SchedulesService {
@@ -57,6 +60,37 @@ export class SchedulesService {
       return `Schedule with id ${schedule.id} is created.`;
     } catch (error) {
       throw error;
+    }
+  }
+
+  @Cron('0 14 */1 * *')
+  async scheduleDailyTasks() {
+    let hasNextPage = true;
+    const fork = this.em.fork();
+    while (hasNextPage) {
+      const schedules = await fork.findByCursor(
+        Schedule,
+        {
+          status: Status.ACTIVE,
+        },
+        {
+          orderBy: {
+            reminderTime: QueryOrder.ASC,
+          },
+        },
+      );
+      const tasks = [];
+      for (const schedule of schedules.items) {
+        const task = fork.create(ScheduledTask, {
+          schedule: schedule,
+          taskStatus: ScheduledTaskStatus.PENDING,
+          type: schedule.type,
+          user: schedule.user,
+        });
+        tasks.push(task);
+      }
+      await fork.persistAndFlush([...tasks]);
+      hasNextPage = schedules.hasNextPage;
     }
   }
 }

@@ -24,9 +24,11 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { APP_FILTER } from '@nestjs/core';
 import { ExceptionsLoggerFilter } from './utils/exceptions-logger/exceptions-logger.filter';
 import { ArticlesModule } from './articles/articles.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     CacheModule.register({ isGlobal: true }),
     ConfigModule.forRoot(),
     MikroOrmModule.forRoot(config),
