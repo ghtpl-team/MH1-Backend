@@ -30,6 +30,7 @@ class BaseClass {
 
 @Entity({ tableName: 'mh_users' })
 export class User extends BaseClass {
+  @Index()
   @Property({ unique: true })
   phone!: string;
 
@@ -232,9 +233,11 @@ export class Schedule extends BaseClass {
   @Property({ type: 'json', nullable: true })
   selectedDays?: DaysOfWeek[];
 
+  @Index()
   @Enum({ items: () => ScheduledBy, nativeEnumName: 'scheduled_by' })
   scheduledBy: ScheduledBy = ScheduledBy.SYSTEM;
 
+  @Index()
   @Enum({ items: () => ReminderType, nativeEnumName: 'reminder_type' })
   type!: ReminderType;
 
@@ -250,9 +253,11 @@ export class ScheduledTask extends BaseClass {
   @ManyToOne(() => Schedule)
   schedule!: Schedule;
 
+  @Index()
   @Enum({ items: () => ScheduledTaskStatus, nativeEnumName: 'task_status' })
   taskStatus: ScheduledTaskStatus = ScheduledTaskStatus.PENDING;
 
+  @Index()
   @Enum({ items: () => ReminderType, nativeEnumName: 'reminder_type' })
   type!: ReminderType;
 
@@ -299,6 +304,7 @@ export class SubscriptionPlans extends BaseClass {
   @Property({ type: 'jsonb' })
   apiResponse: Record<string, string>;
 
+  @Index()
   @Property({ nullable: true })
   razorPayPlanId?: string;
 
@@ -320,12 +326,14 @@ export class Subscriptions extends BaseClass {
   @Property({ type: 'jsonb', nullable: true })
   notes?: Record<string, string>;
 
+  @Index()
   @Enum({
     items: () => SubscriptionStatus,
     nativeEnumName: 'subscription_status',
   })
   subscriptionStatus: SubscriptionStatus = SubscriptionStatus.ACTIVE;
 
+  @Index()
   @Property({ nullable: false })
   razorPaySubscriptionId: string;
 
