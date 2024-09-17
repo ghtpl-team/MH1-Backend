@@ -37,6 +37,7 @@
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/schedule": "^4.1.1",
     "@nestjs/swagger": "^7.4.0",
+    "@nestjs/terminus": "^10.2.3",
     "@types/cron": "^2.0.1",
     "apollo-server-express": "^3.13.0",
     "cache-manager": "^5.7.6",
