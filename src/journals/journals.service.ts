@@ -36,10 +36,7 @@ export class JournalsService {
 
       return journalEntries;
     } catch (error) {
-      throw new HttpException(
-        'something went wrong!',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw error;
     }
   }
 
@@ -62,10 +59,7 @@ export class JournalsService {
       }
       return journalEntry[0];
     } catch (error) {
-      throw new HttpException(
-        'something went wrong!',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw error;
     }
   }
 
