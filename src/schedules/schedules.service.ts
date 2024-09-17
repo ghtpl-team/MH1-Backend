@@ -66,6 +66,7 @@ export class SchedulesService {
   @Cron('0 14 */1 * *', { timeZone: 'Asia/Kolkata' })
   async scheduleDailyTasks() {
     let hasNextPage = true;
+    let endCursor = null;
     const fork = this.em.fork();
     while (hasNextPage) {
       const schedules = await fork.findByCursor(
@@ -74,6 +75,10 @@ export class SchedulesService {
           status: Status.ACTIVE,
         },
         {
+          first: 50,
+          after: {
+            endCursor,
+          },
           orderBy: {
             reminderTime: QueryOrder.ASC,
           },
@@ -91,6 +96,7 @@ export class SchedulesService {
       }
       await fork.persistAndFlush([...tasks]);
       hasNextPage = schedules.hasNextPage;
+      endCursor = schedules.endCursor;
     }
   }
 }
