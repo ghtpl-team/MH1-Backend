@@ -179,10 +179,7 @@ export class MedicationSchedulesService {
 
       return groupedSchedule;
     } catch (error) {
-      throw new HttpException(
-        'Something Went Wrong!',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw error;
     }
   }
 
