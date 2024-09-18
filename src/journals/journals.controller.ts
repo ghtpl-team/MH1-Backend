@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -11,6 +13,7 @@ import {
 import { JournalsService } from './journals.service';
 import {
   CreateJournalEntryDTO,
+  UpdateJournalEntryDto,
   UpdateJournalSecurityDto,
 } from './dto/journals.dto';
 
@@ -43,10 +46,24 @@ export class JournalsController {
     return this.journalService.findById(journalId);
   }
 
-  @Patch()
+  @Patch('delete')
   async deleteJournalEntry(@Query('id') id: string) {
     const journalId = parseInt(id);
     return this.journalService.delete(journalId);
+  }
+
+  @Patch('update')
+  async updateJournalEntry(
+    @Query('id') id: string,
+    @Body() updateJournalEntryDto: UpdateJournalEntryDto,
+  ) {
+    if (!id)
+      throw new HttpException(
+        'Required Params missing',
+        HttpStatus.BAD_REQUEST,
+      );
+    const journalId = parseInt(id);
+    return this.journalService.update(journalId, updateJournalEntryDto);
   }
 
   @Patch('security')

@@ -2,6 +2,7 @@ import { EntityManager } from '@mikro-orm/mysql';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import {
   CreateJournalEntryDTO,
+  UpdateJournalEntryDto,
   UpdateJournalSecurityDto,
 } from './dto/journals.dto';
 import { JournalNotes, Status, UserPreferences } from 'src/app.entities';
@@ -97,6 +98,25 @@ export class JournalsService {
       if (updateResObj === 0)
         throw new HttpException('Nothing to update', HttpStatus.BAD_REQUEST);
       return `lock toggled successfully`;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async update(id: number, reqBody: UpdateJournalEntryDto) {
+    try {
+      const updateStatus = await this.em.nativeUpdate(
+        JournalNotes,
+        {
+          id,
+        },
+        {
+          ...reqBody,
+        },
+      );
+      if (updateStatus)
+        return { status: true, message: `${updateStatus} records updated!` };
+      throw new HttpException('No data for given Id', HttpStatus.NOT_FOUND);
     } catch (error) {
       throw error;
     }

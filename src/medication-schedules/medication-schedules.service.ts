@@ -148,15 +148,18 @@ export class MedicationSchedulesService {
           ],
           true,
         )
-        .leftJoinAndSelect('ms.schedule', 'sc', {}, [
+        .innerJoinAndSelect('ms.schedule', 'sc', { user: userId }, [
           'sc.id',
           'sc.reminderTime',
         ])
-        .leftJoinAndSelect(
+        .innerJoinAndSelect(
           'sc.scheduledTasks',
           'st',
           {
-            date: { $gte: new Date().toISOString().split('T')[0] },
+            date: {
+              $gte: new Date().toISOString().split('T')[0],
+            },
+            user: userId,
           },
           ['st.id', 'st.taskStatus'],
         )
@@ -172,8 +175,6 @@ export class MedicationSchedulesService {
             $lte: new Date(),
           },
         });
-
-      console.log(JSON.stringify(medicationList, null, 2));
 
       const groupedSchedule = this.groupByIntakeTime(medicationList);
 
