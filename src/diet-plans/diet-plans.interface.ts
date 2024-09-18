@@ -1,3 +1,9 @@
+import {
+  DocInfo,
+  ImageData,
+  ParsedDocInfo,
+} from 'src/common/interfaces/common.interface';
+
 export interface GetLearnMoreRaw {
   articles: {
     data: Array<{
@@ -84,4 +90,76 @@ export interface ParsedDoctor {
   imageUrl: string;
   experienceYears: number;
   specialty: string;
+}
+
+export interface DietIntroRaw {
+  dietIntros: {
+    data: DietIntroStory[];
+  };
+}
+
+interface DietIntroStory {
+  attributes: {
+    trimester: string;
+    dietIntroStory: {
+      data: {
+        attributes: {
+          firstCard: {
+            id: string;
+            title: string;
+            cardImage: {
+              data: ImageData;
+            };
+            docInfo: DocInfo;
+            description: string;
+          };
+          cards: Array<{
+            id: string;
+            rank: number;
+            title: string;
+            bgColor: string;
+            description: string;
+            image: {
+              data: ImageData[];
+            };
+          }>;
+        };
+      };
+    };
+    calorieCard: {
+      title: string;
+      id: string;
+      bgImage: {
+        data: ImageData;
+      };
+      footerText: string;
+      description: string;
+    };
+    nutrients: {
+      id: string;
+      title: string;
+      image: {
+        data: ImageData;
+      };
+      footerText: string;
+      description: string;
+    };
+  };
+}
+
+export interface ParsedDietIntroStories {
+  trimester: number;
+  cards: ParsedIntroStory[];
+}
+
+export interface ParsedIntroStory {
+  id: string;
+  title: string;
+  imageUrl?: string;
+  images?: { url: string }[];
+  docInfo?: ParsedDocInfo;
+  description: string;
+  bgColor?: string;
+  bgImageUrl?: string;
+  footerText?: string;
 }
