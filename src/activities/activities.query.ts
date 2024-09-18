@@ -10,6 +10,20 @@ export const MIND_ACTIVITIES = gql`
           mind_activities {
             data {
               attributes {
+                imageUrl {
+                  data {
+                    attributes {
+                      url
+                    }
+                  }
+                }
+                thumbnailUrl {
+                  data {
+                    attributes {
+                      url
+                    }
+                  }
+                }
                 name
                 duration
                 benefits

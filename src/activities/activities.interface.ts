@@ -5,6 +5,8 @@ export interface MindActivity {
   thumbnail: string;
   description: string;
   videoUrl: string;
+  imageUrl: string;
+  thumbnailUrl: string;
 }
 
 export interface MindActivitiesOverview {
@@ -25,6 +27,12 @@ export interface MindActivitiesRaw {
               name: string;
               duration: string;
               benefits: string;
+              imageUrl: {
+                data: ImageData;
+              };
+              thumbnailUrl: {
+                data: ImageData;
+              };
               thumbnail: {
                 data: {
                   attributes: {

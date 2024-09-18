@@ -21,3 +21,13 @@ export class UpdateJournalSecurityDto {
   @ApiProperty()
   isLocked: boolean;
 }
+
+export class UpdateJournalEntryDto {
+  @IsString()
+  @ApiProperty()
+  title: string;
+
+  @IsString()
+  @ApiProperty()
+  content: string;
+}

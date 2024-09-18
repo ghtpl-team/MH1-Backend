@@ -66,6 +66,10 @@ export class UsersService {
     return {
       id: userData[0].id,
       phone: userData[0].phone,
+      userRecord: {
+        currentWeek: 5, //FIXME: Static 2 Dynamic
+        trimester: 1,
+      },
       isPreferencesLogged: userData[0].userPreferences?.afterLunch
         ? true
         : false,

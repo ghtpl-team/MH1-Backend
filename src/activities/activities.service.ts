@@ -62,6 +62,12 @@ export class ActivitiesService {
           thumbnail: getImageUrl(
             activity.attributes.thumbnail?.data?.attributes?.url,
           ),
+          imageUrl: getImageUrl(
+            activity.attributes.imageUrl?.data?.attributes?.url,
+          ),
+          thumbnailUrl: getImageUrl(
+            activity.attributes.thumbnailUrl?.data?.attributes?.url,
+          ),
           description: activity.attributes.description || '',
           videoUrl: activity.attributes.videoUrl || '',
         })),
