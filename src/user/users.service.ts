@@ -133,12 +133,12 @@ export class UsersService {
       const userData = await this.em
         .createQueryBuilder(User, 'u')
         .select(['u.id', 'u.phone'])
-        .leftJoinAndSelect('u.userPreferences', 'up', {}, [
+        .innerJoinAndSelect('u.userPreferences', 'up', {}, [
           'isActivityLocked',
           'isJournalLocked',
           'afterLunch',
         ])
-        .leftJoinAndSelect(
+        .innerJoinAndSelect(
           'schedules',
           'sc',
           {

@@ -112,6 +112,7 @@ interface DietIntroStory {
             };
             docInfo: DocInfo;
             description: string;
+            footerText: string;
           };
           cards: Array<{
             id: string;
@@ -122,6 +123,7 @@ interface DietIntroStory {
             image: {
               data: ImageData[];
             };
+            footerText: string;
           }>;
         };
       };
