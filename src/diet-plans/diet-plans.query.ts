@@ -72,6 +72,7 @@ export const INTRO_CARDS = gql`
                 firstCard {
                   id
                   title
+                  footerText
                   cardImage {
                     data {
                       attributes {
@@ -108,6 +109,7 @@ export const INTRO_CARDS = gql`
                   rank
                   title
                   bgColor
+                  footerText
                   description
                   image {
                     data {

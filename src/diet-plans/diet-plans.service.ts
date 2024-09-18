@@ -98,6 +98,7 @@ export class DietPlansService {
               ?.name,
         },
         imageUrl: getImageUrl(firstCardRaw.cardImage.data.attributes.url),
+        footerText: firstCardRaw.footerText,
       });
 
       for (const middleCard of middleCardsRaw) {
@@ -109,6 +110,7 @@ export class DietPlansService {
           images: middleCard.image.data.map((img) => {
             return { url: getImageUrl(img.attributes.url) };
           }),
+          footerText: middleCard.footerText,
         });
       }
 
