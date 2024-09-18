@@ -123,6 +123,7 @@ interface FitnessActivity {
   thumbnail: Thumbnail;
   subHeading: string;
   description: Description;
+  duration: number;
   consent_form: {
     data: {
       attributes: ConsentForm;
@@ -177,6 +178,7 @@ export interface ParsedFitnessActivities {
 export interface ParsedFitnessActivity {
   week: number;
   name: string;
+  duration: number;
   videoUrl: string;
   thumbnailUrl: string;
   subHeading: string;

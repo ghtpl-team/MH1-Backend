@@ -111,6 +111,7 @@ export class ActivitiesService {
           videoUrl: attrs.videoUrl ?? '',
           thumbnailUrl: getImageUrl(attrs.thumbnail?.data?.attributes?.url),
           subHeading: attrs.subHeading ?? '',
+          duration: attrs?.duration ?? 10,
           description: {
             benefits: attrs.description?.benefits ?? '',
             precautions: attrs.description?.precautions ?? '',
