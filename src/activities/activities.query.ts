@@ -33,9 +33,13 @@ export const MIND_ACTIVITIES = gql`
 
 export const FITNESS_ACTIVITIES = gql`
   query GetFitnessActivities($weekNumber: Int!) {
-    fitnessActivities(filters: { week: { lte: $weekNumber } }) {
+    fitnessActivities(
+      filters: { week: { lte: $weekNumber } }
+      pagination: { pageSize: 45 }
+    ) {
       data {
         attributes {
+          duration
           week
           name
           videoUrl
