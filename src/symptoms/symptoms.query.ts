@@ -69,6 +69,7 @@ export const GET_LOGGED_SYMPTOMS = gql`
               attributes {
                 content {
                   ...GetSymptomStories
+                  ...GetDocCardBtn
                 }
               }
             }
@@ -90,5 +91,24 @@ export const GET_LOGGED_SYMPTOMS = gql`
     }
     bgColor
     description
+  }
+
+  fragment GetDocCardBtn on ComponentCardsTitleImgBtn {
+    id
+    title
+    image {
+      data {
+        attributes {
+          url
+        }
+      }
+    }
+    buttons: Button {
+      id
+      btnText
+      bgColor
+      textColor
+    }
+    bgColor
   }
 `;

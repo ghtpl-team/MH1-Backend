@@ -85,6 +85,11 @@ export interface LoggedSymptomsRaw {
                 };
                 bgColor?: string;
                 description?: string;
+                buttons: {
+                  btnText: string;
+                  bgColor: string;
+                  textColor: string;
+                }[];
               }>;
             };
           };

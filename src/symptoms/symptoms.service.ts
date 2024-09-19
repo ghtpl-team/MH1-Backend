@@ -1,9 +1,9 @@
 import { EntityManager } from '@mikro-orm/mysql';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { GraphQLClientService } from 'src/utils/graphql/graphql.service';
 import { GetSymptomListingRaw, LoggedSymptomsRaw } from './symptoms.interface';
 import { GET_LOGGED_SYMPTOMS, GET_SYMPTOM_CATEGORIES } from './symptoms.query';
-import { getImageUrl } from 'src/common/utils/helper.utils';
+import { generateId, getImageUrl } from 'src/common/utils/helper.utils';
 
 import { LogSymptomsDto } from './dto/symptoms.dto';
 import { formatDateFromDateTime } from 'src/common/utils/date-time.utils';
@@ -12,6 +12,8 @@ import { LoggedSymptoms } from 'src/entities/logged_symptoms';
 
 @Injectable()
 export class SymptomsService {
+  private readonly logger = new Logger(SymptomsService.name);
+
   constructor(
     private readonly graphqlClient: GraphQLClientService,
     private readonly em: EntityManager,
@@ -37,8 +39,7 @@ export class SymptomsService {
       );
       return this.parseSymptomListing(rawData);
     } catch (error) {
-      console.log(error);
-
+      this.logger.error(error);
       throw error;
     }
   }
@@ -77,13 +78,25 @@ export class SymptomsService {
         },
         description: symptomData.attributes?.description ?? '',
         symptomStories:
-          symptomStories?.content?.map((card) => ({
-            // rank: card.rank ?? 0,
-            title: card.title ?? '',
-            imageUrl: getImageUrl(card.image?.data?.attributes?.url) ?? '',
-            bgColor: card.bgColor ?? '',
-            description: card.description ?? '',
-          })) ?? [],
+          symptomStories?.content?.map((card) => {
+            return {
+              // rank: card.rank ?? 0,
+              id: generateId(),
+              title: card.title ?? '',
+              imageUrl: getImageUrl(card.image?.data?.attributes?.url) ?? '',
+              bgColor: card.bgColor ?? '',
+              description: card.description ?? '',
+              button: card?.buttons
+                ? card.buttons.map((button) => {
+                    return {
+                      btnText: button.btnText ?? '',
+                      bgColor: button.bgColor ?? '',
+                      textColor: button.textColor ?? '',
+                    };
+                  })
+                : undefined,
+            };
+          }) ?? [],
       };
     });
   }
