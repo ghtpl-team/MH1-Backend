@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
-import { DaysOfWeek } from 'src/app.entities';
+import { DaysOfWeek } from 'src/entities/medication-schedule.entity';
 
 export class ReminderCreateReqDto {
   @ApiProperty()

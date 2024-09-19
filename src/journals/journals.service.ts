@@ -5,7 +5,10 @@ import {
   UpdateJournalEntryDto,
   UpdateJournalSecurityDto,
 } from './dto/journals.dto';
-import { JournalNotes, Status, UserPreferences } from 'src/app.entities';
+
+import { Status } from 'src/entities/base.entity';
+import { JournalNotes } from 'src/entities/journal-notes.entity';
+import { UserPreferences } from 'src/entities/user-preferences.entity';
 
 @Injectable()
 export class JournalsService {

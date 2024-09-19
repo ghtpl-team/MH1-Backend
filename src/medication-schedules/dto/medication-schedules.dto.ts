@@ -8,12 +8,12 @@ import {
 } from 'class-validator';
 import {
   MedicationType,
-  IntakeType,
-  Frequency,
   IntakeTime,
   MedicationStrengthUnit,
+  IntakeType,
+  Frequency,
   DaysOfWeek,
-} from 'src/app.entities';
+} from 'src/entities/medication-schedule.entity';
 
 export class CreateMedicationScheduleDto {
   @ApiProperty()

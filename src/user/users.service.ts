@@ -3,15 +3,6 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import {
-  ReminderType,
-  Schedule,
-  ScheduledBy,
-  Status,
-  Subscriptions,
-  SubscriptionStatus,
-  User,
-} from 'src/app.entities';
-import {
   ParsedDocCard,
   ParsedMultiPoll,
   ParsedSinglePoll,
@@ -21,6 +12,18 @@ import {
 import { GraphQLClientService } from 'src/utils/graphql/graphql.service';
 import { DYNAMIC_FORM } from './user.query';
 import { getImageUrl } from 'src/common/utils/helper.utils';
+import { Status } from 'src/entities/base.entity';
+
+import { User } from 'src/entities/user.entity';
+import {
+  ReminderType,
+  Schedule,
+  ScheduledBy,
+} from 'src/entities/schedules.entity';
+import {
+  SubscriptionStatus,
+  Subscriptions,
+} from 'src/entities/subscriptions.entity';
 @Injectable()
 export class UsersService {
   constructor(
@@ -62,7 +65,11 @@ export class UsersService {
     return await this.em.find(User, { status: Status.ACTIVE });
   }
 
-  private parseUserData(userData: User[], subscriptionStatus: string) {
+  private parseUserData(
+    userData: User[],
+    subscriptionStatus: string,
+    isDietFormFilled: boolean,
+  ) {
     return {
       id: userData[0].id,
       phone: userData[0].phone,
@@ -73,6 +80,7 @@ export class UsersService {
       isPreferencesLogged: userData[0].userPreferences?.afterLunch
         ? true
         : false,
+      isDietFormFilled,
       isSubscribed:
         subscriptionStatus === SubscriptionStatus.ACTIVE ? true : false,
       userSettings: userData[0].userPreferences
@@ -96,6 +104,24 @@ export class UsersService {
           })
         : [],
     };
+  }
+
+  private async cachedData(userId: number) {
+    try {
+      let subscriptionStatus = await this.cacheService.get(userId.toString());
+      if (!subscriptionStatus) {
+        subscriptionStatus = await this.userSubscriptionStatus(userId);
+      }
+
+      const isDietFormFilled: boolean = (await this.cacheService.get(
+        `diet-plan-form-${userId}`,
+      ))
+        ? true
+        : false;
+      return [subscriptionStatus, isDietFormFilled];
+    } catch (error) {
+      throw error;
+    }
   }
 
   private async userSubscriptionStatus(userId: number) {
@@ -159,11 +185,14 @@ export class UsersService {
         .execute();
 
       if (userData && userData.length) {
-        let subscriptionStatus = await this.cacheService.get(id.toString());
-        if (!subscriptionStatus) {
-          subscriptionStatus = await this.userSubscriptionStatus(id);
-        }
-        return this.parseUserData(userData, subscriptionStatus as string);
+        const [subscriptionStatus, isDietFormFilled] =
+          await this.cachedData(id);
+
+        return this.parseUserData(
+          userData,
+          subscriptionStatus as string,
+          isDietFormFilled as boolean,
+        );
       }
       throw new HttpException(
         'No user exists for given id',

@@ -1,15 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager, EntityRepository, Loaded } from '@mikro-orm/mysql';
-import {
-  MedicationSchedule,
-  ReminderType,
-  Schedule,
-  ScheduledBy,
-  ScheduledTask,
-  ScheduledTaskStatus,
-  Status,
-} from 'src/app.entities';
+
 import {
   CreateMedicationScheduleDto,
   DeleteMedicationScheduleDto,
@@ -20,6 +12,17 @@ import {
   MedicationScheduleResponseObj,
   TimeSlot,
 } from './medication-schedules.interface';
+import { Status } from 'src/entities/base.entity';
+import { MedicationSchedule } from 'src/entities/medication-schedule.entity';
+import {
+  ScheduledTask,
+  ScheduledTaskStatus,
+} from 'src/entities/scheduled-tasks.entity';
+import {
+  Schedule,
+  ScheduledBy,
+  ReminderType,
+} from 'src/entities/schedules.entity';
 
 @Injectable()
 export class MedicationSchedulesService {

@@ -5,13 +5,16 @@ import {
   SubscriptionPlanDto,
 } from './dto/subscriptions.dto';
 import { EntityManager, QueryOrder } from '@mikro-orm/mysql';
+
+import { CurrencyCode } from 'src/common/enums/razorpay.enums';
 import {
-  SubscriptionPlanPeriod,
-  SubscriptionPlans,
   Subscriptions,
   SubscriptionStatus,
-} from 'src/app.entities';
-import { CurrencyCode } from 'src/common/enums/razorpay.enums';
+} from 'src/entities/subscriptions.entity';
+import {
+  SubscriptionPlans,
+  SubscriptionPlanPeriod,
+} from 'src/entities/subscripton-plan.entity';
 
 @Injectable()
 export class SubscriptionsService {

@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { GraphQLClientService } from 'src/utils/graphql/graphql.service';
 import { INTRO_CARDS, LEARN_MORE } from './diet-plans.query';
 import { generateId, getImageUrl } from 'src/common/utils/helper.utils';
@@ -13,10 +19,20 @@ import {
   ParsedIntroStory,
   ParsedDietIntroStories,
 } from './diet-plans.interface';
+import { DietPlanInfoFormDto } from './dto/diet-plan.dto';
+import { EntityManager } from '@mikro-orm/mysql';
+import { MedicalRecord } from 'src/entities/medical-records.entity';
+import { UserProfile } from 'src/entities/user-profile.entity';
+import { UserPreferences } from 'src/entities/user-preferences.entity';
+import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Injectable()
 export class DietPlansService {
-  constructor(private readonly graphqlClient: GraphQLClientService) {}
+  constructor(
+    private readonly graphqlClient: GraphQLClientService,
+    private readonly em: EntityManager,
+    @Inject(CACHE_MANAGER) private readonly cacheService: Cache,
+  ) {}
 
   private readonly logger = new Logger(DietPlansService.name);
 
@@ -154,6 +170,52 @@ export class DietPlansService {
         'unable to fetch diet intro stories',
         error.stack || error,
       );
+      throw error;
+    }
+  }
+
+  async submitForm(userId: number, formData: DietPlanInfoFormDto) {
+    try {
+      const fork = this.em.fork();
+      await fork.transactional(async (em) => {
+        const medicalRecord = em.create(MedicalRecord, {
+          user: userId,
+          ...formData,
+        });
+
+        const userProfile = em.create(UserProfile, {
+          user: userId,
+          ...formData,
+        });
+
+        const userPreferences = await em.nativeUpdate(
+          UserPreferences,
+          { user: userId },
+          {
+            ...(formData?.dietPreferences && {
+              dietPreference: formData.dietPreferences,
+            }),
+            ...(formData?.allergies && { allergies: formData.allergies }),
+            ...(formData?.avoidedFoods && {
+              avoidedFoods: formData.avoidedFoods,
+            }),
+          },
+        );
+
+        this.logger.debug(
+          `User Preferences updated for user ${userId}: ${JSON.stringify(userPreferences)}`,
+        );
+
+        await em.persistAndFlush([medicalRecord, userProfile]);
+      });
+
+      await this.cacheService.set(`diet-plan-form-${userId}`, true, 0);
+
+      return {
+        success: true,
+        message: 'Form submitted successfully',
+      };
+    } catch (error) {
       throw error;
     }
   }

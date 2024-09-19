@@ -1,8 +1,9 @@
 import { EntityManager } from '@mikro-orm/mysql';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UserPreferencesDto } from './dto/user-preferences.dto';
-import { UserPreferences } from 'src/app.entities';
+
 import { adjustTime } from 'src/common/utils/date-time.utils';
+import { UserPreferences } from 'src/entities/user-preferences.entity';
 
 @Injectable()
 export class UserPreferencesService {

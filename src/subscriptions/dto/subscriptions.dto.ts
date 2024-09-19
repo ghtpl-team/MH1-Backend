@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsInt, IsNumber, IsString } from 'class-validator';
-import { SubscriptionPlanPeriod } from 'src/app.entities';
+
 import { CurrencyCode } from 'src/common/enums/razorpay.enums';
+import { SubscriptionPlanPeriod } from 'src/entities/subscripton-plan.entity';
 
 export class SubscriptionPlanDto {
   @ApiProperty()

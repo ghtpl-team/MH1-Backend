@@ -4,9 +4,11 @@ import {
   CreateKickSessionDto,
   UpdateKickSessionDto,
 } from './dto/kick-counter.dto';
-import { KickCounter, Status } from 'src/app.entities';
+
 import { KickHistoryResponseObj } from './kick-counter.interface';
 import { formatDurationInMinutes } from 'src/common/utils/date-time.utils';
+import { Status } from 'src/entities/base.entity';
+import { KickCounter } from 'src/entities/kick-counter.entity';
 
 @Injectable()
 export class KickCounterService {
