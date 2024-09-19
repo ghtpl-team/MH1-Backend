@@ -4,7 +4,6 @@ import { EntityManager, EntityRepository, Loaded } from '@mikro-orm/mysql';
 
 import {
   CreateMedicationScheduleDto,
-  DeleteMedicationScheduleDto,
   UpdateMedicationScheduleDto,
 } from './dto/medication-schedules.dto';
 import { capitalizeFirstLetterOfWords } from 'src/common/utils/string.utils';
@@ -189,18 +188,12 @@ export class MedicationSchedulesService {
 
   // async parseMedicalSchedule(medicalScheduleData: )
 
-  async delete(
-    id: number,
-    deleteMedicationScheduleDto: DeleteMedicationScheduleDto,
-  ) {
+  async delete(id: number) {
     try {
       return await this.em
         .createQueryBuilder(MedicationSchedule)
         .update({
-          ...deleteMedicationScheduleDto,
-          status: deleteMedicationScheduleDto.intakeTimes.length
-            ? Status.ACTIVE
-            : Status.DELETED,
+          status: Status.DELETED,
         })
         .where({
           id,
