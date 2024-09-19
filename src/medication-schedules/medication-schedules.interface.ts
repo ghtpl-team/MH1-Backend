@@ -1,4 +1,7 @@
-import { IntakeTime, MedicationStrengthUnit } from 'src/app.entities';
+import {
+  MedicationStrengthUnit,
+  IntakeTime,
+} from 'src/entities/medication-schedule.entity';
 
 export interface MedicationScheduleResponseObj {
   [key: string]: {

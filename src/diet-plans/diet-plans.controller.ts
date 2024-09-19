@@ -1,11 +1,14 @@
 import {
+  Body,
   Controller,
   Get,
   HttpException,
   HttpStatus,
+  Post,
   Query,
 } from '@nestjs/common';
 import { DietPlansService } from './diet-plans.service';
+import { DietPlanInfoFormDto } from './dto/diet-plan.dto';
 
 @Controller('diet-plans')
 export class DietPlansController {
@@ -24,5 +27,19 @@ export class DietPlansController {
         HttpStatus.BAD_REQUEST,
       );
     return this.dietPlanService.introStories(parseInt(trimester));
+  }
+
+  @Post('form/submit')
+  async submitForm(
+    @Query('userId') userId: string,
+    @Body() formDataDto: DietPlanInfoFormDto,
+  ) {
+    if (!userId)
+      throw new HttpException(
+        'Required params missing',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    return this.dietPlanService.submitForm(parseInt(userId), formDataDto);
   }
 }

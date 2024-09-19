@@ -4,9 +4,11 @@ import { GraphQLClientService } from 'src/utils/graphql/graphql.service';
 import { GetSymptomListingRaw, LoggedSymptomsRaw } from './symptoms.interface';
 import { GET_LOGGED_SYMPTOMS, GET_SYMPTOM_CATEGORIES } from './symptoms.query';
 import { getImageUrl } from 'src/common/utils/helper.utils';
-import { LoggedSymptoms, Status } from 'src/app.entities';
+
 import { LogSymptomsDto } from './dto/symptoms.dto';
 import { formatDateFromDateTime } from 'src/common/utils/date-time.utils';
+import { Status } from 'src/entities/base.entity';
+import { LoggedSymptoms } from 'src/entities/logged_symptoms';
 
 @Injectable()
 export class SymptomsService {

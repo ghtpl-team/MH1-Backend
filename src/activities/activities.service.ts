@@ -26,15 +26,16 @@ import {
 import { getImageUrl } from 'src/common/utils/helper.utils';
 import { pregnancyCoachOverview } from 'src/common/content/activity.content';
 import { EntityManager } from '@mikro-orm/mysql';
+
+import { FeedbackFromDto } from './dto/activities.dto';
+import { Status } from 'src/entities/base.entity';
+import { ActivityFeedBack } from 'src/entities/activity-feedback.entity';
 import {
-  ActivityFeedBack,
-  ReminderType,
   ScheduledTask,
   ScheduledTaskStatus,
-  Status,
-  UserPreferences,
-} from 'src/app.entities';
-import { FeedbackFromDto } from './dto/activities.dto';
+} from 'src/entities/scheduled-tasks.entity';
+import { ReminderType } from 'src/entities/schedules.entity';
+import { UserPreferences } from 'src/entities/user-preferences.entity';
 
 @Injectable()
 export class ActivitiesService {

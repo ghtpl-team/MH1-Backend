@@ -4,9 +4,9 @@ import { RazorpayService } from 'src/utils/razorpay/razorpay.service';
 import { SubscriptionWebhookPayload } from './webhooks.interface';
 import { WebhookCreateDto } from './dto/webhooks.dto';
 import { SubscriptionsService } from 'src/subscriptions/subscriptions.service';
-import { Subscriptions } from 'src/app.entities';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Subscriptions } from 'src/entities/subscriptions.entity';
 
 @Injectable()
 export class WebhooksService {

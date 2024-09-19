@@ -1,16 +1,19 @@
 import { EntityManager, QueryOrder } from '@mikro-orm/mysql';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ReminderCreateReqDto } from './dto/schedules.dto';
+
+import { Cron } from '@nestjs/schedule';
+import { Status } from 'src/entities/base.entity';
+import { Frequency } from 'src/entities/medication-schedule.entity';
 import {
-  Frequency,
-  ReminderType,
-  Schedule,
-  ScheduledBy,
   ScheduledTask,
   ScheduledTaskStatus,
-  Status,
-} from 'src/app.entities';
-import { Cron } from '@nestjs/schedule';
+} from 'src/entities/scheduled-tasks.entity';
+import {
+  Schedule,
+  ScheduledBy,
+  ReminderType,
+} from 'src/entities/schedules.entity';
 
 @Injectable()
 export class SchedulesService {
