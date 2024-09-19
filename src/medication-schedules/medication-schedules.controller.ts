@@ -11,7 +11,6 @@ import {
 import { MedicationSchedulesService } from './medication-schedules.service';
 import {
   CreateMedicationScheduleDto,
-  DeleteMedicationScheduleDto,
   UpdateMedicationScheduleDto,
 } from './dto/medication-schedules.dto';
 @Controller('users/:userId/medication-schedule')
@@ -43,15 +42,9 @@ export class MedicationSchedulesController {
   }
 
   @Delete(':id')
-  async deleteMedicationEntry(
-    @Body() deleteMedicationScheduleDto: DeleteMedicationScheduleDto,
-    @Param('id') id: string,
-  ) {
+  async deleteMedicationEntry(@Param('id') id: string) {
     const medicationScheduleId = parseInt(id);
-    return this.medicationScheduleService.delete(
-      medicationScheduleId,
-      deleteMedicationScheduleDto,
-    );
+    return this.medicationScheduleService.delete(medicationScheduleId);
   }
 
   @Patch(':id')
