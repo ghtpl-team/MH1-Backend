@@ -23,10 +23,6 @@ export function pregnancyCoachOverview() {
         color: '#CBC8F4',
         label: 'Fitness',
       },
-      {
-        color: '#6750A4',
-        label: 'Common',
-      },
     ],
     waterActivityCard: {
       label: {
