@@ -25,6 +25,7 @@ export function pregnancyCoachOverview() {
       },
     ],
     waterActivityCard: {
+      type: 'water',
       label: {
         text: 'Earn 1 water point',
         bgColor: '#B7CCF0',
@@ -33,6 +34,7 @@ export function pregnancyCoachOverview() {
       image: getImageUrl('/uploads/water_point_930261ad44.png'),
     },
     nutritionCard: {
+      type: 'nutrition',
       label: {
         text: 'Earn 1 nutrition point',
         bgColor: '#B7CCF0',
@@ -41,6 +43,7 @@ export function pregnancyCoachOverview() {
       image: getImageUrl('/uploads/nutrition_point_30e0c4b11a.png'),
     },
     mindCard: {
+      type: 'mind',
       label: {
         text: 'Earn 1 mind point',
         bgColor: '#B7CCF0',
@@ -49,6 +52,7 @@ export function pregnancyCoachOverview() {
       image: getImageUrl('/uploads/mind_point_da25677bed.png'),
     },
     fitnessCard: {
+      type: 'fitness',
       label: {
         text: 'Earn 1 fitness point',
         bgColor: '#CBC8F4',

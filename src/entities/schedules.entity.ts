@@ -53,7 +53,7 @@ export enum ReminderType {
   MEDICATION_SCHEDULE = 'medication',
   JOURNAL_SCHEDULE = 'journal',
   WATER_REMINDER = 'water',
-  DIET_REMINDER = 'diet',
+  DIET_REMINDER = 'nutrition',
   SOUL_REMINDER = 'soul',
   MIND_REMINDER = 'mind',
   FITNESS_REMINDER = 'fitness',
