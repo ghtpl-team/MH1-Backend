@@ -132,6 +132,13 @@ export const INTRO_CARDS = gql`
                 }
               }
             }
+            image {
+              data {
+                attributes {
+                  url
+                }
+              }
+            }
             footerText
             description
           }
