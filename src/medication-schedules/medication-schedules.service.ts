@@ -107,6 +107,7 @@ export class MedicationSchedulesService {
               strengthUnit: medication.strengthUnit,
               intakeTime: medication.intakeTime,
               intakeTimes: medication.intakeTimes,
+              ...medication,
               isTaken:
                 medication.schedule[index]?.scheduledTasks[0]?.taskStatus ===
                 ScheduledTaskStatus.DONE,
@@ -141,6 +142,7 @@ export class MedicationSchedulesService {
             'ms.frequency',
             'ms.strength',
             'ms.strengthUnit',
+            'ms.startDate',
             'ms.endDate',
             'ms.intakeTime',
             'ms.intakeTimes',
