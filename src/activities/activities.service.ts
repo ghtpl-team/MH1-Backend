@@ -251,6 +251,7 @@ export class ActivitiesService {
         text: soulActivityCard[0]?.label?.text,
         bgColor: soulActivityCard[0]?.label?.backgroundColor,
       },
+      type: ReminderType.SOUL_REMINDER,
       heading: soulActivityCard[0]?.title,
       image: getImageUrl(soulActivityCard[0]?.image?.data?.attributes?.url),
     };
