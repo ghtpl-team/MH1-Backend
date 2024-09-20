@@ -40,12 +40,12 @@ export class ArticlesService {
     }
   }
 
-  async getFilteredArticles(trimester: number) {
+  async getFilteredArticles(trimesterList: number[]) {
     try {
       const filteredArticlesRaw = await this.graphqlClient.query(
         FILTERED_ARTICLES,
         {
-          trimester: trimester,
+          trimester: trimesterList,
         },
       );
 

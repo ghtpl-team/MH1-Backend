@@ -1,8 +1,8 @@
 import { gql } from 'apollo-server-express';
 
 export const FILTERED_ARTICLES = gql`
-  query GetArticles($trimester: Int!) {
-    articleListings(filters: { trimester: { eq: $trimester } }) {
+  query GetArticles($trimester: [Int!]) {
+    articleListings(filters: { trimester: { in: $trimester } }) {
       data {
         attributes {
           trimester

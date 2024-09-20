@@ -6,7 +6,10 @@ export class ArticlesController {
   constructor(private readonly articleService: ArticlesService) {}
 
   @Get()
-  async getFilteredArticles(@Query('trimester') trimester: string) {
-    return await this.articleService.getFilteredArticles(parseInt(trimester));
+  async getFilteredArticles(@Query('trimester') trimester: string[]) {
+    let trimesterList = [1, 2, 3];
+    if (trimester && trimester.length >= 0)
+      trimesterList = trimester.map((trimester) => parseInt(trimester));
+    return await this.articleService.getFilteredArticles(trimesterList);
   }
 }
