@@ -83,8 +83,6 @@ export class DietPlansService {
 
   private parseIntroStories(rawData: DietIntroRaw): ParsedDietIntroStories {
     try {
-      console.log(rawData);
-
       const data = rawData.dietIntros.data;
       if (!data || !data.length)
         throw new HttpException('No Data Available', HttpStatus.NOT_FOUND);
@@ -136,6 +134,7 @@ export class DietPlansService {
         title: calorieCardRaw.title,
         bgImageUrl: getImageUrl(calorieCardRaw.bgImage.data.attributes.url),
         footerText: calorieCardRaw.footerText,
+        imageUrl: getImageUrl(calorieCardRaw.image?.data?.attributes?.url),
       });
 
       cards.push({

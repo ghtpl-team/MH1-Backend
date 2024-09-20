@@ -134,6 +134,9 @@ interface DietIntroStory {
       bgImage: {
         data: ImageData;
       };
+      image: {
+        data: ImageData;
+      };
       footerText: string;
       description: string;
     };
