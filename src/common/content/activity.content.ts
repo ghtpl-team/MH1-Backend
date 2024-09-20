@@ -37,7 +37,7 @@ export function pregnancyCoachOverview() {
       type: 'nutrition',
       label: {
         text: 'Earn 1 nutrition point',
-        bgColor: '#B7CCF0',
+        bgColor: '#9CC688',
       },
       heading: 'Follow the diet plan for today',
       image: getImageUrl('/uploads/nutrition_point_30e0c4b11a.png'),
@@ -46,7 +46,7 @@ export function pregnancyCoachOverview() {
       type: 'mind',
       label: {
         text: 'Earn 1 mind point',
-        bgColor: '#B7CCF0',
+        bgColor: '#F6BDDE',
       },
       heading: 'Begin your mind activities for today',
       image: getImageUrl('/uploads/mind_point_da25677bed.png'),
