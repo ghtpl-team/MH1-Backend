@@ -3,7 +3,7 @@ import { WebhooksController } from './webhooks.controller';
 import { WebhooksService } from './webhooks.service';
 import { RazorpayService } from 'src/utils/razorpay/razorpay.service';
 import { ConfigService } from '@nestjs/config';
-import { SubscriptionsService } from 'src/subscriptions/subscriptions.service';
+import { SubscriptionsService } from 'src/modules/subscriptions/subscriptions.service';
 
 @Module({
   controllers: [WebhooksController],

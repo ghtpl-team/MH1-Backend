@@ -10,7 +10,7 @@ import {
   ParsedIntroCard,
 } from './unsubscribed-home.interface';
 import { generateId, getImageUrl } from 'src/common/utils/helper.utils';
-import { ParsedUnsubscribedHome } from 'src/weekly-insights/weekly-insights.interface';
+import { ParsedUnsubscribedHome } from 'src/modules/weekly-insights/weekly-insights.interface';
 
 @Injectable()
 export class UnsubscribedHomeService {
