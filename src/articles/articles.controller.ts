@@ -3,18 +3,36 @@ import {
   Get,
   HttpException,
   HttpStatus,
+  ParseArrayPipe,
   Patch,
   Post,
   Query,
 } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
+import { ApiQuery } from '@nestjs/swagger';
 
 @Controller('articles')
 export class ArticlesController {
   constructor(private readonly articleService: ArticlesService) {}
 
   @Get()
-  async getFilteredArticles(@Query('trimester') trimester: string[]) {
+  @ApiQuery({
+    required: false,
+    name: 'trimester',
+    examples: {
+      onlyFirstTrimester: { value: ['1'] },
+      multipleTrimesters: { value: ['1', '3'] },
+      all: { value: [] },
+      all_v2: { value: ['1', '2', '3'] },
+    },
+  })
+  async getFilteredArticles(
+    @Query(
+      'trimester',
+      new ParseArrayPipe({ items: String, separator: ',', optional: true }),
+    )
+    trimester: string[],
+  ) {
     let trimesterList = [1, 2, 3];
     if (trimester && trimester.length >= 0)
       trimesterList = trimester.map((trimester) => parseInt(trimester));
