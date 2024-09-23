@@ -42,6 +42,7 @@
     "apollo-server-express": "^3.13.0",
     "cache-manager": "^5.7.6",
     "class-validator": "^0.14.1",
+    "dayjs": "^1.11.13",
     "dotenv": "^16.4.5",
     "graphql": "^16.9.0",
     "razorpay": "^2.9.4",

@@ -1,7 +1,6 @@
 import { EntityManager, QueryOrder } from '@mikro-orm/mysql';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ReminderCreateReqDto } from './dto/schedules.dto';
-
 import { Cron } from '@nestjs/schedule';
 import { Status } from 'src/entities/base.entity';
 import { Frequency } from 'src/entities/medication-schedule.entity';
@@ -14,10 +13,14 @@ import {
   ScheduledBy,
   ReminderType,
 } from 'src/entities/schedules.entity';
+import { DayjsService } from 'src/utils/dayjs/dayjs.service';
 
 @Injectable()
 export class SchedulesService {
-  constructor(private readonly em: EntityManager) {}
+  constructor(
+    private readonly em: EntityManager,
+    private readonly dayJsService: DayjsService,
+  ) {}
 
   async upsert(
     reminderCreateDto: ReminderCreateReqDto,
@@ -66,7 +69,27 @@ export class SchedulesService {
     }
   }
 
-  @Cron('16 10 */1 * *', { timeZone: 'Asia/Kolkata' })
+  private needToSchedule(schedule: Schedule): boolean {
+    try {
+      const currentDay = this.dayJsService.getCurrentDay().toLowerCase();
+
+      const selectedDays = schedule.selectedDays.map((day) =>
+        day.toLowerCase(),
+      );
+
+      if (
+        selectedDays &&
+        selectedDays.length &&
+        !selectedDays.includes(currentDay)
+      )
+        return false;
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Cron('0 0 */1 * *', { timeZone: 'Asia/Kolkata' })
   async scheduleDailyTasks() {
     let hasNextPage = true;
     let endCursor = null;
@@ -89,13 +112,15 @@ export class SchedulesService {
       );
       const tasks = [];
       for (const schedule of schedules.items) {
-        const task = fork.create(ScheduledTask, {
-          schedule: schedule,
-          taskStatus: ScheduledTaskStatus.PENDING,
-          type: schedule.type,
-          user: schedule.user,
-        });
-        tasks.push(task);
+        if (this.needToSchedule(schedule)) {
+          const task = fork.create(ScheduledTask, {
+            schedule: schedule,
+            taskStatus: ScheduledTaskStatus.PENDING,
+            type: schedule.type,
+            user: schedule.user,
+          });
+          tasks.push(task);
+        }
       }
       await fork.persistAndFlush([...tasks]);
       hasNextPage = schedules.hasNextPage;
