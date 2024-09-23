@@ -186,18 +186,21 @@ export class DietPlansService {
         const userProfile = em.create(UserProfile, {
           user: userId,
           ...formData,
+          activityLevel: formData.physicalActivity,
         });
 
         const userPreferences = await em.nativeUpdate(
           UserPreferences,
           { user: userId },
           {
-            ...(formData?.dietPreferences && {
-              dietPreference: formData.dietPreferences,
+            ...(formData?.dietPreference && {
+              dietPreference: formData.dietPreference,
             }),
-            ...(formData?.allergies && { allergies: formData.allergies }),
-            ...(formData?.avoidedFoods && {
-              avoidedFoods: formData.avoidedFoods,
+            ...(formData?.foodAllergies && {
+              allergies: formData.foodAllergies,
+            }),
+            ...(formData?.avoidedIngredients && {
+              avoidedFoods: formData.avoidedIngredients,
             }),
           },
         );

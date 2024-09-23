@@ -39,7 +39,7 @@ export class DietPlanInfoFormDto {
   @ApiProperty()
   @IsEnum(ActivityLevel)
   @IsOptional()
-  activityLevel: ActivityLevel;
+  physicalActivity: ActivityLevel;
 
   @ApiProperty()
   @IsEnum(MedicalCondition)
@@ -74,15 +74,15 @@ export class DietPlanInfoFormDto {
   @ApiProperty({ isArray: true })
   @IsArray()
   @IsOptional()
-  allergies?: string[];
+  foodAllergies?: string[];
 
   @ApiProperty({ isArray: true })
   @IsArray()
   @IsOptional()
-  avoidedFoods?: string[];
+  avoidedIngredients?: string[];
 
   @ApiProperty({ enum: DietPreferences })
   @IsEnum(DietPreferences)
   @IsOptional()
-  dietPreferences: DietPreferences;
+  dietPreference: DietPreferences;
 }

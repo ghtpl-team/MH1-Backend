@@ -1,3 +1,5 @@
+/* The SubscriptionsService class in TypeScript handles creating new subscription plans, subscribing
+users to plans, retrieving subscription details, and canceling subscriptions. */
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { RazorpayService } from 'src/utils/razorpay/razorpay.service';
 import {
