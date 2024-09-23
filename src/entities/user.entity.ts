@@ -17,6 +17,7 @@ import { Subscriptions } from './subscriptions.entity';
 import { UserPreferences } from './user-preferences.entity';
 import { UserProfile } from './user-profile.entity';
 import { MedicalRecord } from './medical-records.entity';
+import { BookmarkedArticle } from './bookmarked-articles.entity';
 
 @Entity({ tableName: 'mh_users' })
 export class User extends BaseClass {
@@ -63,4 +64,10 @@ export class User extends BaseClass {
     nullable: true,
   })
   medicalRecord?: MedicalRecord;
+
+  @OneToMany(
+    () => BookmarkedArticle,
+    (bookmarkedArticle) => bookmarkedArticle.user,
+  )
+  bookmarkedArticles = new Collection<BookmarkedArticle>(this);
 }
