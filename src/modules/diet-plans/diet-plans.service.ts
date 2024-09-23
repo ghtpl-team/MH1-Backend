@@ -6,7 +6,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { GraphQLClientService } from 'src/utils/graphql/graphql.service';
-import { INTRO_CARDS, LEARN_MORE } from './diet-plans.query';
+import { DIET_PLAN, INTRO_CARDS, LEARN_MORE } from './diet-plans.query';
 import { generateId, getImageUrl } from 'src/common/utils/helper.utils';
 import {
   GetLearnMoreRaw,
@@ -18,6 +18,7 @@ import {
   DietIntroRaw,
   ParsedIntroStory,
   ParsedDietIntroStories,
+  DietChartsRawResponse,
 } from './diet-plans.interface';
 import { DietPlanInfoFormDto } from './dto/diet-plan.dto';
 import { EntityManager } from '@mikro-orm/mysql';
@@ -215,6 +216,62 @@ export class DietPlansService {
         message: 'Form submitted successfully',
       };
     } catch (error) {
+      throw error;
+    }
+  }
+
+  private parseDietPlan(rawData: DietChartsRawResponse) {
+    try {
+      const data = rawData.dietCharts.data[0].attributes;
+      const dietPlanRaw = data.dietPlan;
+      const weekNumber = data.week;
+
+      const dietPlan = dietPlanRaw.map((meal) => {
+        return {
+          id: meal.id,
+          mealTiming: meal.mealTiming,
+          mealPlan: meal.recipes.data.map((recipe) => {
+            return {
+              id: recipe.id,
+              name: recipe.attributes.name,
+              imageUrl: getImageUrl(
+                recipe.attributes.image.data.attributes.url,
+              ),
+              label: recipe.attributes.label.map((label) => {
+                return {
+                  name: label?.text ?? '',
+                  bgColor: label.backgroundColor,
+                };
+              }),
+            };
+          }),
+        };
+      });
+
+      return {
+        weekNumber,
+        dietPlan,
+      };
+    } catch (error) {
+      this.logger.error('unable to parse diet plan', error.stack || error);
+      throw error;
+    }
+  }
+
+  async fetchDietPlan(userId: number, weekNumber: number) {
+    try {
+      const dietPlanRaw: DietChartsRawResponse = await this.graphqlClient.query(
+        DIET_PLAN,
+        {
+          weekNumber: weekNumber,
+        },
+      );
+
+      const parsedDietPlan = this.parseDietPlan(dietPlanRaw);
+
+      return parsedDietPlan;
+    } catch (error) {
+      this.logger.error('unable to fetch diet plan', error.stack || error);
       throw error;
     }
   }
