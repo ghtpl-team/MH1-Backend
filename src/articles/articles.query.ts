@@ -38,3 +38,42 @@ export const FILTERED_ARTICLES = gql`
     }
   }
 `;
+
+export const BOOKMARKED_ARTICLES = gql`
+  query GetBookmarkedArticles($articleIds: [ID!]) {
+    articleListings(filters: { id: { in: $articleIds } }) {
+      data {
+        attributes {
+          trimester
+          article_cards {
+            data {
+              attributes {
+                title
+                coverImg {
+                  data {
+                    attributes {
+                      url
+                    }
+                  }
+                }
+                storyCards {
+                  id
+                  title
+                  image {
+                    data {
+                      attributes {
+                        url
+                      }
+                    }
+                  }
+                  bgColor
+                  description
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
