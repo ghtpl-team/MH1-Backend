@@ -181,6 +181,9 @@ export class DietPlansService {
         const medicalRecord = em.create(MedicalRecord, {
           user: userId,
           ...formData,
+          afterFastBloodSugar: formData.afterFastBloodSugarLevel,
+          afterMealBloodSugar1: formData.afterMealBloodSugarLevel,
+          afterMealBloodSugar2: formData.afterMealBloodSugarLevel2,
         });
 
         const userProfile = em.create(UserProfile, {
