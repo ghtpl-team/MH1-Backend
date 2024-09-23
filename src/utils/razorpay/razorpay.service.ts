@@ -5,7 +5,7 @@ import { SubscriptionWebhookPayload } from 'src/webhooks/webhooks.interface';
 import {
   CreateSubscriptionDto,
   SubscriptionPlanDto,
-} from 'src/subscriptions/dto/subscriptions.dto';
+} from 'src/modules/subscriptions/dto/subscriptions.dto';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { validateWebhookSignature } = require('razorpay');
