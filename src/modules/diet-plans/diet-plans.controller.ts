@@ -9,10 +9,36 @@ import {
 } from '@nestjs/common';
 import { DietPlansService } from './diet-plans.service';
 import { DietPlanInfoFormDto } from './dto/diet-plan.dto';
+import { ApiQuery } from '@nestjs/swagger';
 
 @Controller('diet-plans')
 export class DietPlansController {
   constructor(private readonly dietPlanService: DietPlansService) {}
+
+  @ApiQuery({ name: 'userId', required: true, type: 'string', example: '1' })
+  @ApiQuery({
+    name: 'weekNumber',
+    required: true,
+    type: 'string',
+    example: '1',
+  })
+  @Get()
+  async fetchDietPlan(
+    @Query('userId') userId: string,
+    @Query('weekNumber') weekNumber: string,
+  ) {
+    if (!userId || !weekNumber) {
+      throw new HttpException(
+        'Required params missing',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return this.dietPlanService.fetchDietPlan(
+      parseInt(userId),
+      parseInt(weekNumber),
+    );
+  }
 
   @Get('learn-more')
   async fetchLearnMore() {

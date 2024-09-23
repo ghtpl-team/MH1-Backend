@@ -168,3 +168,57 @@ export interface ParsedIntroStory {
   bgImageUrl?: string;
   footerText?: string;
 }
+
+export interface DietChartsRawResponse {
+  dietCharts: {
+    data: DietChartRaw[];
+  };
+}
+
+export interface DietChartRaw {
+  attributes: {
+    week: number;
+    dietPlan: Array<{
+      id: string;
+      recipes: {
+        data: RecipesRaw[];
+      };
+      mealTiming: string;
+    }>;
+  };
+}
+
+export interface RecipesRaw {
+  id: string;
+  attributes: {
+    name: string;
+    image: {
+      data: ImageData;
+    };
+    label: Array<{
+      text: string;
+      backgroundColor: string;
+    }>;
+  };
+}
+
+export interface DietChartParsed {
+  week: number;
+  dietPlan: DietPlan[];
+}
+
+export interface DietPlan {
+  id: string;
+  recipes: Recipe[];
+  mealTiming: string;
+}
+
+export interface Recipe {
+  id: string;
+  name: string;
+  imageUrl: string;
+  label: Array<{
+    name: string;
+    bgColor: string;
+  }>;
+}

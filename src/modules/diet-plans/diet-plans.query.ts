@@ -160,3 +160,42 @@ export const INTRO_CARDS = gql`
     }
   }
 `;
+
+export const DIET_PLAN = gql`
+  query GetDietPlan($weekNumber: Int!) {
+    dietCharts(filters: { week: { eq: $weekNumber } }) {
+      data {
+        attributes {
+          week
+          dietPlan {
+            ...GetDietPlan
+          }
+        }
+      }
+    }
+  }
+
+  fragment GetDietPlan on ComponentStructuresMealPlan {
+    id
+    recipes {
+      data {
+        id
+        attributes {
+          name
+          image {
+            data {
+              attributes {
+                url
+              }
+            }
+          }
+          label {
+            text
+            backgroundColor
+          }
+        }
+      }
+    }
+    mealTiming
+  }
+`;
