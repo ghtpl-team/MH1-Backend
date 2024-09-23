@@ -26,6 +26,7 @@ import { ExceptionsLoggerFilter } from './utils/exceptions-logger/exceptions-log
 import { ArticlesModule } from './articles/articles.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AppHealthModule } from './app-health/app-health.module';
+import { DayjsModule } from './utils/dayjs/dayjs.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { AppHealthModule } from './app-health/app-health.module';
     SubscriptionModule,
     ArticlesModule,
     AppHealthModule,
+    DayjsModule,
   ],
   controllers: [AppController],
   providers: [
