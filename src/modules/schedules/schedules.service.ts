@@ -1,5 +1,5 @@
 import { EntityManager, QueryOrder } from '@mikro-orm/mysql';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { ReminderCreateReqDto } from './dto/schedules.dto';
 import { Cron } from '@nestjs/schedule';
 import { Status } from 'src/entities/base.entity';
@@ -14,9 +14,11 @@ import {
   ReminderType,
 } from 'src/entities/schedules.entity';
 import { DayjsService } from 'src/utils/dayjs/dayjs.service';
+import { CronJobStatus, CronStatus } from 'src/entities/cron-status.entity';
 
 @Injectable()
 export class SchedulesService {
+  private readonly logger = new Logger(SchedulesService.name);
   constructor(
     private readonly em: EntityManager,
     private readonly dayJsService: DayjsService,
@@ -41,6 +43,10 @@ export class SchedulesService {
       );
       return `${schedule} schedule updated successfully`;
     } catch (error) {
+      this.logger.error(
+        'Error while updating schedule. Please try again later.',
+        error.stack || error,
+      );
       throw error;
     }
   }
@@ -65,6 +71,10 @@ export class SchedulesService {
 
       return `Schedule with id ${schedule.id} is created.`;
     } catch (error) {
+      this.logger.error(
+        'Error while creating schedule. Please try again later.',
+        error.stack || error,
+      );
       throw error;
     }
   }
@@ -73,11 +83,13 @@ export class SchedulesService {
     try {
       const currentDay = this.dayJsService.getCurrentDay().toLowerCase();
 
-      const selectedDays = schedule.selectedDays.map((day) =>
+      const selectedDays = schedule?.selectedDays?.map((day) =>
         day.toLowerCase(),
       );
 
       if (
+        schedule?.selectedDays &&
+        schedule?.selectedDays.length &&
         selectedDays &&
         selectedDays.length &&
         !selectedDays.includes(currentDay)
@@ -85,6 +97,10 @@ export class SchedulesService {
         return false;
       return true;
     } catch (error) {
+      this.logger.error(
+        'Error while checking if need to schedule. Please try again later.',
+        error.stack || error,
+      );
       throw error;
     }
   }
@@ -111,18 +127,58 @@ export class SchedulesService {
         },
       );
       const tasks = [];
-      for (const schedule of schedules.items) {
-        if (this.needToSchedule(schedule)) {
-          const task = fork.create(ScheduledTask, {
-            schedule: schedule,
-            taskStatus: ScheduledTaskStatus.PENDING,
-            type: schedule.type,
-            user: schedule.user,
-          });
-          tasks.push(task);
+      const successSchedules = [];
+      const failedSchedules = [];
+      const skippedSchedules = [];
+      try {
+        for (const schedule of schedules.items) {
+          if (this.needToSchedule(schedule)) {
+            const task = fork.create(ScheduledTask, {
+              schedule: schedule,
+              taskStatus: ScheduledTaskStatus.PENDING,
+              type: schedule.type,
+              user: schedule.user,
+            });
+            tasks.push(task);
+
+            const successStatus = new CronStatus();
+            const failedStatus = new CronStatus();
+
+            successStatus.schedule = schedule;
+            successStatus.cronStatus = CronJobStatus.SUCCESS;
+
+            failedStatus.schedule = schedule;
+            failedStatus.cronStatus = CronJobStatus.FAILURE;
+
+            successSchedules.push(successStatus);
+            failedSchedules.push(failedStatus);
+          } else {
+            const skippedStatus = new CronStatus();
+
+            skippedStatus.schedule = schedule;
+            skippedStatus.cronStatus = CronJobStatus.SKIPPED;
+            skippedSchedules.push(skippedStatus);
+          }
         }
+        await fork.persistAndFlush([...tasks]);
+        this.logger.debug(
+          `Scheduled ${tasks.length} tasks for ${schedules.items.length} schedules`,
+        );
+        await fork.insertMany(CronStatus, [
+          ...successSchedules,
+          ...skippedSchedules,
+        ]);
+      } catch (error) {
+        await fork.insertMany(CronStatus, [
+          ...failedSchedules,
+          ...skippedSchedules,
+        ]);
+        this.logger.error(
+          'Error while scheduling tasks. Please try again later.',
+          error.stack || error,
+        );
       }
-      await fork.persistAndFlush([...tasks]);
+
       hasNextPage = schedules.hasNextPage;
       endCursor = schedules.endCursor;
     }
