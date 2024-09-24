@@ -21,4 +21,5 @@ export class CronStatus extends BaseClass {
 export enum CronJobStatus {
   SUCCESS = 'success',
   FAILURE = 'failure',
+  SKIPPED = 'skipped',
 }
