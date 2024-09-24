@@ -8,6 +8,7 @@ export const FILTERED_ARTICLES = gql`
           trimester
           article_cards {
             data {
+              id
               attributes {
                 title
                 coverImg {
@@ -47,6 +48,7 @@ export const BOOKMARKED_ARTICLES = gql`
           trimester
           article_cards {
             data {
+              id
               attributes {
                 title
                 coverImg {

@@ -14,6 +14,7 @@ interface FilteredArticlesRaw {
 }
 
 interface ArticlesRaw {
+  id: string;
   attributes: {
     title: string;
     coverImg: {
