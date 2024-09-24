@@ -16,6 +16,7 @@ export class ArticlesService {
 
   private parseFilteredArticles(
     filteredArticlesRaw: ArticleListRaw,
+    bookmarkedArticles: Array<{ articleId: string; id: number }>,
   ): ParsedFilteredArticles {
     try {
       const data = filteredArticlesRaw?.articleListings.data[0];
@@ -26,6 +27,11 @@ export class ArticlesService {
           return {
             id: article.id,
             title: article.attributes.title,
+            isBookmarked: bookmarkedArticles.find(
+              (bookmarkedArticle) => bookmarkedArticle.articleId === article.id,
+            )
+              ? true
+              : false,
             coverImg: getImageUrl(
               article.attributes.coverImg.data.attributes.url,
             ),
@@ -47,7 +53,7 @@ export class ArticlesService {
     }
   }
 
-  async getFilteredArticles(trimesterList: number[]) {
+  async getFilteredArticles(trimesterList: number[], userId: number) {
     try {
       const filteredArticlesRaw = await this.graphqlClient.query(
         FILTERED_ARTICLES,
@@ -56,7 +62,13 @@ export class ArticlesService {
         },
       );
 
-      return this.parseFilteredArticles(filteredArticlesRaw);
+      const bookmarkedArticles =
+        await this.findBookmarkedArticleByUserId(userId);
+
+      return this.parseFilteredArticles(
+        filteredArticlesRaw,
+        bookmarkedArticles,
+      );
     } catch (error) {
       this.logger.error('unable to fetch article data', error.stack || error);
       throw error;
@@ -78,15 +90,28 @@ export class ArticlesService {
     }
   }
 
-  async getBookmarkedArticles(userId: number) {
+  private async findBookmarkedArticleByUserId(userId: number) {
     try {
-      const bookmarkedArticles = await this.em
+      return await this.em
         .createQueryBuilder(BookmarkedArticle)
-        .select('articleId')
+        .select(['articleId', 'id'])
         .where({
           user: userId,
           status: Status.ACTIVE,
         });
+    } catch (error) {
+      this.logger.error(
+        'unable to find bookmarked article',
+        error.stack || error,
+      );
+      throw error;
+    }
+  }
+
+  async getBookmarkedArticles(userId: number) {
+    try {
+      const bookmarkedArticles =
+        await this.findBookmarkedArticleByUserId(userId);
 
       if (!bookmarkedArticles.length) {
         return [];
@@ -95,11 +120,16 @@ export class ArticlesService {
       const bookmarkedArticlesRaw = await this.graphqlClient.query(
         BOOKMARKED_ARTICLES,
         {
-          articleIds: bookmarkedArticles.map((article) => article.articleId),
+          articleIds: bookmarkedArticles.map((article) => {
+            return article.articleId;
+          }),
         },
       );
 
-      return this.parseFilteredArticles(bookmarkedArticlesRaw);
+      return this.parseFilteredArticles(
+        bookmarkedArticlesRaw,
+        bookmarkedArticles,
+      );
     } catch (error) {
       this.logger.error(
         'unable to fetch bookmarked articles',

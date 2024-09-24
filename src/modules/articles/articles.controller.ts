@@ -32,11 +32,15 @@ export class ArticlesController {
       new ParseArrayPipe({ items: String, separator: ',', optional: true }),
     )
     trimester: string[],
+    @Query('userId') userId: string,
   ) {
     let trimesterList = [1, 2, 3];
     if (trimester && trimester.length >= 0)
       trimesterList = trimester.map((trimester) => parseInt(trimester));
-    return await this.articleService.getFilteredArticles(trimesterList);
+    return await this.articleService.getFilteredArticles(
+      trimesterList,
+      parseInt(userId),
+    );
   }
 
   @Post('bookmark')
