@@ -24,6 +24,7 @@ export class ArticlesService {
         trimester: data.attributes.trimester,
         articles: articles.map((article) => {
           return {
+            id: article.id,
             title: article.attributes.title,
             coverImg: getImageUrl(
               article.attributes.coverImg.data.attributes.url,
