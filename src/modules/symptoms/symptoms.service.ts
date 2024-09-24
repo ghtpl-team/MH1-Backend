@@ -101,7 +101,7 @@ export class SymptomsService {
     });
   }
 
-  async fetchLoggedSymptoms(userId: number) {
+  async fetchLoggedSymptoms(userId: number, page: number, limit: number) {
     try {
       const loggedSymptoms = await this.em
         .createQueryBuilder(LoggedSymptoms)
@@ -118,10 +118,18 @@ export class SymptomsService {
           GET_LOGGED_SYMPTOMS,
           {
             loggedSymptoms: loggedSymptoms[0].symptoms,
+            page: page,
+            pageSize: limit,
           },
         );
         return {
           id: loggedSymptoms[0].id,
+          pagination: {
+            currentPage: page,
+            currentLimit: limit,
+            totalLogged: loggedSymptoms.length,
+            totalPages: Math.ceil(loggedSymptoms.length / limit),
+          },
           loggedSymptoms: this.parsedLoggedSymptomData(symptomsWithStory),
         };
       }
