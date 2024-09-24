@@ -28,8 +28,11 @@ export const GET_SYMPTOM_CATEGORIES = gql`
 `;
 
 export const GET_LOGGED_SYMPTOMS = gql`
-  query GetSymptoms($loggedSymptoms: [String!]) {
-    symptoms(filters: { name: { in: $loggedSymptoms } }) {
+  query GetSymptoms($loggedSymptoms: [String!], $page: Int!, $pageSize: Int!) {
+    symptoms(
+      filters: { name: { in: $loggedSymptoms } }
+      pagination: { page: $page, pageSize: $pageSize }
+    ) {
       data {
         attributes {
           name

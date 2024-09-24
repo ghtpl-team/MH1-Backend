@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Get,
   HttpException,
   HttpStatus,
@@ -10,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { SymptomsService } from './symptoms.service';
 import { LogSymptomsDto } from './dto/symptoms.dto';
+import { ApiQuery } from '@nestjs/swagger';
 
 @Controller('symptoms')
 export class SymptomsController {
@@ -32,9 +34,23 @@ export class SymptomsController {
   }
 
   @Get()
-  async getLoggedSymptoms(@Query('userId') userId: string) {
+  @ApiQuery({
+    name: 'page',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+  })
+  async getLoggedSymptoms(
+    @Query('userId') userId: string,
+    @Query('page', new DefaultValuePipe('1')) page: string,
+    @Query('limit', new DefaultValuePipe('10')) limit: string,
+  ) {
     const symptoms = await this.symptomsService.fetchLoggedSymptoms(
       parseInt(userId),
+      parseInt(page),
+      parseInt(limit),
     );
     return symptoms;
   }
