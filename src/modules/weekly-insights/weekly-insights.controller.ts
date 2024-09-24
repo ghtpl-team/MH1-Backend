@@ -1,6 +1,7 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { WeeklyInsightsService } from './weekly-insights.service';
 import { InsightType } from './weekly-insights.interface';
+import { Week } from 'src/decorators/week/week.decorator';
 
 @Controller('weekly-insights')
 export class WeeklyInsightsController {
@@ -8,19 +9,17 @@ export class WeeklyInsightsController {
 
   @Get(':week')
   async fetchWeeklyInsights(
-    @Param('week') weekNumber: string,
+    @Week() weekNumber: number,
     @Query('insightType') insightType: InsightType,
   ) {
     return await this.weeklyInsightsService.fetchInsights(
-      parseInt(weekNumber),
+      weekNumber,
       insightType,
     );
   }
 
   @Get('notes/listing/:week')
-  async fetchNoteCards(@Param('week') weekNumber: string) {
-    return await this.weeklyInsightsService.fetchNoteCards(
-      parseInt(weekNumber),
-    );
+  async fetchNoteCards(@Week() weekNumber: number) {
+    return await this.weeklyInsightsService.fetchNoteCards(weekNumber);
   }
 }
