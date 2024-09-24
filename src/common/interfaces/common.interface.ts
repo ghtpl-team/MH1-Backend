@@ -1,6 +1,7 @@
 export interface ImageData {
   attributes: {
     url: string;
+    name?: string;
   };
 }
 

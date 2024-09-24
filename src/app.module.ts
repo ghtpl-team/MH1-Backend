@@ -27,6 +27,7 @@ import { ArticlesModule } from './modules/articles/articles.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AppHealthModule } from './app-health/app-health.module';
 import { DayjsModule } from './utils/dayjs/dayjs.module';
+import { MediaModule } from './modules/media/media.module';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { DayjsModule } from './utils/dayjs/dayjs.module';
     ArticlesModule,
     AppHealthModule,
     DayjsModule,
+    MediaModule,
   ],
   controllers: [AppController],
   providers: [
