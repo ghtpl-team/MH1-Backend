@@ -30,7 +30,7 @@ export class AppHealthController {
       // the used disk storage should not exceed the 50% of the available space
       () =>
         this.diskHealthIndicator.checkStorage('disk health', {
-          thresholdPercent: 0.5,
+          thresholdPercent: 0.8,
           path: '/',
         }),
     ]);
