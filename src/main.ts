@@ -3,11 +3,14 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import 'dotenv/config';
 import { getLogLevels } from './common/utils/helper.utils';
+import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: getLogLevels(process.env.NODE_ENV === 'production'),
   });
+  app.use(helmet());
+  app.enableCors();
   app.setGlobalPrefix('api');
 
   const config = new DocumentBuilder()
