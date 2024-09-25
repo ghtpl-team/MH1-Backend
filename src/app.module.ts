@@ -28,9 +28,11 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { AppHealthModule } from './app-health/app-health.module';
 import { DayjsModule } from './utils/dayjs/dayjs.module';
 import { MediaModule } from './modules/media/media.module';
+import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 
 @Module({
   imports: [
+    PrometheusModule.register(),
     ScheduleModule.forRoot(),
     CacheModule.register({ isGlobal: true }),
     ConfigModule.forRoot(),
