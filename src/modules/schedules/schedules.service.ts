@@ -105,7 +105,7 @@ export class SchedulesService {
     }
   }
 
-  @Cron('0 0 */1 * *', { timeZone: 'Asia/Kolkata' })
+  @Cron('22 11 */1 * *', { timeZone: 'Asia/Kolkata' })
   async scheduleDailyTasks() {
     let hasNextPage = true;
     let endCursor = null;
