@@ -26,6 +26,7 @@ import { MedicalRecord } from 'src/entities/medical-records.entity';
 import { UserProfile } from 'src/entities/user-profile.entity';
 import { UserPreferences } from 'src/entities/user-preferences.entity';
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
+import { DietCardColor } from 'src/constants/diet-plan.constants';
 
 @Injectable()
 export class DietPlansService {
@@ -226,6 +227,30 @@ export class DietPlansService {
     }
   }
 
+  private assignBgColor(index: number) {
+    try {
+      switch (index) {
+        case 6:
+          return DietCardColor['Pale Yellow'];
+        case 5:
+          return DietCardColor['Pale Green'];
+        case 4:
+          return DietCardColor['Pale Blue'];
+        case 3:
+          return DietCardColor['Pale Red'];
+        case 2:
+          return DietCardColor['Pale Purple'];
+        case 1:
+          return DietCardColor['Pale Yellow'];
+        default:
+          return DietCardColor['Pale Pink'];
+      }
+    } catch (error) {
+      this.logger.error('unable to assign bg color', error.stack || error);
+      throw error;
+    }
+  }
+
   private parseDietPlan(rawData: DietChartsRawResponse) {
     try {
       const data = rawData.dietCharts.data[0].attributes;
@@ -236,8 +261,9 @@ export class DietPlansService {
         return {
           id: meal.id,
           mealTiming: meal.mealTiming,
-          mealPlan: meal.recipes.data.map((recipe) => {
+          mealPlan: meal.recipes.data.map((recipe, index) => {
             return {
+              bgColor: this.assignBgColor(index),
               id: recipe.id,
               name: recipe.attributes.name,
               imageUrl: getImageUrl(
