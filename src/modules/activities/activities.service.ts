@@ -224,6 +224,12 @@ export class ActivitiesService {
     type: ReminderType,
   ) {
     const data = activityHistory.find((history) => history.type === type);
+    if (!data)
+      return {
+        taskId: null,
+        scheduleId: null,
+        taskStatus: ScheduledTaskStatus.NOT_SCHEDULED,
+      };
     return {
       taskId: data.id,
       scheduleId: data.schedule.id,

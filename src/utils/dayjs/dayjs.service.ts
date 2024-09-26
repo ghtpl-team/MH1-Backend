@@ -30,12 +30,18 @@ export class DayjsService {
     return dayjs(date).tz(this.indianTimezone).format(format);
   }
 
-  addDays(date: Date | string, days: number): Date {
-    return dayjs(date).tz(this.indianTimezone).add(days, 'day').toDate();
+  addDays(date: Date | string, days: number): string {
+    return dayjs(date)
+      .tz(this.indianTimezone)
+      .add(days, 'day')
+      .format('YYYY-MM-DD');
   }
 
-  subtractDays(date: Date | string, days: number): Date {
-    return dayjs(date).tz(this.indianTimezone).subtract(days, 'day').toDate();
+  subtractDays(date: Date | string, days: number): string {
+    return dayjs(date)
+      .tz(this.indianTimezone)
+      .subtract(days, 'day')
+      .format('YYYY-MM-DD');
   }
 
   isBefore(date1: Date | string, date2: Date | string): boolean {
@@ -52,5 +58,15 @@ export class DayjsService {
 
   convertToIST(date: Date | string): string {
     return dayjs(date).tz(this.indianTimezone).format('YYYY-MM-DD HH:mm:ss');
+  }
+
+  getDiff(
+    date1: Date | string,
+    date2: Date | string,
+    diffUnit: dayjs.QUnitType | dayjs.OpUnitType = 'day',
+  ): number {
+    return dayjs(date1)
+      .tz(this.indianTimezone)
+      .diff(dayjs(date2).tz(this.indianTimezone), diffUnit);
   }
 }
