@@ -28,4 +28,5 @@ export enum ScheduledTaskStatus {
   PENDING = 'pending',
   DONE = 'done',
   MISSED = 'missed',
+  NOT_SCHEDULED = 'not_scheduled',
 }

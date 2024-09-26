@@ -1,6 +1,12 @@
 import { EntityManager, QueryOrder } from '@mikro-orm/mysql';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import {
   ParsedDocCard,
@@ -24,12 +30,15 @@ import {
   SubscriptionStatus,
   Subscriptions,
 } from 'src/entities/subscriptions.entity';
+import { DayjsService } from 'src/utils/dayjs/dayjs.service';
 @Injectable()
 export class UsersService {
+  private readonly logger = new Logger(UsersService.name);
   constructor(
     private readonly em: EntityManager,
     @Inject(CACHE_MANAGER) private readonly cacheService: Cache,
     private readonly graphqlClient: GraphQLClientService,
+    private readonly dayjsService: DayjsService,
   ) {}
 
   async create(
@@ -65,18 +74,37 @@ export class UsersService {
     return await this.em.find(User, { status: Status.ACTIVE });
   }
 
+  private calculateCurrentPregnancyWeek(expectedDate: string) {
+    try {
+      const today = this.dayjsService.getCurrentDate();
+      const predictedStartDate = this.dayjsService.addDays(expectedDate, -280);
+      const predictedCurrentWeek = this.dayjsService.getDiff(
+        today,
+        predictedStartDate,
+        'weeks',
+      );
+      const predictedCurrentTrimester =
+        Math.floor(predictedCurrentWeek / 14) + 1;
+      return {
+        predictedStartDate: predictedStartDate,
+        currentWeek: predictedCurrentWeek,
+        trimester: predictedCurrentTrimester,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
   private parseUserData(
     userData: User[],
     subscriptionStatus: string,
     isDietFormFilled: boolean,
   ) {
+    const expectedDate = '2025-05-25'; // TODO: Static Fix this
     return {
       id: userData[0].id,
       phone: userData[0].phone,
-      userRecord: {
-        currentWeek: 5, //FIXME: Static 2 Dynamic
-        trimester: 1,
-      },
+      userRecord: this.calculateCurrentPregnancyWeek(expectedDate),
       isPreferencesLogged: userData[0].userPreferences?.afterLunch
         ? true
         : false,
