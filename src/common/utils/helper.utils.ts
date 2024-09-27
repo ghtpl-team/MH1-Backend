@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { LogLevel } from '@nestjs/common/services/logger.service';
 
 export function getImageUrl(str: string) {

@@ -6,6 +6,7 @@ import {
 export interface MedicationScheduleResponseObj {
   [key: string]: {
     rank: number;
+    tabIcon: string;
     intakeTiming: string;
     schedule: Array<{
       id: number;

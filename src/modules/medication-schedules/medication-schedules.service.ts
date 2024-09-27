@@ -22,6 +22,7 @@ import {
   ScheduledBy,
   ReminderType,
 } from 'src/entities/schedules.entity';
+import { MedicationTabIcons } from 'src/constants/medication-schedule.constants';
 
 @Injectable()
 export class MedicationSchedulesService {
@@ -95,6 +96,7 @@ export class MedicationSchedulesService {
             if (!groupedObj[intakeTimeType]) {
               groupedObj[intakeTimeType] = {
                 rank: TimeSlot[intakeTimeType],
+                tabIcon: MedicationTabIcons[intakeTimeType],
                 intakeTiming: intakeTimeType,
                 schedule: [],
               };
