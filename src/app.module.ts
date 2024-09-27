@@ -21,7 +21,7 @@ import { RazorpayModule } from './utils/razorpay/razorpay.module';
 import { ConfigModule } from '@nestjs/config';
 import { SubscriptionModule } from './modules/subscriptions/subscription.module';
 import { CacheModule } from '@nestjs/cache-manager';
-import { APP_FILTER } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { ExceptionsLoggerFilter } from './utils/exceptions-logger/exceptions-logger.filter';
 import { ArticlesModule } from './modules/articles/articles.module';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -29,10 +29,11 @@ import { AppHealthModule } from './app-health/app-health.module';
 import { DayjsModule } from './utils/dayjs/dayjs.module';
 import { MediaModule } from './modules/media/media.module';
 import { PrometheusModule } from '@willsoto/nestjs-prometheus';
+import { MetricsInterceptor } from './interceptors/metrics.interceptor';
 
 @Module({
   imports: [
-    PrometheusModule.register(),
+    PrometheusModule.register({}),
     ScheduleModule.forRoot(),
     CacheModule.register({ isGlobal: true }),
     ConfigModule.forRoot(),
@@ -60,6 +61,10 @@ import { PrometheusModule } from '@willsoto/nestjs-prometheus';
   ],
   controllers: [AppController],
   providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: MetricsInterceptor,
+    },
     AppService,
     {
       provide: APP_FILTER,
