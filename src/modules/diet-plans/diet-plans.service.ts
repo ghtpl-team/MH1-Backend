@@ -26,7 +26,10 @@ import { MedicalRecord } from 'src/entities/medical-records.entity';
 import { UserProfile } from 'src/entities/user-profile.entity';
 import { UserPreferences } from 'src/entities/user-preferences.entity';
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
-import { DietCardColor } from 'src/constants/diet-plan.constants';
+import {
+  DietCardColor,
+  DietCardTabIcons,
+} from 'src/constants/diet-plan.constants';
 
 @Injectable()
 export class DietPlansService {
@@ -260,7 +263,8 @@ export class DietPlansService {
       const dietPlan = dietPlanRaw.map((meal) => {
         return {
           id: meal.id,
-          mealTiming: meal.mealTiming,
+          tabIcon: DietCardTabIcons[meal.mealTiming],
+          mealTiming: meal.mealTiming.replaceAll('_', ' '),
           mealPlan: meal.recipes.data.map((recipe, index) => {
             return {
               bgColor: this.assignBgColor(index),
