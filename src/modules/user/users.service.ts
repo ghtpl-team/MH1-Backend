@@ -78,11 +78,8 @@ export class UsersService {
     try {
       const today = this.dayjsService.getCurrentDate();
       const predictedStartDate = this.dayjsService.addDays(expectedDate, -280);
-      const predictedCurrentWeek = this.dayjsService.getDiff(
-        today,
-        predictedStartDate,
-        'weeks',
-      );
+      const predictedCurrentWeek =
+        this.dayjsService.getDiff(today, predictedStartDate, 'weeks') + 1;
       const predictedCurrentTrimester =
         Math.floor(predictedCurrentWeek / 14) + 1;
       return {
