@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { SchedulesService } from './schedules.service';
 import { SchedulesController } from './schedules.controller';
-import { DayjsService } from 'src/utils/dayjs/dayjs.service';
+import { DayjsModule } from 'src/utils/dayjs/dayjs.module';
 
 @Module({
-  providers: [SchedulesService, DayjsService],
+  imports: [DayjsModule],
+  providers: [SchedulesService],
   controllers: [SchedulesController],
 })
 export class SchedulesModule {}
