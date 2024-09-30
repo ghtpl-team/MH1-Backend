@@ -195,6 +195,11 @@ export interface RecipesRaw {
     image: {
       data: ImageData;
     };
+    contains: string[];
+    notSuitableFor: string[];
+    ingredients: string;
+    method: string;
+    videoUrl: string;
     label: Array<{
       text: string;
       backgroundColor: string;
@@ -217,6 +222,11 @@ export interface Recipe {
   id: string;
   name: string;
   imageUrl: string;
+  contains: string[];
+  notSuitableFor: string[];
+  ingredients: string;
+  method: string;
+  videoUrl: string;
   label: Array<{
     name: string;
     bgColor: string;
