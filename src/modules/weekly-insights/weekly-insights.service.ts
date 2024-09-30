@@ -18,11 +18,15 @@ import {
   GET_PERSONALIZED_CARD_LISTING,
   GET_WEEKLY_INSIGHTS,
 } from './weekly-insights.queries';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class WeeklyInsightsService {
   private readonly logger = new Logger(WeeklyInsightsService.name);
-  constructor(private readonly graphqlClient: GraphQLClientService) {}
+  constructor(
+    private readonly graphqlClient: GraphQLClientService,
+    private readonly configService: ConfigService,
+  ) {}
 
   private parseWeeklyInsights(rawData: WeeklyInsightAttributes) {
     try {
@@ -181,6 +185,7 @@ export class WeeklyInsightsService {
             type: 'TITLE_DOC_BTN' as const,
             bgColor: card.bgColor,
             ctaButton: card.ctaButton,
+            chatUrl: this.configService.get('HP_SUPPORT_CHAT_URL'),
           };
         } else if (card.__typename === 'ComponentCardsNoteCard') {
           return {
