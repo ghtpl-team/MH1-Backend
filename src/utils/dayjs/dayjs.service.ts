@@ -2,62 +2,71 @@ import { Injectable } from '@nestjs/common';
 import * as dayjs from 'dayjs';
 import * as utc from 'dayjs/plugin/utc';
 import * as timezone from 'dayjs/plugin/timezone';
+import { TimezoneService } from 'src/common/timezone/timezone.service';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
 @Injectable()
 export class DayjsService {
-  private readonly indianTimezone = 'Asia/Kolkata';
+  constructor(private readonly timezoneService: TimezoneService) {}
+
+  private getCurrentTimezone(): string {
+    return this.timezoneService.getTimezone();
+  }
 
   getCurrentDate(): string {
-    return dayjs().tz(this.indianTimezone).format('YYYY-MM-DD');
+    console.log(this.getCurrentTimezone());
+
+    return dayjs().tz(this.getCurrentTimezone()).format('YYYY-MM-DD');
   }
 
   getCurrentDateTime(): string {
-    return dayjs().tz(this.indianTimezone).format('YYYY-MM-DD HH:mm:ss');
+    return dayjs().tz(this.getCurrentTimezone()).format('YYYY-MM-DD HH:mm:ss');
   }
 
   getCurrentTime(): string {
-    return dayjs().tz(this.indianTimezone).format('HH:mm:ss');
+    return dayjs().tz(this.getCurrentTimezone()).format('HH:mm:ss');
   }
 
   getCurrentDay(): string {
-    return dayjs().tz(this.indianTimezone).format('dddd');
+    return dayjs().tz(this.getCurrentTimezone()).format('dddd');
   }
 
   formatDate(date: Date | string, format: string): string {
-    return dayjs(date).tz(this.indianTimezone).format(format);
+    return dayjs(date).tz(this.getCurrentTimezone()).format(format);
   }
 
   addDays(date: Date | string, days: number): string {
     return dayjs(date)
-      .tz(this.indianTimezone)
+      .tz(this.getCurrentTimezone())
       .add(days, 'day')
       .format('YYYY-MM-DD');
   }
 
   subtractDays(date: Date | string, days: number): string {
     return dayjs(date)
-      .tz(this.indianTimezone)
+      .tz(this.getCurrentTimezone())
       .subtract(days, 'day')
       .format('YYYY-MM-DD');
   }
 
   isBefore(date1: Date | string, date2: Date | string): boolean {
     return dayjs(date1)
-      .tz(this.indianTimezone)
-      .isBefore(dayjs(date2).tz(this.indianTimezone));
+      .tz(this.getCurrentTimezone())
+      .isBefore(dayjs(date2).tz(this.getCurrentTimezone()));
   }
 
   isAfter(date1: Date | string, date2: Date | string): boolean {
     return dayjs(date1)
-      .tz(this.indianTimezone)
-      .isAfter(dayjs(date2).tz(this.indianTimezone));
+      .tz(this.getCurrentTimezone())
+      .isAfter(dayjs(date2).tz(this.getCurrentTimezone()));
   }
 
   convertToIST(date: Date | string): string {
-    return dayjs(date).tz(this.indianTimezone).format('YYYY-MM-DD HH:mm:ss');
+    return dayjs(date)
+      .tz(this.getCurrentTimezone())
+      .format('YYYY-MM-DD HH:mm:ss');
   }
 
   getDiff(
@@ -66,7 +75,7 @@ export class DayjsService {
     diffUnit: dayjs.QUnitType | dayjs.OpUnitType = 'day',
   ): number {
     return dayjs(date1)
-      .tz(this.indianTimezone)
-      .diff(dayjs(date2).tz(this.indianTimezone), diffUnit);
+      .tz(this.getCurrentTimezone())
+      .diff(dayjs(date2).tz(this.getCurrentTimezone()), diffUnit);
   }
 }

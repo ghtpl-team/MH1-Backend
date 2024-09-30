@@ -1,5 +1,5 @@
 import { MikroOrmModule } from '@mikro-orm/nestjs';
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { JournalsModule } from './modules/journals/journals.module';
@@ -30,6 +30,9 @@ import { DayjsModule } from './utils/dayjs/dayjs.module';
 import { MediaModule } from './modules/media/media.module';
 import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 import { MetricsInterceptor } from './interceptors/metrics.interceptor';
+import { RequestContextModule } from './common/request-context/request-context.module';
+import { RequestContextMiddleware } from './middlewares/request.context.middleware';
+import { TimezoneModule } from './common/timezone/timezone.module';
 
 @Module({
   imports: [
@@ -58,6 +61,8 @@ import { MetricsInterceptor } from './interceptors/metrics.interceptor';
     AppHealthModule,
     DayjsModule,
     MediaModule,
+    RequestContextModule,
+    TimezoneModule,
   ],
   controllers: [AppController],
   providers: [
@@ -72,4 +77,8 @@ import { MetricsInterceptor } from './interceptors/metrics.interceptor';
     },
   ],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(RequestContextMiddleware).forRoutes('*');
+  }
+}
