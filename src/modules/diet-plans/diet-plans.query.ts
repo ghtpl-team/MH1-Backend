@@ -182,6 +182,11 @@ export const DIET_PLAN = gql`
         id
         attributes {
           name
+          contains
+          notSuitableFor
+          videoUrl
+          ingredients
+          method: Method
           image {
             data {
               attributes {

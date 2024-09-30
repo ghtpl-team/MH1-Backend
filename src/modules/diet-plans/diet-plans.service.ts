@@ -273,6 +273,11 @@ export class DietPlansService {
               imageUrl: getImageUrl(
                 recipe.attributes.image.data.attributes.url,
               ),
+              contains: recipe.attributes?.contains ?? [],
+              notSuitableFor: recipe.attributes.notSuitableFor ?? [],
+              ingredients: recipe.attributes.ingredients,
+              method: recipe.attributes.method,
+              videoUrl: recipe.attributes.videoUrl,
               label: recipe.attributes.label.map((label) => {
                 return {
                   name: label?.text ?? '',
