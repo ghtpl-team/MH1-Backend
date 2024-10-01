@@ -16,8 +16,6 @@ export class DayjsService {
   }
 
   getCurrentDate(): string {
-    console.log(this.getCurrentTimezone());
-
     return dayjs().tz(this.getCurrentTimezone()).format('YYYY-MM-DD');
   }
 
