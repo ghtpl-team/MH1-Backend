@@ -15,9 +15,19 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Motherhood One')
-    .setDescription('Motherhood One API Documentation')
+    .setDescription('The Motherhood One API description')
     .setVersion('1.0')
-    .addTag('mh1')
+    .addGlobalParameters({
+      name: 'x-mh-timezone',
+      in: 'header',
+      description:
+        'Timezone (Asia/Kolkata is not default. one must pass this header in every request)',
+      required: true,
+      schema: {
+        type: 'string',
+        default: 'Asia/Kolkata',
+      },
+    })
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
