@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager, EntityRepository, Loaded } from '@mikro-orm/mysql';
 
@@ -23,13 +23,17 @@ import {
   ReminderType,
 } from 'src/entities/schedules.entity';
 import { MedicationTabIcons } from 'src/constants/medication-schedule.constants';
+import { DayjsService } from 'src/utils/dayjs/dayjs.service';
 
 @Injectable()
 export class MedicationSchedulesService {
+  private readonly logger = new Logger(MedicationSchedulesService.name);
+
   constructor(
     @InjectRepository(MedicationSchedule)
     private readonly medicationScheduleRepository: EntityRepository<MedicationSchedule>,
     private readonly em: EntityManager,
+    private readonly dayjsService: DayjsService,
   ) {}
 
   async create(
@@ -81,6 +85,26 @@ export class MedicationSchedulesService {
     }
   }
 
+  private checkIfInSelectedDays(days: string[]) {
+    try {
+      const currentDay = this.dayjsService.getCurrentDay().toLowerCase();
+
+      const selectedDays = days?.map((day) => day.toLowerCase());
+
+      if (
+        days &&
+        selectedDays &&
+        selectedDays.length &&
+        !selectedDays.includes(currentDay)
+      )
+        return false;
+      return true;
+    } catch (error) {
+      this.logger.debug('Error in checkIfInSelectedDays', error.stack || error);
+      throw error;
+    }
+  }
+
   private groupByIntakeTime(
     medicationSchedule: Loaded<MedicationSchedule, never>[],
   ) {
@@ -88,6 +112,14 @@ export class MedicationSchedulesService {
       const groupedData = medicationSchedule.reduce(
         (groupedObj, medication) => {
           let index = 0;
+
+          if (
+            medication.selectedDays &&
+            !this.checkIfInSelectedDays(medication.selectedDays)
+          ) {
+            return groupedObj;
+          }
+
           for (const time of medication.intakeTime) {
             const intakeTimeType = capitalizeFirstLetterOfWords(
               `${medication.intakeType.split('_')[0]} ${time}`,
@@ -129,6 +161,7 @@ export class MedicationSchedulesService {
       );
       return Object.values(groupedData).sort((a, b) => a.rank - b.rank);
     } catch (error) {
+      this.logger.debug('Error in groupByIntakeTime', error.stack || error);
       throw error;
     }
   }
@@ -186,6 +219,7 @@ export class MedicationSchedulesService {
 
       return groupedSchedule;
     } catch (error) {
+      this.logger.error('Error in findAll', error.stack || error);
       throw error;
     }
   }
@@ -203,6 +237,7 @@ export class MedicationSchedulesService {
           id,
         });
     } catch (error) {
+      this.logger.error('Error in delete', error.stack || error);
       return error;
     }
   }
