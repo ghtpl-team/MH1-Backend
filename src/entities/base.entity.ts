@@ -1,4 +1,5 @@
 import { PrimaryKey, Property, Enum, Index } from '@mikro-orm/core';
+import { v4 as uuidv4 } from 'uuid';
 
 export class BaseClass {
   @PrimaryKey()
@@ -13,6 +14,10 @@ export class BaseClass {
   @Enum()
   @Index()
   status: Status = Status.ACTIVE;
+
+  @Index()
+  @Property({ type: 'uuid', defaultRaw: 'uuid_generate_v4()' })
+  publicUuid: string = uuidv4();
 }
 
 export enum Status {

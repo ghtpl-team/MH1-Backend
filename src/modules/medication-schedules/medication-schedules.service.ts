@@ -61,7 +61,12 @@ export class MedicationSchedulesService {
       );
 
       const scheduledTasks = [];
-      if (new Date(medicationSchedule.startDate) <= new Date()) {
+      const startDate = this.dayjsService.formatDate(
+        medicationSchedule.startDate,
+        'YYYY-MM-DD',
+      );
+      const currentDate = this.dayjsService.getCurrentDate();
+      if (!this.dayjsService.isAfter(startDate, currentDate)) {
         schedules.forEach((schedule) => {
           scheduledTasks.push(
             this.em.create(ScheduledTask, {
@@ -208,10 +213,10 @@ export class MedicationSchedulesService {
           },
           status: Status.ACTIVE,
           endDate: {
-            $gte: new Date(),
+            $gte: this.dayjsService.getCurrentDate(),
           },
           startDate: {
-            $lte: new Date(),
+            $lte: this.dayjsService.getCurrentDate(),
           },
         });
 
