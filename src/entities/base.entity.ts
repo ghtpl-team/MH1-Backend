@@ -16,7 +16,7 @@ export class BaseClass {
   status: Status = Status.ACTIVE;
 
   @Index()
-  @Property({ type: 'uuid', defaultRaw: 'uuid_generate_v4()' })
+  @Property({ type: 'uuid' })
   publicUuid: string = uuidv4();
 }
 
