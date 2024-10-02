@@ -9,6 +9,7 @@ import { LogSymptomsDto } from './dto/symptoms.dto';
 import { formatDateFromDateTime } from 'src/common/utils/date-time.utils';
 import { Status } from 'src/entities/base.entity';
 import { LoggedSymptoms } from 'src/entities/logged_symptoms';
+import { SYSTEM_SETTING } from 'src/configs/system.config';
 
 @Injectable()
 export class SymptomsService {
@@ -101,11 +102,23 @@ export class SymptomsService {
     });
   }
 
+  private isSymptomReviewed(updatedAt: string | Date) {
+    try {
+      const reviewTime = SYSTEM_SETTING.symptomReviewTime;
+      const currentTime = new Date().getTime();
+      const updatedTime = new Date(updatedAt).getTime();
+      return currentTime - updatedTime > reviewTime;
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
+  }
+
   async fetchLoggedSymptoms(userId: number, page: number, limit: number) {
     try {
       const loggedSymptoms = await this.em
         .createQueryBuilder(LoggedSymptoms)
-        .select(['id', 'symptoms'])
+        .select(['id', 'symptoms', 'updatedAt'])
         .where({
           user: { id: userId },
           loggingDate: formatDateFromDateTime(new Date()),
@@ -123,6 +136,7 @@ export class SymptomsService {
           },
         );
         return {
+          isReviewed: this.isSymptomReviewed(loggedSymptoms[0].updatedAt),
           id: loggedSymptoms[0].id,
           pagination: {
             currentPage: page,

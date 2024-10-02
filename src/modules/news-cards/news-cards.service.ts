@@ -3,10 +3,14 @@ import { getImageUrl } from 'src/common/utils/helper.utils';
 import { GraphQLClientService } from 'src/utils/graphql/graphql.service';
 import { GetNewsCardRaw } from './news-cards.interface';
 import { GET_NEWS_CARDS } from './news-cards.queries';
+import { DayjsService } from 'src/utils/dayjs/dayjs.service';
 
 @Injectable()
 export class NewsCardsService {
-  constructor(private readonly graphqlClient: GraphQLClientService) {}
+  constructor(
+    private readonly graphqlClient: GraphQLClientService,
+    private readonly dayjsService: DayjsService,
+  ) {}
 
   async parseNewsCards(rawData: GetNewsCardRaw) {
     return rawData.newsCards.data.map((card) => {
@@ -16,7 +20,7 @@ export class NewsCardsService {
         title: attributes.title,
         date: attributes.date,
         header:
-          attributes?.date === new Date().toISOString().slice(0, 10)
+          attributes?.date === this.dayjsService.getCurrentDate()
             ? 'Today’s Highlights'
             : '',
         bgImageUrl: getImageUrl(attributes.bgImage.data?.attributes.url),
