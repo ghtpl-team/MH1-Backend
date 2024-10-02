@@ -105,7 +105,7 @@ export class SchedulesService {
     }
   }
 
-  @Cron('22 6 */1 * *', { timeZone: 'Asia/Kolkata' })
+  @Cron('10 1 */1 * *', { timeZone: 'Asia/Kolkata' })
   async scheduleDailyTasks() {
     let hasNextPage = true;
     let endCursor = null;
@@ -169,10 +169,13 @@ export class SchedulesService {
           ...skippedSchedules,
         ]);
       } catch (error) {
-        await fork.insertMany(CronStatus, [
-          ...failedSchedules,
-          ...skippedSchedules,
-        ]);
+        this.logger.debug(
+          await fork.insertMany(CronStatus, [
+            ...failedSchedules,
+            ...skippedSchedules,
+          ]),
+        );
+
         this.logger.error(
           'Error while scheduling tasks. Please try again later.',
           error.stack || error,
