@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpException,
   HttpStatus,
   Put,
@@ -36,5 +37,10 @@ export class SchedulesController {
       );
     else
       return this.schedulingService.create(createReminderDto, parseInt(userId));
+  }
+
+  @Get('trigger')
+  async triggerTaskScheduler() {
+    return this.schedulingService.scheduleDailyTasks();
   }
 }
