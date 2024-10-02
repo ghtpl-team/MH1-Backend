@@ -7,6 +7,6 @@ export class TimezoneService {
 
   getTimezone(): string {
     const context = this.requestContextService.getContext();
-    return context.timezone || 'UTC';
+    return context?.timezone || 'UTC';
   }
 }
