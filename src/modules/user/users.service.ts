@@ -44,6 +44,18 @@ export class UsersService {
   async create(
     userData: Partial<User>,
   ): Promise<Pick<User, 'id' | 'phone' | 'status'>> {
+    const existingUser = await this.em
+      .getKnex()
+      .raw(`SELECT * FROM mh_users WHERE phone = ?`, [userData.phone]);
+
+    if (existingUser[0].length) {
+      return {
+        id: existingUser[0][0].id,
+        phone: existingUser[0][0].phone,
+        status: existingUser[0][0].status,
+      };
+    }
+
     const activityTasks = [
       ReminderType.WATER_REMINDER,
       ReminderType.DIET_REMINDER,
