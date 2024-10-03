@@ -2,14 +2,17 @@ import {
   Body,
   Controller,
   Get,
+  Headers,
   HttpException,
   HttpStatus,
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ActivitiesService } from './activities.service';
 import { FeedbackFromDto } from './dto/activities.dto';
+import { CustomAuthGuard } from '../auth/custom-auth.guard';
 
 @Controller('activities')
 export class ActivitiesController {
@@ -25,10 +28,11 @@ export class ActivitiesController {
     return this.activitiesService.fetchFitnessActivities(parseInt(weekNumber));
   }
 
+  @UseGuards(CustomAuthGuard)
   @Get('overview')
   async getPregnancyCoachCard(
     @Query('week') weekNumber: string,
-    @Query('userId') userId: string,
+    @Headers('x-mh-v3-user-id') userId: string,
   ) {
     if (!userId) {
       throw new HttpException('user id is required!', HttpStatus.BAD_REQUEST);
@@ -45,9 +49,10 @@ export class ActivitiesController {
   }
 
   @Post('feedback')
+  @UseGuards(CustomAuthGuard)
   async recordFeedBack(
     @Body() feedbackFormDto: FeedbackFromDto,
-    @Query('userId') userId: string,
+    @Headers('x-mh-v3-user-id') userId: string,
   ) {
     return this.activitiesService.recordFeedback(
       feedbackFormDto,
@@ -56,13 +61,15 @@ export class ActivitiesController {
   }
 
   @Get('history')
-  async dailyActivityHistory(@Query('userId') userId: string) {
+  @UseGuards(CustomAuthGuard)
+  async dailyActivityHistory(@Headers('x-mh-v3-user-id') userId: string) {
     return this.activitiesService.fetchActivityHistory(parseInt(userId));
   }
 
   @Patch('status')
+  @UseGuards(CustomAuthGuard)
   async updateActivityStatus(
-    @Query('userId') userId: string,
+    @Headers('x-mh-v3-user-id') userId: string,
     @Query('taskId') taskId: string,
   ) {
     if (!taskId || !userId)

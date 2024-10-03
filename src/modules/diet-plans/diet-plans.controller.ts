@@ -2,14 +2,17 @@ import {
   Body,
   Controller,
   Get,
+  Headers,
   HttpException,
   HttpStatus,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { DietPlansService } from './diet-plans.service';
 import { DietPlanInfoFormDto } from './dto/diet-plan.dto';
 import { ApiQuery } from '@nestjs/swagger';
+import { CustomAuthGuard } from '../auth/custom-auth.guard';
 
 @Controller('diet-plans')
 export class DietPlansController {
@@ -23,8 +26,9 @@ export class DietPlansController {
     example: '1',
   })
   @Get()
+  @UseGuards(CustomAuthGuard)
   async fetchDietPlan(
-    @Query('userId') userId: string,
+    @Headers('x-mh-v3-user-id') userId: string,
     @Query('weekNumber') weekNumber: string,
   ) {
     if (!userId || !weekNumber) {
@@ -56,8 +60,9 @@ export class DietPlansController {
   }
 
   @Post('form/submit')
+  @UseGuards(CustomAuthGuard)
   async submitForm(
-    @Query('userId') userId: string,
+    @Headers('x-mh-v3-user-id') userId: string,
     @Body() formDataDto: DietPlanInfoFormDto,
   ) {
     if (!userId)

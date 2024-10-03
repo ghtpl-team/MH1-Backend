@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Headers,
   HttpException,
   HttpStatus,
   Param,
@@ -9,6 +10,7 @@ import {
   Post,
   Query,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { JournalsService } from './journals.service';
 import {
@@ -16,6 +18,7 @@ import {
   UpdateJournalEntryDto,
   UpdateJournalSecurityDto,
 } from './dto/journals.dto';
+import { CustomAuthGuard } from '../auth/custom-auth.guard';
 
 @Controller('users/:userId/journals')
 export class JournalsController {
@@ -25,7 +28,7 @@ export class JournalsController {
   async createJournalEntry(
     @Body() createJournalEntryDto: CreateJournalEntryDTO,
     @Req() req: Request,
-    @Param('userId') mhUserId: string,
+    @Headers('x-mh-v3-user-id') mhUserId: string,
   ) {
     const userId = parseInt(mhUserId);
     return this.journalService.createEntry({
@@ -35,7 +38,7 @@ export class JournalsController {
   }
 
   @Get('/list')
-  async fetchAllJournalEntries(@Param('userId') mhUserId: string) {
+  async fetchAllJournalEntries(@Headers('x-mh-v3-user-id') mhUserId: string) {
     const userId = parseInt(mhUserId);
     return this.journalService.findAllByUserId(userId);
   }
@@ -67,8 +70,9 @@ export class JournalsController {
   }
 
   @Patch('security')
+  @UseGuards(CustomAuthGuard)
   async journalLock(
-    @Query('userId') userId: string,
+    @Headers('x-mh-v3-user-id') userId: string,
     @Body() updateJournalSecurityDto: UpdateJournalSecurityDto,
   ) {
     return this.journalService.toggleJournalLock(

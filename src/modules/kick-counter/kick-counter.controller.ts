@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Headers,
   Param,
   Patch,
   Post,
@@ -24,7 +25,7 @@ export class KickCounterController {
   async createKickSession(
     @Body() createKickSessionDto: CreateKickSessionDto,
     @Req() req: Request,
-    @Param('userId') mhUserId: string,
+    @Headers('x-mh-v3-user-id') mhUserId: string,
   ) {
     const userId = parseInt(mhUserId);
     return this.kcService.create(createKickSessionDto, userId);
@@ -35,7 +36,7 @@ export class KickCounterController {
     @Req() req: Request,
     @Query('dateRange')
     dateRange: 'last_7_days' | 'last_30_days' | 'last_60_days',
-    @Param('userId')
+    @Headers('x-mh-v3-user-id')
     mhUserId: string,
   ) {
     return this.kcService.fetchAllByDate(dateRange, parseInt(mhUserId));
@@ -54,7 +55,7 @@ export class KickCounterController {
   @Delete()
   async deleteKickSession(
     @Body() deleteKickSessionDto: DeleteKickSessionDto,
-    @Param('userId') mhUserId: string,
+    @Headers('x-mh-v3-user-id') mhUserId: string,
   ) {
     const userId = parseInt(mhUserId);
     return this.kcService.deleteByDate(deleteKickSessionDto.date, userId);

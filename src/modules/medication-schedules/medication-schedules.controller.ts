@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Headers,
   Param,
   Patch,
   Post,
@@ -23,7 +24,7 @@ export class MedicationSchedulesController {
   async createMedicationEntry(
     @Body() createMedicationScheduleDto: CreateMedicationScheduleDto,
     @Req() req: Request,
-    @Param('userId') mhUserId: string,
+    @Headers('x-mh-v3-user-id') mhUserId: string,
   ) {
     const userId = parseInt(mhUserId);
     return await this.medicationScheduleService.create(
@@ -35,7 +36,7 @@ export class MedicationSchedulesController {
   @Get()
   async getMedicalSchedule(
     @Req() req: Request,
-    @Param('userId') mhUserId: string,
+    @Headers('x-mh-v3-user-id') mhUserId: string,
   ) {
     const userId = parseInt(req.headers['x-mh-user-id']) || parseInt(mhUserId);
     return await this.medicationScheduleService.findAll(userId);

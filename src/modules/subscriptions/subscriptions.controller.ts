@@ -1,17 +1,20 @@
 import {
   Body,
   Controller,
+  Headers,
   HttpException,
   HttpStatus,
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { SubscriptionsService } from './subscriptions.service';
 import {
   CreateSubscriptionDto,
   SubscriptionPlanDto,
 } from './dto/subscriptions.dto';
+import { CustomAuthGuard } from '../auth/custom-auth.guard';
 
 @Controller('subscriptions')
 export class SubscriptionsController {
@@ -23,9 +26,10 @@ export class SubscriptionsController {
   }
 
   @Post('add')
+  @UseGuards(CustomAuthGuard)
   async subscribe(
     @Body() createSubscriptionDto: CreateSubscriptionDto,
-    @Query('userId') userId: string,
+    @Headers('x-mh-v3-user-id') userId: string,
   ) {
     if (!userId)
       throw new HttpException('userId is required', HttpStatus.BAD_REQUEST);
@@ -36,8 +40,9 @@ export class SubscriptionsController {
   }
 
   @Patch('cancel')
+  @UseGuards(CustomAuthGuard)
   async cancelSubscription(
-    @Query('userId') userId: string,
+    @Headers('x-mh-v3-user-id') userId: string,
     @Query('subscriptionId') subscriptionId: string,
   ) {
     if (!userId || !subscriptionId)

@@ -1,15 +1,18 @@
 import {
   Controller,
   Get,
+  Headers,
   HttpException,
   HttpStatus,
   ParseArrayPipe,
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
 import { ApiQuery } from '@nestjs/swagger';
+import { CustomAuthGuard } from '../auth/custom-auth.guard';
 
 @Controller('articles')
 export class ArticlesController {
@@ -26,13 +29,14 @@ export class ArticlesController {
       all_v2: { value: ['1', '2', '3'] },
     },
   })
+  @UseGuards(CustomAuthGuard)
   async getFilteredArticles(
     @Query(
       'trimester',
       new ParseArrayPipe({ items: String, separator: ',', optional: true }),
     )
     trimester: string[],
-    @Query('userId') userId: string,
+    @Headers('x-mh-v3-user-id') userId: string,
   ) {
     let trimesterList = [1, 2, 3];
     if (trimester && trimester.length >= 0)
@@ -44,9 +48,10 @@ export class ArticlesController {
   }
 
   @Post('bookmark')
+  @UseGuards(CustomAuthGuard)
   async bookmarkArticle(
     @Query('articleId') articleId: string,
-    @Query('userId') userId: string,
+    @Headers('x-mh-v3-user-id') userId: string,
   ) {
     if (!articleId || !userId) {
       throw new HttpException(
@@ -62,7 +67,8 @@ export class ArticlesController {
   }
 
   @Get('bookmarked')
-  async getBookmarkedArticles(@Query('userId') userId: string) {
+  @UseGuards(CustomAuthGuard)
+  async getBookmarkedArticles(@Headers('x-mh-v3-user-id') userId: string) {
     if (!userId) {
       throw new HttpException(
         'Missing required parameters',
@@ -73,9 +79,10 @@ export class ArticlesController {
   }
 
   @Patch('bookmark')
+  @UseGuards(CustomAuthGuard)
   async unBookmarkArticle(
     @Query('articleId') articleId: string,
-    @Query('userId') userId: string,
+    @Headers('x-mh-v3-user-id') userId: string,
   ) {
     if (!articleId || !userId) {
       throw new HttpException(
