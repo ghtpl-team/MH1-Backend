@@ -9,6 +9,7 @@ import {
   Post,
   Query,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { KickCounterService } from './kick-counter.service';
 import {
@@ -16,12 +17,14 @@ import {
   DeleteKickSessionDto,
   UpdateKickSessionDto,
 } from './dto/kick-counter.dto';
+import { CustomAuthGuard } from '../auth/custom-auth.guard';
 
 @Controller('user/:userId/kick-counter')
 export class KickCounterController {
   constructor(private readonly kcService: KickCounterService) {}
 
   @Post()
+  @UseGuards(CustomAuthGuard)
   async createKickSession(
     @Body() createKickSessionDto: CreateKickSessionDto,
     @Req() req: Request,
@@ -32,6 +35,7 @@ export class KickCounterController {
   }
 
   @Get('history')
+  @UseGuards(CustomAuthGuard)
   async fetchKickSessions(
     @Req() req: Request,
     @Query('dateRange')
@@ -53,6 +57,7 @@ export class KickCounterController {
   }
 
   @Delete()
+  @UseGuards(CustomAuthGuard)
   async deleteKickSession(
     @Body() deleteKickSessionDto: DeleteKickSessionDto,
     @Headers('x-mh-v3-user-id') mhUserId: string,
