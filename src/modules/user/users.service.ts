@@ -41,9 +41,41 @@ export class UsersService {
     private readonly dayjsService: DayjsService,
   ) {}
 
+  /**
+   * Asynchronously finds a user by their phone number.
+   *
+   * @param phoneNumber - The phone number of the user to find.
+   * @returns An object containing the user's id, phone, status, and public UUID if found,
+   *          or null if no user is found or an error occurs.
+   */
+  async findOneByPhoneNumber(phoneNumber: string) {
+    try {
+      const user = await this.em.findOneOrFail(
+        User,
+        { phone: phoneNumber },
+        { strict: true },
+      );
+      return {
+        id: user.id,
+        phone: user.phone,
+        status: user.status,
+        uuid: user.publicUuid,
+      };
+    } catch (error) {
+      return null;
+    }
+  }
+
+  /**
+   * Creates a new user
+   * If the user does not exist, it creates a new user along with default activity schedules.
+   *
+   * @param userData - Partial user data containing at least the phone number.
+   * @returns A promise that resolves to an object containing the user's id, phone, and status.
+   */
   async create(
     userData: Partial<User>,
-  ): Promise<Pick<User, 'id' | 'phone' | 'status'>> {
+  ): Promise<Pick<User, 'id' | 'phone' | 'status'> & { uuid: string }> {
     const existingUser = await this.em
       .getKnex()
       .raw(`SELECT * FROM mh_users WHERE phone = ?`, [userData.phone]);
@@ -53,6 +85,7 @@ export class UsersService {
         id: existingUser[0][0].id,
         phone: existingUser[0][0].phone,
         status: existingUser[0][0].status,
+        uuid: existingUser[0][0].publicUuid,
       };
     }
 
@@ -79,7 +112,12 @@ export class UsersService {
 
     await this.em.persistAndFlush([user, ...schedules]);
 
-    return { id: user.id, phone: user.phone, status: user.status };
+    return {
+      id: user.id,
+      phone: user.phone,
+      status: user.status,
+      uuid: user.publicUuid,
+    };
   }
 
   async findAll(): Promise<User[]> {
@@ -191,6 +229,13 @@ export class UsersService {
     }
   }
 
+  /**
+   * Finds a user by their ID and retrieves their data, including user preferences and schedules.
+   *
+   * @param id - The unique identifier of the user to find.
+   * @returns A promise that resolves to the parsed user data, including subscription status and diet form status.
+   * @throws HttpException if no user exists for the given ID.
+   */
   async find(id: number) {
     try {
       const userData = await this.em

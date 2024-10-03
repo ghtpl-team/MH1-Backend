@@ -10,5 +10,6 @@ import { DayjsModule } from 'src/utils/dayjs/dayjs.module';
   imports: [MikroOrmModule.forFeature([User]), DayjsModule],
   controllers: [UserController],
   providers: [UsersService, GraphQLClientService],
+  exports: [UsersService],
 })
 export class UsersModule {}

@@ -33,6 +33,7 @@ import { MetricsInterceptor } from './interceptors/metrics.interceptor';
 import { RequestContextModule } from './common/request-context/request-context.module';
 import { RequestContextMiddleware } from './middlewares/request.context.middleware';
 import { TimezoneModule } from './common/timezone/timezone.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -63,6 +64,7 @@ import { TimezoneModule } from './common/timezone/timezone.module';
     MediaModule,
     RequestContextModule,
     TimezoneModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [
