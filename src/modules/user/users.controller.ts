@@ -10,6 +10,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/users.dto';
 import { User } from 'src/entities/user.entity';
 import { CustomAuthGuard } from '../auth/custom-auth.guard';
+import { ApiHeader } from '@nestjs/swagger';
 
 @Controller('users')
 export class UserController {
@@ -31,6 +32,11 @@ export class UserController {
 
   @UseGuards(CustomAuthGuard)
   @Get()
+  @ApiHeader({
+    name: 'x-mh-v3-user-id',
+    description: 'User ID',
+    required: false,
+  })
   async find(@Headers('x-mh-v3-user-id') userId: string) {
     return this.usersService.find(parseInt(userId));
   }
