@@ -19,29 +19,25 @@ async function bootstrap() {
     .setTitle('Motherhood One')
     .setDescription('The Motherhood One API description')
     .setVersion('1.0')
-    .addGlobalParameters(
-      {
-        name: 'x-mh-timezone',
-        in: 'header',
-        description:
-          'Timezone (Asia/Kolkata is not default. one must pass this header in every request)',
-        required: true,
-        schema: {
-          type: 'string',
-          default: 'Asia/Kolkata',
-        },
+    .addBearerAuth({
+      type: 'http',
+      scheme: 'bearer',
+      bearerFormat: 'JWT',
+      name: 'JWT',
+      description: 'Enter JWT token',
+      in: 'header',
+    })
+    .addGlobalParameters({
+      name: 'x-mh-timezone',
+      in: 'header',
+      description:
+        'Timezone (Asia/Kolkata is not default. one must pass this header in every request)',
+      required: true,
+      schema: {
+        type: 'string',
+        default: 'Asia/Kolkata',
       },
-      {
-        name: 'authorization',
-        in: 'header',
-        description: 'JWT token',
-        required: true,
-        schema: {
-          type: 'string',
-          default: 'Bearer <token>',
-        },
-      },
-    )
+    })
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
