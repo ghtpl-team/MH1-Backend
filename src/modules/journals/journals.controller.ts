@@ -25,6 +25,7 @@ export class JournalsController {
   constructor(private readonly journalService: JournalsService) {}
 
   @Post('/add')
+  @UseGuards(CustomAuthGuard)
   async createJournalEntry(
     @Body() createJournalEntryDto: CreateJournalEntryDTO,
     @Req() req: Request,
@@ -38,6 +39,7 @@ export class JournalsController {
   }
 
   @Get('/list')
+  @UseGuards(CustomAuthGuard)
   async fetchAllJournalEntries(@Headers('x-mh-v3-user-id') mhUserId: string) {
     const userId = parseInt(mhUserId);
     return this.journalService.findAllByUserId(userId);

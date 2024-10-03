@@ -8,12 +8,14 @@ import {
   Patch,
   Post,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { MedicationSchedulesService } from './medication-schedules.service';
 import {
   CreateMedicationScheduleDto,
   UpdateMedicationScheduleDto,
 } from './dto/medication-schedules.dto';
+import { CustomAuthGuard } from '../auth/custom-auth.guard';
 @Controller('users/:userId/medication-schedule')
 export class MedicationSchedulesController {
   constructor(
@@ -21,6 +23,7 @@ export class MedicationSchedulesController {
   ) {}
 
   @Post('add')
+  @UseGuards(CustomAuthGuard)
   async createMedicationEntry(
     @Body() createMedicationScheduleDto: CreateMedicationScheduleDto,
     @Req() req: Request,
@@ -34,6 +37,7 @@ export class MedicationSchedulesController {
   }
 
   @Get()
+  @UseGuards(CustomAuthGuard)
   async getMedicalSchedule(
     @Req() req: Request,
     @Headers('x-mh-v3-user-id') mhUserId: string,
