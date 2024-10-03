@@ -3,15 +3,18 @@ import {
   Controller,
   DefaultValuePipe,
   Get,
+  Headers,
   HttpException,
   HttpStatus,
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { SymptomsService } from './symptoms.service';
 import { LogSymptomsDto } from './dto/symptoms.dto';
 import { ApiQuery } from '@nestjs/swagger';
+import { CustomAuthGuard } from '../auth/custom-auth.guard';
 
 @Controller('symptoms')
 export class SymptomsController {
@@ -23,8 +26,9 @@ export class SymptomsController {
   }
 
   @Post('add')
+  @UseGuards(CustomAuthGuard)
   async logSymptoms(
-    @Query('userId') userId: string,
+    @Headers('x-mh-v3-user-id') userId: string,
     @Body() logSymptomsDto: LogSymptomsDto,
   ) {
     if (!userId) {
@@ -42,8 +46,9 @@ export class SymptomsController {
     name: 'limit',
     required: false,
   })
+  @UseGuards(CustomAuthGuard)
   async getLoggedSymptoms(
-    @Query('userId') userId: string,
+    @Headers('x-mh-v3-user-id') userId: string,
     @Query('page', new DefaultValuePipe('1')) page: string,
     @Query('limit', new DefaultValuePipe('10')) limit: string,
   ) {

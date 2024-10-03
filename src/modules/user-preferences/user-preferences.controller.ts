@@ -1,13 +1,16 @@
 import {
   Body,
   Controller,
+  Headers,
   HttpException,
   HttpStatus,
   Patch,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { UserPreferencesService } from './user-preferences.service';
 import { UserPreferencesDto } from './dto/user-preferences.dto';
+import { CustomAuthGuard } from '../auth/custom-auth.guard';
 
 @Controller('user-preferences')
 export class UserPreferencesController {
@@ -16,8 +19,9 @@ export class UserPreferencesController {
   ) {}
 
   @Patch()
+  @UseGuards(CustomAuthGuard)
   async setUserPreferences(
-    @Query('userId') userId: string,
+    @Headers('x-mh-v3-user-id') userId: string,
     @Query('preferencesId') preferencesId: string,
     @Body() userPreferencesDto: UserPreferencesDto,
   ) {
