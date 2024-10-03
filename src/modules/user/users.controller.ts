@@ -2,8 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  Headers,
   Post,
-  Request,
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -31,9 +31,8 @@ export class UserController {
 
   @UseGuards(CustomAuthGuard)
   @Get()
-  async find(@Request() req) {
-    const user = req.user;
-    return this.usersService.find(parseInt(user.id));
+  async find(@Headers('x-mh-v3-user-id') userId: string) {
+    return this.usersService.find(parseInt(userId));
   }
 
   @UseGuards(CustomAuthGuard)

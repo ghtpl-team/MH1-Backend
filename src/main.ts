@@ -4,6 +4,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import 'dotenv/config';
 import { getLogLevels } from './common/utils/helper.utils';
 import helmet from 'helmet';
+import { HeaderInjectorInterceptor } from './interceptors/inject-headers.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -12,6 +13,7 @@ async function bootstrap() {
   app.use(helmet());
   app.enableCors();
   app.setGlobalPrefix('api');
+  app.useGlobalInterceptors(new HeaderInjectorInterceptor());
 
   const config = new DocumentBuilder()
     .setTitle('Motherhood One')
