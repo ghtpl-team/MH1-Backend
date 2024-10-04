@@ -36,6 +36,8 @@ import {
 } from 'src/entities/scheduled-tasks.entity';
 import { ReminderType } from 'src/entities/schedules.entity';
 import { UserPreferences } from 'src/entities/user-preferences.entity';
+import { UserConsent } from 'src/entities/user-consent.entity';
+import { formatDateFromDateTime } from 'src/common/utils/date-time.utils';
 
 @Injectable()
 export class ActivitiesService {
@@ -100,9 +102,13 @@ export class ActivitiesService {
     }
   }
 
-  private parseFitnessActivities(response: FitnessActivitiesRaw): {
+  private parseFitnessActivities(
+    response: FitnessActivitiesRaw,
+    showConsentForm: boolean,
+  ): {
     activities: ParsedFitnessActivity[];
     consentForm: ParsedConsentForm;
+    showConsentForm: boolean;
   } {
     let consentForm;
     const activities = response.fitnessActivities?.data
@@ -129,12 +135,12 @@ export class ActivitiesService {
         (activity): activity is NonNullable<typeof activity> =>
           activity !== null,
       );
-
     return {
       activities:
         activities.sort(
           (activity1, activity2) => activity1.week - activity2.week,
         ) ?? [],
+      showConsentForm,
       consentForm,
     };
   }
@@ -202,20 +208,60 @@ export class ActivitiesService {
     };
   }
 
-  async fetchFitnessActivities(weekNumber: number) {
+  private async isConsentFormAcknowledged(userId: number) {
+    try {
+      const consentFormStatus = await this.em.findOne(UserConsent, {
+        user: userId,
+        lastAcknowledgedAt: {
+          $ne: null,
+          $eq: formatDateFromDateTime(new Date()),
+        },
+      });
+
+      if (consentFormStatus) return false;
+      return true;
+    } catch (error) {
+      this.logger.error(
+        'Error occurred while updating consent form acknowledgement',
+        error.stack || error,
+      );
+      return true;
+    }
+  }
+
+  async fetchFitnessActivities(weekNumber: number, userId: number) {
     try {
       const fitnessActivityRaw: FitnessActivitiesRaw =
         await this.graphqlClient.query(FITNESS_ACTIVITIES, {
           weekNumber: weekNumber,
         });
 
-      return this.parseFitnessActivities(fitnessActivityRaw);
+      const showConsentForm = await this.isConsentFormAcknowledged(userId);
+
+      return this.parseFitnessActivities(fitnessActivityRaw, showConsentForm);
     } catch (error) {
       this.logger.error(
         'Error occurred while fetching fitness activities data',
         error.stack || error,
       );
       throw error;
+    }
+  }
+
+  async acknowledgeConsentForm(userId: number) {
+    try {
+      this.em.upsert(UserConsent, {
+        user: userId,
+        lastAcknowledgedAt: formatDateFromDateTime(new Date()),
+      });
+      this.em.flush();
+      return 'Acknowledged Successfully';
+    } catch (error) {
+      this.logger.error(
+        'Error occurred while updating consent form acknowledgement',
+        error.stack || error,
+      );
+      return 'Failed to acknowledge consent form';
     }
   }
 
