@@ -24,8 +24,21 @@ export class ActivitiesController {
   }
 
   @Get('fitness')
-  async fitnessActivities(@Query('week') weekNumber: string) {
-    return this.activitiesService.fetchFitnessActivities(parseInt(weekNumber));
+  @UseGuards(CustomAuthGuard)
+  async fitnessActivities(
+    @Query('week') weekNumber: string,
+    @Headers('x-mh-v3-user-id') userId: string,
+  ) {
+    return this.activitiesService.fetchFitnessActivities(
+      parseInt(weekNumber),
+      parseInt(userId),
+    );
+  }
+
+  @Post('fitness/consent')
+  @UseGuards(CustomAuthGuard)
+  async consentFitnessActivities(@Headers('x-mh-v3-user-id') userId: string) {
+    return this.activitiesService.acknowledgeConsentForm(parseInt(userId));
   }
 
   @UseGuards(CustomAuthGuard)
