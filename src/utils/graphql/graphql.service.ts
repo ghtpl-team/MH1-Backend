@@ -28,7 +28,9 @@ export class GraphQLClientService {
   ): Promise<T> {
     try {
       const { data } = await this.client.query({ query, variables });
-      return data as T;
+      return JSON.parse(
+        JSON.stringify(data).replaceAll('<u>', '++').replaceAll('</u>', '++'),
+      ) as T;
     } catch (error) {
       throw new Error(`GraphQL query failed: ${error.message}`);
     }
