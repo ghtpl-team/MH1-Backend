@@ -264,6 +264,9 @@ export class MedicationSchedulesService {
       },
       {
         ...updateMedicationScheduleDto,
+        ...(updateMedicationScheduleDto.frequency === Frequency.DAILY && {
+          selectedDays: undefined,
+        }),
       },
     );
   }
