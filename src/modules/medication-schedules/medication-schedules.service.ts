@@ -47,6 +47,10 @@ export class MedicationSchedulesService {
       const medicationSchedule = this.em.create(MedicationSchedule, {
         user: userId,
         ...medicationScheduleData,
+        selectedDays:
+          medicationScheduleData.frequency === Frequency.DAILY
+            ? undefined
+            : (medicationScheduleData?.selectedDays ?? undefined),
       });
 
       const schedules = medicationScheduleData.intakeTimes.map(
