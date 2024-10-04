@@ -12,7 +12,10 @@ import {
   TimeSlot,
 } from './medication-schedules.interface';
 import { Status } from 'src/entities/base.entity';
-import { MedicationSchedule } from 'src/entities/medication-schedule.entity';
+import {
+  Frequency,
+  MedicationSchedule,
+} from 'src/entities/medication-schedule.entity';
 import {
   ScheduledTask,
   ScheduledTaskStatus,
@@ -52,7 +55,10 @@ export class MedicationSchedulesService {
             medicationSchedule: medicationSchedule,
             recurrenceRule: medicationSchedule.frequency,
             scheduledBy: ScheduledBy.USER,
-            selectedDays: medicationSchedule?.selectedDays ?? undefined,
+            selectedDays:
+              medicationSchedule.frequency === Frequency.DAILY
+                ? undefined
+                : (medicationSchedule?.selectedDays ?? undefined),
             type: ReminderType.MEDICATION_SCHEDULE,
             reminderTime: medicationTime,
             user: userId,
@@ -119,7 +125,7 @@ export class MedicationSchedulesService {
           let index = 0;
 
           if (
-            medication.selectedDays &&
+            medication.frequency === Frequency.SPECIFIC_DAYS &&
             !this.checkIfInSelectedDays(medication.selectedDays)
           ) {
             return groupedObj;
