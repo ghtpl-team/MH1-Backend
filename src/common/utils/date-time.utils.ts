@@ -37,3 +37,15 @@ export function formatDurationInMinutes(durationInSec: number): string {
 export function formatDateFromDateTime(timestamp: Date) {
   return timestamp.toISOString().slice(0, 10);
 }
+
+export function timeToSeconds(time) {
+  const [hours, minutes, seconds] = time.split(':').map(Number);
+  return hours * 3600 + minutes * 60 + seconds;
+}
+
+export function timeDifferenceInSeconds(time1, time2) {
+  const seconds1 = timeToSeconds(time1);
+  const seconds2 = timeToSeconds(time2);
+
+  return seconds1 - seconds2;
+}
