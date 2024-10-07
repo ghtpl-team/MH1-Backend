@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDateString } from 'class-validator';
+import { IsBoolean, IsDateString, IsOptional } from 'class-validator';
 
 export class UserPreferencesDto {
   @ApiProperty()
@@ -13,4 +13,9 @@ export class UserPreferencesDto {
   @ApiProperty()
   @IsDateString()
   dinnerTiming: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsBoolean({ message: 'must be a boolean' })
+  isActivityLocked: boolean;
 }
