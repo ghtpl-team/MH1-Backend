@@ -41,6 +41,9 @@ export class UserPreferencesService {
         },
         {
           ...createUserPreferencesObj,
+          ...(userPreferencesData.isActivityLocked && {
+            isJournalLocked: false,
+          }),
         },
       );
       return `user preference updated for ${userPreference} users.`;
