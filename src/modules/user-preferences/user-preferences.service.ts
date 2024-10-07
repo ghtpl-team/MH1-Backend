@@ -42,7 +42,7 @@ export class UserPreferencesService {
         {
           ...createUserPreferencesObj,
           ...(userPreferencesData.isActivityLocked !== undefined && {
-            isJournalLocked: false,
+            isActivityLocked: false,
           }),
         },
       );
