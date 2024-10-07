@@ -100,10 +100,9 @@ export class SubscriptionsService {
     }
   }
 
-  async cancel(userId: number, subscriptionId: number) {
+  async cancel(userId: number) {
     try {
       const subscriptionData = await this.em.findOne(Subscriptions, {
-        id: subscriptionId,
         user: userId,
         subscriptionStatus: SubscriptionStatus.ACTIVE,
       });
