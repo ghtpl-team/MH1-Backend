@@ -41,7 +41,7 @@ export class UserPreferencesService {
         },
         {
           ...createUserPreferencesObj,
-          ...(userPreferencesData.isActivityLocked && {
+          ...(userPreferencesData.isActivityLocked !== undefined && {
             isJournalLocked: false,
           }),
         },
