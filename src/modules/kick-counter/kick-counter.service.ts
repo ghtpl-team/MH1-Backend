@@ -48,11 +48,11 @@ export class KickCounterService {
       );
 
       const timeDifference = timeDifferenceInSeconds(
-        updateKickSessionDto.startTime,
         currentKickSession.startTime,
+        updateKickSessionDto.startTime,
       );
 
-      const updatedKickSession = this.em
+      const updatedKickSession = await this.em
         .createQueryBuilder(KickCounter)
         .update({
           startTime: updateKickSessionDto.startTime,
@@ -60,8 +60,17 @@ export class KickCounterService {
         })
         .where({
           id,
-        });
-      return updatedKickSession;
+        })
+        .execute('run');
+
+      if (updatedKickSession.affectedRows === 0) {
+        throw new HttpException('Kick session not found', HttpStatus.NOT_FOUND);
+      }
+
+      return {
+        msg: 'Kick session updated successfully',
+        data: { updatedKickSession, startTime: updateKickSessionDto.startTime },
+      };
     } catch (error) {
       this.logger.error(
         'Error while updating kick session',
