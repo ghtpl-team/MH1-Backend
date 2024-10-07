@@ -4,6 +4,6 @@ import { KickCounterService } from './kick-counter.service';
 
 @Module({
   controllers: [KickCounterController],
-  providers: [KickCounterService]
+  providers: [KickCounterService],
 })
 export class KickCounterModule {}
