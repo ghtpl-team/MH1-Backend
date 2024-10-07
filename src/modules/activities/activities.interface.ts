@@ -144,6 +144,7 @@ export interface GetPregnancyCoachRaw {
     data: Array<{
       attributes: {
         week: number;
+        journalRelated: boolean;
         hms_doctor: {
           data: {
             attributes: Doctor;

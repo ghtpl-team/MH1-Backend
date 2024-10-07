@@ -38,6 +38,7 @@ import { ReminderType } from 'src/entities/schedules.entity';
 import { UserPreferences } from 'src/entities/user-preferences.entity';
 import { UserConsent } from 'src/entities/user-consent.entity';
 import { formatDateFromDateTime } from 'src/common/utils/date-time.utils';
+import { RewardPointsEarnedType } from 'src/entities/reward-point-aggregation.entity';
 
 @Injectable()
 export class ActivitiesService {
@@ -303,6 +304,7 @@ export class ActivitiesService {
         text: soulActivityCard[0]?.label?.text,
         bgColor: soulActivityCard[0]?.label?.backgroundColor,
       },
+      isJournalRelated: data.journalRelated ? true : false,
       type: ReminderType.SOUL_REMINDER,
       heading: soulActivityCard[0]?.title,
       image: getImageUrl(soulActivityCard[0]?.image?.data?.attributes?.url),
@@ -522,18 +524,34 @@ export class ActivitiesService {
     }
   }
 
+  private convertToRewardPointsEarnedType(text: string) {
+    switch (text) {
+      case ReminderType.WATER_REMINDER:
+        return RewardPointsEarnedType.WATER_GOAL_ACHIEVED;
+      case ReminderType.DIET_REMINDER:
+        return RewardPointsEarnedType.NUTRITION_GOAL_ACHIEVED;
+      case ReminderType.SOUL_REMINDER:
+        return RewardPointsEarnedType.SOUL_GOAL_ACHIEVED;
+      case ReminderType.FITNESS_REMINDER:
+        return RewardPointsEarnedType.FITNESS_GOAL_ACHIEVED;
+      case ReminderType.MIND_REMINDER:
+        return RewardPointsEarnedType.MIND_GOAL_ACHIEVED;
+      default:
+        return RewardPointsEarnedType.WATER_GOAL_ACHIEVED;
+    }
+  }
   async updateActivityStatus(userId: number, taskId: number) {
     try {
-      const updatedStatus = await this.em.nativeUpdate(
-        ScheduledTask,
-        {
+      const updatedStatus = await this.em
+        .createQueryBuilder(ScheduledTask)
+        .update({
+          taskStatus: ScheduledTaskStatus.DONE,
+        })
+        .where({
           id: taskId,
           user: userId,
-        },
-        {
-          taskStatus: ScheduledTaskStatus.DONE,
-        },
-      );
+        });
+
       return `Task status updated for ${updatedStatus} entries`;
     } catch (error) {
       throw error;

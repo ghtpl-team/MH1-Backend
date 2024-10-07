@@ -157,6 +157,7 @@ export const PREGNANCY_COACH = gql`
       data {
         attributes {
           week
+          journalRelated
           hms_doctor {
             data {
               attributes {
