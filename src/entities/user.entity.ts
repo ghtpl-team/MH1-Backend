@@ -18,6 +18,7 @@ import { UserPreferences } from './user-preferences.entity';
 import { UserProfile } from './user-profile.entity';
 import { MedicalRecord } from './medical-records.entity';
 import { BookmarkedArticle } from './bookmarked-articles.entity';
+import { RewardPointsAggregate } from './reward-point-aggregation.entity';
 
 @Entity({ tableName: 'mh_users' })
 export class User extends BaseClass {
@@ -43,6 +44,12 @@ export class User extends BaseClass {
     fieldName: 'user_preference_id',
   })
   userPreferences = new UserPreferences();
+
+  @OneToMany(
+    () => RewardPointsAggregate,
+    (rewardPointsAggregate) => rewardPointsAggregate.user,
+  )
+  rewardPointsAggregate = new Collection<RewardPointsAggregate>(this);
 
   @OneToMany(() => JournalNotes, (journalNotes) => journalNotes.user, {
     orphanRemoval: true,
