@@ -147,7 +147,7 @@ export class UsersService {
     subscriptionStatus: string,
     isDietFormFilled: boolean,
   ) {
-    const expectedDate = '2025-05-25'; // TODO: Static Fix this
+    const expectedDate = '2025-06-10'; // TODO: Static Fix this
     return {
       id: userData[0].id,
       phone: userData[0].phone,
