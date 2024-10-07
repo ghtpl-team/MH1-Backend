@@ -27,7 +27,6 @@ export class UserPreferencesService {
   async update(
     userPreferencesData: UserPreferencesDto,
     userId: number,
-    id: number,
   ): Promise<string> {
     try {
       const createUserPreferencesObj =
@@ -36,7 +35,6 @@ export class UserPreferencesService {
       const userPreference = await this.em.nativeUpdate(
         UserPreferences,
         {
-          id,
           user: userId,
         },
         {

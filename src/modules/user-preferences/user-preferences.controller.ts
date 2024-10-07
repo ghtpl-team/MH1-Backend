@@ -5,7 +5,6 @@ import {
   HttpException,
   HttpStatus,
   Patch,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import { UserPreferencesService } from './user-preferences.service';
@@ -22,16 +21,14 @@ export class UserPreferencesController {
   @UseGuards(CustomAuthGuard)
   async setUserPreferences(
     @Headers('x-mh-v3-user-id') userId: string,
-    @Query('preferencesId') preferencesId: string,
     @Body() userPreferencesDto: UserPreferencesDto,
   ) {
-    if (!userId || !preferencesId) {
+    if (!userId) {
       throw new HttpException('user id is required!', HttpStatus.BAD_REQUEST);
     }
     return this.userPreferencesService.update(
       userPreferencesDto,
       parseInt(userId),
-      parseInt(preferencesId),
     );
   }
 }
