@@ -13,6 +13,14 @@ export const EMBRYO_IMAGES = gql`
               }
             }
           }
+          videos(pagination: { pageSize: 50 }) {
+            data {
+              attributes {
+                url
+                name
+              }
+            }
+          }
         }
       }
     }

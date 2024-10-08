@@ -16,7 +16,7 @@ export class MediaService {
   private selectedEmbryoImage(
     imagesRaw: EmbryoImagesRaw,
     week: number,
-  ): string {
+  ): { imageUrl: string; videoUrl: string } {
     try {
       const embryoImages =
         imagesRaw.embryoImage.data.attributes?.images?.data?.map((image) => {
@@ -26,15 +26,32 @@ export class MediaService {
           };
         }) ?? [];
 
+      const embryoVideos =
+        imagesRaw.embryoImage.data.attributes?.videos?.data?.map((video) => {
+          return {
+            videoUrl: video.attributes.url,
+            id: video.attributes.name
+              .replaceAll('foetus_week_', '')
+              .split('.')[0],
+          };
+        });
+
       const selectedImage = embryoImages.find(
         (image) => image.id === week.toString(),
       );
 
-      if (!selectedImage) {
+      const selectedVideo = embryoVideos.find(
+        (video) => video.id === week.toString(),
+      );
+
+      if (!selectedImage || !selectedVideo) {
         throw new NotFoundException('Image not found');
       }
 
-      return getImageUrl(selectedImage.imageUrl);
+      return {
+        imageUrl: getImageUrl(selectedImage.imageUrl),
+        videoUrl: getImageUrl(selectedVideo.videoUrl),
+      };
     } catch (error) {
       this.logger.error(error);
       throw error;
@@ -43,26 +60,26 @@ export class MediaService {
 
   async getEmbryoImage(week: number): Promise<EmbryoImageResponseObj> {
     try {
-      let selectedImage = await this.cacheService.get<string>(
+      let embryoMedia = await this.cacheService.get<EmbryoImageResponseObj>(
         `embryoImage-${week}`,
       );
 
-      if (!selectedImage) {
+      if (!embryoMedia) {
         const embryoImagesRaw = await this.graphqlClient.query(
           EMBRYO_IMAGES,
           {},
         );
 
-        selectedImage = this.selectedEmbryoImage(embryoImagesRaw, week);
+        embryoMedia = this.selectedEmbryoImage(embryoImagesRaw, week);
 
         await this.cacheService.set(
           `embryoImage-${week}`,
-          selectedImage,
+          embryoMedia,
           60 * 60 * 24 * 15 * 100,
         );
       }
 
-      return { imageUrl: selectedImage };
+      return embryoMedia;
     } catch (error) {
       this.logger.error(error);
       throw error;

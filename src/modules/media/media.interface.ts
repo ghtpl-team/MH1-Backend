@@ -7,6 +7,9 @@ export interface EmbryoImagesRaw {
         images: {
           data: ImageData[];
         };
+        videos: {
+          data: ImageData[];
+        };
       };
     };
   };
@@ -14,4 +17,5 @@ export interface EmbryoImagesRaw {
 
 export interface EmbryoImageResponseObj {
   imageUrl: string;
+  videoUrl: string;
 }
