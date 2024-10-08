@@ -14,6 +14,13 @@ import { CustomAuthGuard } from './custom-auth.guard';
     PassportModule,
     JwtModule.register({
       secret: new ConfigService().get('JWT_SECRET'),
+      signOptions: {
+        expiresIn: 86400 * 365 * 2000,
+        issuer: 'Motherhood One',
+      },
+      verifyOptions: {
+        issuer: 'Motherhood One',
+      },
     }),
   ],
   controllers: [AuthController],

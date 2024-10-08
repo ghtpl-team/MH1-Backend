@@ -66,6 +66,25 @@ export class UsersService {
     }
   }
 
+  async findOneByDeviceId(deviceId: string) {
+    try {
+      const user = await this.em.findOneOrFail(
+        User,
+        { deviceId: deviceId },
+        { strict: true },
+      );
+      return {
+        id: user.id,
+        phone: user.phone,
+        status: user.status,
+        expectedDueDate: user.expectedDueDate,
+        uuid: user.publicUuid,
+      };
+    } catch (error) {
+      return null;
+    }
+  }
+
   /**
    * Creates a new user
    * If the user does not exist, it creates a new user along with default activity schedules.
@@ -75,49 +94,47 @@ export class UsersService {
    */
   async create(
     userData: Partial<User>,
-  ): Promise<Pick<User, 'id' | 'phone' | 'status'> & { uuid: string }> {
-    const existingUser = await this.em
-      .getKnex()
-      .raw(`SELECT * FROM mh_users WHERE phone = ?`, [userData.phone]);
+  ): Promise<
+    Pick<User, 'id' | 'phone' | 'status' | 'expectedDueDate'> & { uuid: string }
+  > {
+    try {
+      const activityTasks = [
+        ReminderType.WATER_REMINDER,
+        ReminderType.DIET_REMINDER,
+        ReminderType.SOUL_REMINDER,
+        ReminderType.MIND_REMINDER,
+        ReminderType.FITNESS_REMINDER,
+      ];
 
-    if (existingUser[0].length) {
-      return {
-        id: existingUser[0][0].id,
-        phone: existingUser[0][0].phone,
-        status: existingUser[0][0].status,
-        uuid: existingUser[0][0].publicUuid,
-      };
-    }
+      const user = this.em.create(User, userData);
 
-    const activityTasks = [
-      ReminderType.WATER_REMINDER,
-      ReminderType.DIET_REMINDER,
-      ReminderType.SOUL_REMINDER,
-      ReminderType.MIND_REMINDER,
-      ReminderType.FITNESS_REMINDER,
-    ];
-
-    const user = this.em.create(User, userData);
-
-    const schedules = activityTasks.map((task) => {
-      return this.em.create(Schedule, {
-        type: task,
-        scheduledTasks: {
+      const schedules = activityTasks.map((task) => {
+        return this.em.create(Schedule, {
           type: task,
+          scheduledTasks: {
+            type: task,
+            user: user,
+          },
           user: user,
-        },
-        user: user,
+        });
       });
-    });
 
-    await this.em.persistAndFlush([user, ...schedules]);
+      await this.em.persistAndFlush([user, ...schedules]);
 
-    return {
-      id: user.id,
-      phone: user.phone,
-      status: user.status,
-      uuid: user.publicUuid,
-    };
+      return {
+        id: user.id,
+        phone: user.phone,
+        status: user.status,
+        expectedDueDate: user.expectedDueDate,
+        uuid: user.publicUuid,
+      };
+    } catch (error) {
+      this.logger.error(
+        `Error creating user: ${JSON.stringify(error.message)}`,
+        error.stack || error,
+      );
+      throw error;
+    }
   }
 
   async findAll(): Promise<User[]> {
@@ -149,7 +166,7 @@ export class UsersService {
   ) {
     const expectedDate = '2025-05-30'; // TODO: Static Fix this
     const { userPreferences } = userData[0];
-    const isPreferencesLogged = userPreferences.afterLunch ? true : false;
+    const isPreferencesLogged = userPreferences.lunchTime ? true : false;
     return {
       id: userData[0].id,
       phone: userData[0].phone,
@@ -157,12 +174,9 @@ export class UsersService {
       isPreferencesLogged,
       userMealTimings: isPreferencesLogged
         ? {
-            breakfast: [
-              userPreferences.beforeBreakFast,
-              userPreferences.afterBreakFast,
-            ],
-            lunch: [userPreferences.beforeLunch, userPreferences.afterLunch],
-            dinner: [userPreferences.beforeDinner, userPreferences.afterDinner],
+            breakfast: userPreferences.breakfastTime,
+            lunch: userPreferences.lunchTime,
+            dinner: userPreferences.dinnerTime,
           }
         : undefined,
       isDietFormFilled,
@@ -250,16 +264,13 @@ export class UsersService {
     try {
       const userData = await this.em
         .createQueryBuilder(User, 'u')
-        .select(['u.id', 'u.phone'])
+        .select(['u.id', 'u.phone', 'u.expectedDueDate'])
         .innerJoinAndSelect('u.userPreferences', 'up', {}, [
           'isActivityLocked',
           'isJournalLocked',
-          'afterLunch',
-          'beforeLunch',
-          'beforeBreakFast',
-          'afterBreakFast',
-          'beforeDinner',
-          'afterDinner',
+          'breakfastTime',
+          'lunchTime',
+          'dinnerTime',
         ])
         .innerJoinAndSelect(
           'schedules',

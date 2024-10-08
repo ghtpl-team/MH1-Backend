@@ -30,6 +30,7 @@ import {
   DietCardColor,
   DietCardTabIcons,
 } from 'src/constants/diet-plan.constants';
+import { Status } from 'src/entities/base.entity';
 
 @Injectable()
 export class DietPlansService {
@@ -301,6 +302,36 @@ export class DietPlansService {
 
   async fetchDietPlan(userId: number, weekNumber: number) {
     try {
+      const userMedicalHistory = await this.em.findOne(MedicalRecord, {
+        user: userId,
+        status: Status.ACTIVE,
+      });
+
+      const userPreferences = await this.em.findOne(
+        UserPreferences,
+        {
+          user: userId,
+          status: Status.ACTIVE,
+        },
+        {
+          populate: ['allergies', 'avoidedFoods', 'id', 'dietPreference'],
+        },
+      );
+
+      if (!userMedicalHistory) {
+        throw new HttpException(
+          'User medical history not found',
+          HttpStatus.FAILED_DEPENDENCY,
+        );
+      }
+
+      if (userPreferences?.allergies?.length >= 2) {
+        return {
+          success: false,
+          message: 'consult doctor',
+        };
+      }
+
       const dietPlanRaw: DietChartsRawResponse = await this.graphqlClient.query(
         DIET_PLAN,
         {
