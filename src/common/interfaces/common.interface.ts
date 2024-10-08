@@ -32,3 +32,9 @@ export interface ParsedDocInfo {
   specialty: string;
   experienceYears: string;
 }
+
+export interface GenericButton {
+  btnText: string;
+  bgColor: string;
+  textColor: string;
+}

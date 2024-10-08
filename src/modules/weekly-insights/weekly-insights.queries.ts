@@ -130,52 +130,52 @@ export const GET_PERSONALIZED_CARD_LISTING = gql`
         attributes {
           heading
           weekNumber
-          cards {
-            ...GetNodeCardWithButton
-            ...GetNodeCard
-          }
-        }
-      }
-    }
-  }
-
-  fragment GetNodeCardWithButton on ComponentCardsTitleDocBtn {
-    id
-    title
-    bgColor
-    ctaButton {
-      textColor
-      btnText
-      bgColor
-    }
-    hms_doctor {
-      data {
-        attributes {
-          name
-          experienceYears
-          hmsDoctorId
-          image {
+          weekly_scan {
             data {
               attributes {
-                previewUrl
-                url
-              }
-            }
-          }
-          specialty {
-            data {
-              attributes {
-                name
-                image {
-                  data {
-                    attributes {
-                      url
-                      previewUrl
+                scanDetails {
+                  title
+                  image {
+                    data {
+                      attributes {
+                        url
+                      }
                     }
                   }
+                  button: Button {
+                    btnText
+                    bgColor
+                    textColor
+                  }
+                  bgColor
                 }
               }
             }
+          }
+          counseling {
+            data {
+              attributes {
+                counselingCard {
+                  title
+                  image {
+                    data {
+                      attributes {
+                        url
+                      }
+                    }
+                  }
+                  button: Button {
+                    btnText
+                    bgColor
+                    textColor
+                  }
+                  bgColor
+                }
+              }
+            }
+          }
+          cards {
+            ...GetNodeCard
           }
         }
       }
