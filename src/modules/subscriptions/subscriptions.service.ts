@@ -6,7 +6,7 @@ import {
   CreateSubscriptionDto,
   SubscriptionPlanDto,
 } from './dto/subscriptions.dto';
-import { EntityManager, QueryOrder } from '@mikro-orm/mysql';
+import { EntityManager, QueryOrder, raw } from '@mikro-orm/mysql';
 
 import { CurrencyCode } from 'src/common/enums/razorpay.enums';
 import {
@@ -79,9 +79,15 @@ export class SubscriptionsService {
 
   async getSubscriptionDetails(userId: number) {
     try {
-      const subscriptionInfo = await this.em
-        .createQueryBuilder(Subscriptions, 'sub')
-        .select(['subscriptionStatus', 'id', 'subscriptionUrl'])
+      const qb = this.em.createQueryBuilder(Subscriptions, 'sub');
+
+      const subscriptionInfo = await qb
+        .select([
+          'subscriptionStatus',
+          'id',
+          'subscriptionUrl',
+          raw(`JSON_VALUE(sub.api_response, "$.charge_at") as renewsAt`),
+        ])
         .leftJoinAndSelect('sub.plan', 'pl', {}, [
           'pl.id',
           'pl.planName',
@@ -89,11 +95,18 @@ export class SubscriptionsService {
         ])
         .where({
           user: userId,
+          subscriptionStatus: SubscriptionStatus.ACTIVE,
         })
         .orderBy({
           createdAt: QueryOrder.DESC,
         })
-        .limit(1);
+        .limit(1)
+        .execute();
+
+      if (!subscriptionInfo) {
+        throw new HttpException('No active subscription', HttpStatus.NOT_FOUND);
+      }
+
       return subscriptionInfo;
     } catch (error) {
       throw error;
