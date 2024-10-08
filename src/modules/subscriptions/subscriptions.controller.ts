@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Headers,
   HttpException,
   HttpStatus,
@@ -47,5 +48,16 @@ export class SubscriptionsController {
         HttpStatus.BAD_REQUEST,
       );
     return this.subscriptionService.cancel(parseInt(userId));
+  }
+
+  @Get('active')
+  @UseGuards(CustomAuthGuard)
+  async fetchSubscriptionDetails(@Headers('x-mh-v3-user-id') userId: string) {
+    if (!userId)
+      throw new HttpException(
+        'required params are missing',
+        HttpStatus.BAD_REQUEST,
+      );
+    return this.subscriptionService.getSubscriptionDetails(parseInt(userId));
   }
 }
