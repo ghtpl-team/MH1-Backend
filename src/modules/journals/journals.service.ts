@@ -1,4 +1,4 @@
-import { EntityManager } from '@mikro-orm/mysql';
+import { EntityManager, QueryOrder } from '@mikro-orm/mysql';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import {
   CreateJournalEntryDTO,
@@ -36,6 +36,9 @@ export class JournalsService {
             id: userId,
           },
           status: Status.ACTIVE,
+        })
+        .orderBy({
+          updatedAt: QueryOrder.DESC,
         });
 
       return journalEntries;

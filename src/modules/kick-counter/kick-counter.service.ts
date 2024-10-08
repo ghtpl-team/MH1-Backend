@@ -1,4 +1,4 @@
-import { EntityManager, Loaded } from '@mikro-orm/mysql';
+import { EntityManager, Loaded, QueryOrder } from '@mikro-orm/mysql';
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import {
   CreateKickSessionDto,
@@ -208,7 +208,7 @@ export class KickCounterService {
           },
           user: userId,
         })
-        .orderBy({ date: 'DESC' });
+        .orderBy({ date: QueryOrder.DESC, startTime: QueryOrder.DESC });
 
       return this.groupKickSessionsByDate(kickSessionHistory);
     } catch (error) {
