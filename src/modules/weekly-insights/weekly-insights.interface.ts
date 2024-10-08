@@ -1,3 +1,8 @@
+import {
+  GenericButton,
+  ImageData,
+} from 'src/common/interfaces/common.interface';
+
 export interface WeeklyInsightResponseRaw {
   weeklyInsights: {
     data: Array<{
@@ -109,22 +114,33 @@ export interface GetPersonalizedNotesListingResponse {
 export interface PersonalizedNotesListingAttributes {
   heading: string;
   weekNumber: number;
-  cards: Array<ComponentCardsTitleDocBtn | ComponentCardsNoteCard>;
+  weeklyScanCard: WeeklyScans;
+  counselingCard: CounselingCard;
+  cards: Array<ComponentCardsNoteCard>;
 }
 
-export interface ComponentCardsTitleDocBtn {
-  __typename: 'ComponentCardsTitleDocBtn';
-  id: string;
-  title: string;
-  bgColor: string;
-  ctaButton: {
-    textColor: string;
-    btnText: string;
-    bgColor: string;
+export interface WeeklyScans {
+  data: {
+    attributes: {
+      scanDetails: ComponentCardsTitleImgBtn;
+    };
   };
-  hms_doctor: {
-    data: {
-      attributes: HmsDoctorAttributes;
+}
+
+export interface ComponentCardsTitleImgBtn {
+  __typename: 'ComponentCardsTitleImgBtn';
+  title: string;
+  image: {
+    data: ImageData;
+  };
+  button: GenericButton;
+  bgColor: string;
+}
+
+export interface CounselingCard {
+  data: {
+    attributes: {
+      counselingCard: ComponentCardsTitleImgBtn;
     };
   };
 }
@@ -193,8 +209,10 @@ export interface ParsedCard {
     btnText: string;
     bgColor: string;
   };
+  chatUrl?: string;
+  image?: string;
   insightType?: string;
-  doctor: {
+  doctor?: {
     name: string;
     experienceYears: number;
     hmsDoctorId: string;

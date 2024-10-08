@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
-import { getImageUrl } from 'src/common/utils/helper.utils';
+import { generateId, getImageUrl } from 'src/common/utils/helper.utils';
 import { GraphQLClientService } from 'src/utils/graphql/graphql.service';
 import {
   GenericTitleImageColor,
@@ -169,36 +169,41 @@ export class WeeklyInsightsService {
   ): ParsedPersonalisedNotes {
     try {
       const data = rawData[0].attributes;
+      const scanCard =
+        rawData[0].attributes.weeklyScanCard?.data?.attributes?.scanDetails;
+      const counselingCard =
+        rawData[0].attributes?.counselingCard?.data?.attributes?.counselingCard;
 
-      const parsedCards: ParsedCard[] = data.cards.map((card) => {
+      const parsedCards: ParsedCard[] = [];
+
+      [scanCard, counselingCard].forEach((card) => {
+        if (card) {
+          parsedCards.push({
+            id: generateId(),
+            title: card.title,
+            image: getImageUrl(card.image.data.attributes.url),
+            type: 'TITLE_DOC_BTN' as const,
+            ctaButton: card.button,
+            chatUrl: this.configService.get('HP_SUPPORT_CHAT_URL'),
+            bgColor: card.bgColor,
+          });
+        }
+      });
+
+      data.cards.forEach((card) => {
         const baseCard = {
           id: card.id,
           title: card.title,
           doctor: card.hms_doctor?.data
             ? this.parseDoctorInfo(card.hms_doctor.data.attributes)
             : null,
+          image: getImageUrl(card.image.data.attributes.url),
+          type: 'NOTE_CARD' as const,
+          insightType: card.insightType,
+          bgColor: card.bgColor,
+          bottomBgColor: card.bgBottomColor,
         };
-
-        if (card.__typename === 'ComponentCardsTitleDocBtn') {
-          return {
-            ...baseCard,
-            type: 'TITLE_DOC_BTN' as const,
-            bgColor: card.bgColor,
-            ctaButton: card.ctaButton,
-            chatUrl: this.configService.get('HP_SUPPORT_CHAT_URL'),
-          };
-        } else if (card.__typename === 'ComponentCardsNoteCard') {
-          return {
-            ...baseCard,
-            image: getImageUrl(card.image.data.attributes.url),
-            type: 'NOTE_CARD' as const,
-            insightType: card.insightType,
-            bgColor: card.bgColor,
-            bottomBgColor: card.bgBottomColor,
-          };
-        }
-
-        throw new Error(`Unknown card type: ${(card as any).__typename}`);
+        parsedCards.push(baseCard);
       });
 
       return {
