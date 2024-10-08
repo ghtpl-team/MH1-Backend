@@ -148,13 +148,23 @@ export class UsersService {
     isDietFormFilled: boolean,
   ) {
     const expectedDate = '2025-05-30'; // TODO: Static Fix this
+    const { userPreferences } = userData[0];
+    const isPreferencesLogged = userPreferences.afterLunch ? true : false;
     return {
       id: userData[0].id,
       phone: userData[0].phone,
       userRecord: this.calculateCurrentPregnancyWeek(expectedDate),
-      isPreferencesLogged: userData[0].userPreferences?.afterLunch
-        ? true
-        : false,
+      isPreferencesLogged,
+      userMealTimings: isPreferencesLogged
+        ? {
+            breakfast: [
+              userPreferences.beforeBreakFast,
+              userPreferences.afterBreakFast,
+            ],
+            lunch: [userPreferences.beforeLunch, userPreferences.afterLunch],
+            dinner: [userPreferences.beforeDinner, userPreferences.afterDinner],
+          }
+        : undefined,
       isDietFormFilled,
       isSubscribed:
         subscriptionStatus === SubscriptionStatus.ACTIVE ? true : false,
@@ -245,6 +255,11 @@ export class UsersService {
           'isActivityLocked',
           'isJournalLocked',
           'afterLunch',
+          'beforeLunch',
+          'beforeBreakFast',
+          'afterBreakFast',
+          'beforeDinner',
+          'afterDinner',
         ])
         .innerJoinAndSelect(
           'schedules',
