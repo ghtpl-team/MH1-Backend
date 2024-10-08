@@ -5,7 +5,7 @@ export const EMBRYO_IMAGES = gql`
     embryoImage {
       data {
         attributes {
-          images {
+          images(pagination: { pageSize: 50 }) {
             data {
               attributes {
                 url
