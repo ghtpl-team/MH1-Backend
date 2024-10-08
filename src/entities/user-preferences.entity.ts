@@ -5,22 +5,13 @@ import { User } from './user.entity';
 @Entity({ tableName: 'mh_user_preferences' })
 export class UserPreferences extends BaseClass {
   @Property({ type: 'time' })
-  beforeBreakFast?: string;
+  breakfastTime?: string;
 
   @Property({ type: 'time' })
-  afterBreakFast?: string;
+  lunchTime?: string;
 
   @Property({ type: 'time' })
-  beforeLunch?: string;
-
-  @Property({ type: 'time' })
-  afterLunch?: string;
-
-  @Property({ type: 'time' })
-  beforeDinner?: string;
-
-  @Property({ type: 'time' })
-  afterDinner?: string;
+  dinnerTime?: string;
 
   @Property({ type: 'time' })
   beforeBedTime?: string;
@@ -36,6 +27,9 @@ export class UserPreferences extends BaseClass {
 
   @Property({ type: 'boolean' })
   isJournalLocked: boolean = false;
+
+  @Enum({ items: () => LifeStages, nullable: false })
+  lifeStage: LifeStages = LifeStages.PREGNANT;
 
   @Enum({ items: () => DietPreferences, default: 'none', nullable: false })
   dietPreference?: DietPreferences = DietPreferences.NONE;
@@ -56,4 +50,11 @@ export enum DietPreferences {
   VEGAN = 'vegan',
   NON_VEGETARIAN = 'non_veg',
   VEGETARIAN_WITH_EGG = 'veg_with_egg',
+}
+
+export enum LifeStages {
+  PREGNANT = 'pregnant',
+  MOTHER = 'mother',
+  TRYING_TO_CONCEIVE = 'trying_to_conceive',
+  TRACK_PERIOD = 'track_period',
 }

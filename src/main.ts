@@ -5,13 +5,14 @@ import 'dotenv/config';
 import { getLogLevels } from './common/utils/helper.utils';
 import helmet from 'helmet';
 import { HeaderInjectorInterceptor } from './interceptors/inject-headers.interceptor';
-
+import * as cookieParser from 'cookie-parser';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: getLogLevels(process.env.NODE_ENV === 'production'),
   });
   app.use(helmet());
   app.enableCors();
+  app.use(cookieParser());
   app.setGlobalPrefix('api');
   app.useGlobalInterceptors(new HeaderInjectorInterceptor());
 

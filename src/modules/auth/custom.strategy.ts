@@ -19,7 +19,7 @@ export class CustomStrategy extends PassportStrategy(Strategy, 'custom') {
    */
   async validate(req: Request): Promise<any> {
     const token =
-      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3Mjc5NDMyNDUsImV4cCI6MTc1OTQ3OTQ3MSwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsInBob25lTnVtYmVyIjoiOTM1MjE3ODk2MSJ9.7h7CMMG1okkmbnOafGy53_WwOcVIFcyCQLo4OyNbV0w' ||
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJNb3RoZXJob29kIE9uZSIsImlhdCI6MTcyODM4NTY3NSwiZXhwIjoxNzU5OTIxNjkzLCJhdWQiOiIiLCJzdWIiOiJtaDFfdXNlciIsImRldmljZUlkIjoiMTIzNDU2Nzg5In0.2Pzvs56qpDu2-TCUORJWpEEnVcLy2qjp7Ov5KSBwe2Y' ||
       req.headers['authorization']?.split(' ')[1]; //TODO: static need to change it
     if (!token) {
       throw new UnauthorizedException('Token not found');

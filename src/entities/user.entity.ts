@@ -26,6 +26,17 @@ export class User extends BaseClass {
   @Property({ unique: true })
   phone!: string;
 
+  @Index()
+  @Property({ unique: true })
+  deviceId!: string;
+
+  @Index()
+  @Property({ unique: true })
+  mongoId!: string;
+
+  @Property({ type: 'date' })
+  expectedDueDate!: string;
+
   @OneToMany(() => MedicationSchedule, (schedule) => schedule.user)
   medicationSchedules = new Collection<MedicationSchedule>(this);
 

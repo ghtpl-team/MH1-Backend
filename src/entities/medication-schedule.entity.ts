@@ -7,6 +7,8 @@ import {
   Property,
   Enum,
   Index,
+  BeforeCreate,
+  BeforeUpdate,
 } from '@mikro-orm/core';
 import { BaseClass } from './base.entity';
 import { Schedule } from './schedules.entity';
@@ -55,6 +57,16 @@ export class MedicationSchedule extends BaseClass {
   @Property({ type: 'date' })
   @Index()
   endDate!: string;
+
+  @BeforeCreate()
+  @BeforeUpdate()
+  validateArrayLengths() {
+    if (this.intakeTimes.length !== this.intakeTime.length) {
+      throw new Error(
+        'The lengths of intakeTimes and intakeTime must be equal.',
+      );
+    }
+  }
 }
 
 export enum MedicationType {
