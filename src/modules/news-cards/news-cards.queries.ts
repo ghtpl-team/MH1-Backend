@@ -2,7 +2,7 @@ import { gql } from 'apollo-server-express';
 
 export const GET_NEWS_CARDS = gql`
   query GetNewsCard {
-    newsCards {
+    newsCards(sort: ["date:desc"]) {
       data {
         id
         attributes {
