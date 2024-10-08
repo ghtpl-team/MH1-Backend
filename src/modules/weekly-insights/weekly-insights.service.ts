@@ -19,6 +19,7 @@ import {
   GET_WEEKLY_INSIGHTS,
 } from './weekly-insights.queries';
 import { ConfigService } from '@nestjs/config';
+import { PersonalisedCardColor } from 'src/constants/personalized-nots.constants';
 
 @Injectable()
 export class WeeklyInsightsService {
@@ -176,7 +177,7 @@ export class WeeklyInsightsService {
 
       const parsedCards: ParsedCard[] = [];
 
-      [scanCard, counselingCard].forEach((card) => {
+      [scanCard, counselingCard].forEach((card, index) => {
         if (card) {
           parsedCards.push({
             id: generateId(),
@@ -185,12 +186,17 @@ export class WeeklyInsightsService {
             type: 'TITLE_DOC_BTN' as const,
             ctaButton: card.button,
             chatUrl: this.configService.get('HP_SUPPORT_CHAT_URL'),
-            bgColor: card.bgColor,
+            bgColor: index
+              ? PersonalisedCardColor['Session Card']
+              : PersonalisedCardColor['Scan Card'],
           });
         }
       });
 
       data.cards.forEach((card) => {
+        const { bgColor, bottomBgColor } = this.getCardColor(
+          card.insightType as any,
+        );
         const baseCard = {
           id: card.id,
           title: card.title,
@@ -200,8 +206,8 @@ export class WeeklyInsightsService {
           image: getImageUrl(card.image.data.attributes.url),
           type: 'NOTE_CARD' as const,
           insightType: card.insightType,
-          bgColor: card.bgColor,
-          bottomBgColor: card.bgBottomColor,
+          bgColor,
+          bottomBgColor,
         };
         parsedCards.push(baseCard);
       });
@@ -217,6 +223,29 @@ export class WeeklyInsightsService {
     }
   }
 
+  private getCardColor(type: 'body' | 'baby' | 'checklist') {
+    try {
+      switch (type) {
+        case 'body':
+          return {
+            bgColor: PersonalisedCardColor.Body,
+            bottomBgColor: PersonalisedCardColor.BodyBottom,
+          };
+        case 'baby':
+          return {
+            bgColor: PersonalisedCardColor.Baby,
+            bottomBgColor: PersonalisedCardColor.BabyBottom,
+          };
+        case 'checklist':
+          return {
+            bgColor: PersonalisedCardColor.Checklist,
+            bottomBgColor: PersonalisedCardColor.ChecklistBottom,
+          };
+      }
+    } catch (error) {
+      return error;
+    }
+  }
   private parseDoctorInfo(
     doctorData: HmsDoctorAttributes,
   ): ParsedCard['doctor'] {
