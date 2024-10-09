@@ -17,48 +17,57 @@ export class ArticlesService {
   private parseFilteredArticles(
     filteredArticlesRaw: ArticleListRaw,
     bookmarkedArticles: Array<{ articleId: string; id: number }>,
-  ): ParsedFilteredArticles {
+  ): ParsedFilteredArticles[] {
     try {
-      const data = filteredArticlesRaw?.articleListings.data[0];
-      const articles = data?.attributes?.article_cards?.data;
-      return {
-        trimester: data.attributes.trimester,
-        articles: articles.map((article) => {
-          return {
-            id: article.id,
-            title: article.attributes.title,
-            isBookmarked: bookmarkedArticles.find(
-              (bookmarkedArticle) => bookmarkedArticle.articleId === article.id,
-            )
-              ? true
-              : false,
-            coverImg: getImageUrl(
-              article.attributes.coverImg.data.attributes.url,
-            ),
-            storyCards: article.attributes.storyCards.map((storyCard) => {
-              return {
-                title: storyCard.title,
-                id: storyCard.id,
-                image: getImageUrl(storyCard.image?.data?.attributes?.url),
-                bgColor: storyCard.bgColor,
-                description: storyCard.description,
-              };
-            }),
-          };
-        }),
-      };
+      const articlesAllData = filteredArticlesRaw?.articleListings.data;
+      const articles = articlesAllData.map((data) => {
+        const articles = data?.attributes?.article_cards?.data;
+        return {
+          trimester: data.attributes.trimester,
+          articles: articles.map((article) => {
+            return {
+              id: article.id,
+              title: article.attributes.title,
+              isBookmarked: bookmarkedArticles.find(
+                (bookmarkedArticle) =>
+                  bookmarkedArticle.articleId === article.id,
+              )
+                ? true
+                : false,
+              coverImg: getImageUrl(
+                article.attributes.coverImg.data.attributes.url,
+              ),
+              storyCards: article.attributes.storyCards.map((storyCard) => {
+                return {
+                  title: storyCard.title,
+                  id: storyCard.id,
+                  image: getImageUrl(storyCard.image?.data?.attributes?.url),
+                  bgColor: storyCard.bgColor,
+                  description: storyCard.description,
+                };
+              }),
+            };
+          }),
+        };
+      });
+      return articles;
     } catch (error) {
       this.logger.error('cant parse article data', error.stack || error);
       throw error;
     }
   }
 
-  async getFilteredArticles(trimesterList: number[], userId: number) {
+  async getFilteredArticles(
+    trimesterList: number[],
+    userId: number,
+    searchText: string,
+  ) {
     try {
       const filteredArticlesRaw = await this.graphqlClient.query(
         FILTERED_ARTICLES,
         {
-          trimester: trimesterList,
+          trimester: searchText ? undefined : trimesterList,
+          searchText: searchText ?? '',
         },
       );
 
