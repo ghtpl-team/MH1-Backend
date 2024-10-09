@@ -185,8 +185,12 @@ export class UsersService {
       userSettings: userData[0].userPreferences
         ? {
             id: userData[0].userPreferences.id,
-            isActivityLocked: userData[0].userPreferences.isActivityLocked,
-            isJournalLocked: userData[0].userPreferences.isJournalLocked,
+            isActivityLocked: userData[0].userPreferences.isActivityLocked
+              ? true
+              : false,
+            isJournalLocked: userData[0].userPreferences.isJournalLocked
+              ? true
+              : false,
           }
         : null,
       schedules: userData[0].schedules.length
