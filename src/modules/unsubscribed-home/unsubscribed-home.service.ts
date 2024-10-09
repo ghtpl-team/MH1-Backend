@@ -37,6 +37,8 @@ export class UnsubscribedHomeService {
       },
       pregnancyCoachPromo: attributes.pregnancyCoachPromo.map((promo) => ({
         id: generateId(),
+        header: promo.header,
+        btnText: promo.btnText,
         image: getImageUrl(promo.image.data?.attributes.url),
         title: promo.title,
         content: promo.content,
