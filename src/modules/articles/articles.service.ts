@@ -18,46 +18,46 @@ export class ArticlesService {
     filteredArticlesRaw: ArticleListRaw,
     bookmarkedArticles: Array<{ articleId: string; id: number }>,
     isUnsubscribed: boolean,
-  ): ParsedFilteredArticles[] {
+  ): ParsedFilteredArticles {
     try {
       const articlesAllData = filteredArticlesRaw?.articleListings.data;
-      const articles = articlesAllData.map((data) => {
+      const responseObj = [];
+      articlesAllData.forEach((data) => {
         const articles = data?.attributes?.article_cards?.data;
-        return {
-          trimester: data.attributes.trimester,
-          articles: articles.map((article) => {
-            return {
-              id: article.id,
-              title: article.attributes.title,
-              isBookmarked: isUnsubscribed
-                ? undefined
-                : bookmarkedArticles.find(
-                      (bookmarkedArticle) =>
-                        bookmarkedArticle.articleId === article.id,
-                    )
-                  ? true
-                  : false,
-              coverImg: getImageUrl(
-                article.attributes.coverImg.data.attributes.url,
-              ),
-              storyCards: isUnsubscribed
-                ? undefined
-                : article.attributes.storyCards.map((storyCard) => {
-                    return {
-                      title: storyCard.title,
-                      id: storyCard.id,
-                      image: getImageUrl(
-                        storyCard.image?.data?.attributes?.url,
-                      ),
-                      bgColor: storyCard.bgColor,
-                      description: storyCard.description,
-                    };
-                  }),
-            };
-          }),
-        };
+        articles.forEach((article) => {
+          responseObj.push({
+            trimester: data.attributes.trimester,
+            id: article.id,
+            title: article.attributes.title,
+            isBookmarked: isUnsubscribed
+              ? undefined
+              : bookmarkedArticles.find(
+                    (bookmarkedArticle) =>
+                      bookmarkedArticle.articleId === article.id,
+                  )
+                ? true
+                : false,
+            coverImg: getImageUrl(
+              article.attributes.coverImg.data.attributes.url,
+            ),
+            storyCards: isUnsubscribed
+              ? undefined
+              : article.attributes.storyCards.map((storyCard) => {
+                  return {
+                    title: storyCard.title,
+                    id: storyCard.id,
+                    image: getImageUrl(storyCard.image?.data?.attributes?.url),
+                    bgColor: storyCard.bgColor,
+                    description: storyCard.description,
+                  };
+                }),
+          });
+        });
       });
-      return articles;
+
+      return {
+        articles: responseObj,
+      };
     } catch (error) {
       this.logger.error('cant parse article data', error.stack || error);
       throw error;
@@ -92,7 +92,7 @@ export class ArticlesService {
         isUnsubscribed,
       );
 
-      return isUnsubscribed ? parsedArticle[0] : parsedArticle;
+      return parsedArticle;
     } catch (error) {
       this.logger.error('unable to fetch article data', error.stack || error);
       throw error;
