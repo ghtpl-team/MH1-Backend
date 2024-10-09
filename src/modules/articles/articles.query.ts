@@ -1,12 +1,12 @@
 import { gql } from 'apollo-server-express';
 
 export const FILTERED_ARTICLES = gql`
-  query GetArticles($trimester: [Int!]) {
+  query GetArticles($trimester: [Int!], $searchText: String!) {
     articleListings(filters: { trimester: { in: $trimester } }) {
       data {
         attributes {
           trimester
-          article_cards {
+          article_cards(filters: { title: { containsi: $searchText } }) {
             data {
               id
               attributes {

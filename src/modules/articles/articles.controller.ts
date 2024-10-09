@@ -29,6 +29,10 @@ export class ArticlesController {
       all_v2: { value: ['1', '2', '3'] },
     },
   })
+  @ApiQuery({
+    required: false,
+    name: 'searchText',
+  })
   @UseGuards(CustomAuthGuard)
   async getFilteredArticles(
     @Query(
@@ -37,6 +41,7 @@ export class ArticlesController {
     )
     trimester: string[],
     @Headers('x-mh-v3-user-id') userId: string,
+    @Query('searchText') searchText?: string,
   ) {
     let trimesterList = [1, 2, 3];
     if (trimester && trimester.length >= 0)
@@ -44,6 +49,7 @@ export class ArticlesController {
     return await this.articleService.getFilteredArticles(
       trimesterList,
       parseInt(userId),
+      searchText,
     );
   }
 
