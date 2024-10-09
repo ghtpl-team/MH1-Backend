@@ -241,13 +241,13 @@ export enum InsightCardType {
 }
 
 export interface ParsedUnsubscribedHome {
-  personalisedNotes: {
-    heading: string;
-    notes: Array<{
-      id: string;
-      imageUrl: string;
-    }>;
-  };
+  // personalisedNotes: {
+  //   heading: string;
+  //   notes: Array<{
+  //     id: string;
+  //     imageUrl: string;
+  //   }>;
+  // };
   pregnancyCoachPromo: Array<{
     image: string | null;
     title: string;
@@ -255,13 +255,13 @@ export interface ParsedUnsubscribedHome {
     btnText: string;
     header: string;
   }>;
-  pregnancyCoachAd: {
-    image: string | null;
-    title: string | null;
-    bgColor: string;
-    btnText: string;
-    btnBgColor: string;
-  };
+  // pregnancyCoachAd: {
+  //   image: string | null;
+  //   title: string | null;
+  //   bgColor: string;
+  //   btnText: string;
+  //   btnBgColor: string;
+  // };
   dietPlanPromo: Array<{
     image: string | null;
     title: string;

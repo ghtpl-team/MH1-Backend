@@ -25,16 +25,16 @@ export class UnsubscribedHomeService {
       throw new HttpException('No Data Available', HttpStatus.BAD_REQUEST);
 
     return {
-      personalisedNotes: {
-        heading: attributes.unsubNotes.heading,
-        notes:
-          attributes.unsubNotes?.noteGifs?.data?.map((note) => {
-            return {
-              id: generateId(),
-              imageUrl: getImageUrl(note.attributes.url),
-            };
-          }) ?? [],
-      },
+      // personalisedNotes: {
+      //   heading: attributes.unsubNotes?.heading,
+      //   notes:
+      //     attributes.unsubNotes?.noteGifs?.data?.map((note) => {
+      //       return {
+      //         id: generateId(),
+      //         imageUrl: getImageUrl(note.attributes.url),
+      //       };
+      //     }) ?? [],
+      // },
       pregnancyCoachPromo: attributes.pregnancyCoachPromo.map((promo) => ({
         id: generateId(),
         header: promo.header,
@@ -43,15 +43,15 @@ export class UnsubscribedHomeService {
         title: promo.title,
         content: promo.content,
       })),
-      pregnancyCoachAd: {
-        image: getImageUrl(
-          attributes.pregnancyCoachAd.image.data?.attributes.url,
-        ),
-        title: attributes.pregnancyCoachAd.title,
-        bgColor: attributes.pregnancyCoachAd.bgColor,
-        btnText: attributes.pregnancyCoachAd.btnText,
-        btnBgColor: attributes.pregnancyCoachAd.btnBgColor,
-      },
+      // pregnancyCoachAd: {
+      //   image: getImageUrl(
+      //     attributes.pregnancyCoachAd?.image?.data?.attributes.url,
+      //   ),
+      //   title: attributes.pregnancyCoachAd?.title,
+      //   bgColor: attributes.pregnancyCoachAd?.bgColor,
+      //   btnText: attributes.pregnancyCoachAd?.btnText,
+      //   btnBgColor: attributes.pregnancyCoachAd?.btnBgColor,
+      // },
       dietPlanPromo: attributes.dietPlanPromo.map((promo) => ({
         id: generateId(),
         image: getImageUrl(promo.image.data?.attributes.url),
