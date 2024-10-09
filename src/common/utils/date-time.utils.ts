@@ -49,3 +49,17 @@ export function timeDifferenceInSeconds(time1, time2) {
 
   return seconds1 - seconds2;
 }
+
+export function processTimeStatus(
+  updatedAt: string | Date,
+  reviewTime: number,
+) {
+  try {
+    const currentTime = new Date().getTime();
+    const updatedTime = new Date(updatedAt).getTime();
+
+    return currentTime - updatedTime > reviewTime;
+  } catch (error) {
+    throw error;
+  }
+}
