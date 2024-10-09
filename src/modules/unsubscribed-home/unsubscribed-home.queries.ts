@@ -17,6 +17,8 @@ export const GET_UNSUBSCRIBED_HOME = gql`
             }
           }
           pregnancyCoachPromo {
+            header
+            btnText
             image {
               data {
                 attributes {

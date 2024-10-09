@@ -52,6 +52,8 @@ interface ImageData {
 }
 
 interface PregnancyCoachPromo {
+  header: string;
+  btnText: string;
   image: ImageData;
   title: string;
   content: string;

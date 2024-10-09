@@ -252,6 +252,8 @@ export interface ParsedUnsubscribedHome {
     image: string | null;
     title: string;
     content: string;
+    btnText: string;
+    header: string;
   }>;
   pregnancyCoachAd: {
     image: string | null;
