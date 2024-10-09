@@ -17,6 +17,7 @@ export class ArticlesService {
   private parseFilteredArticles(
     filteredArticlesRaw: ArticleListRaw,
     bookmarkedArticles: Array<{ articleId: string; id: number }>,
+    isUnsubscribed: boolean,
   ): ParsedFilteredArticles[] {
     try {
       const articlesAllData = filteredArticlesRaw?.articleListings.data;
@@ -28,24 +29,30 @@ export class ArticlesService {
             return {
               id: article.id,
               title: article.attributes.title,
-              isBookmarked: bookmarkedArticles.find(
-                (bookmarkedArticle) =>
-                  bookmarkedArticle.articleId === article.id,
-              )
-                ? true
-                : false,
+              isBookmarked: isUnsubscribed
+                ? undefined
+                : bookmarkedArticles.find(
+                      (bookmarkedArticle) =>
+                        bookmarkedArticle.articleId === article.id,
+                    )
+                  ? true
+                  : false,
               coverImg: getImageUrl(
                 article.attributes.coverImg.data.attributes.url,
               ),
-              storyCards: article.attributes.storyCards.map((storyCard) => {
-                return {
-                  title: storyCard.title,
-                  id: storyCard.id,
-                  image: getImageUrl(storyCard.image?.data?.attributes?.url),
-                  bgColor: storyCard.bgColor,
-                  description: storyCard.description,
-                };
-              }),
+              storyCards: isUnsubscribed
+                ? undefined
+                : article.attributes.storyCards.map((storyCard) => {
+                    return {
+                      title: storyCard.title,
+                      id: storyCard.id,
+                      image: getImageUrl(
+                        storyCard.image?.data?.attributes?.url,
+                      ),
+                      bgColor: storyCard.bgColor,
+                      description: storyCard.description,
+                    };
+                  }),
             };
           }),
         };
@@ -61,8 +68,13 @@ export class ArticlesService {
     trimesterList: number[],
     userId: number,
     searchText: string,
+    isUnsubscribed: boolean,
   ) {
     try {
+      if (isUnsubscribed) {
+        trimesterList = [1];
+        searchText = null;
+      }
       const filteredArticlesRaw = await this.graphqlClient.query(
         FILTERED_ARTICLES,
         {
@@ -74,10 +86,13 @@ export class ArticlesService {
       const bookmarkedArticles =
         await this.findBookmarkedArticleByUserId(userId);
 
-      return this.parseFilteredArticles(
+      const parsedArticle = this.parseFilteredArticles(
         filteredArticlesRaw,
         bookmarkedArticles,
+        isUnsubscribed,
       );
+
+      return isUnsubscribed ? parsedArticle[0] : parsedArticle;
     } catch (error) {
       this.logger.error('unable to fetch article data', error.stack || error);
       throw error;
@@ -138,6 +153,7 @@ export class ArticlesService {
       return this.parseFilteredArticles(
         bookmarkedArticlesRaw,
         bookmarkedArticles,
+        false,
       );
     } catch (error) {
       this.logger.error(

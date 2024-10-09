@@ -42,6 +42,7 @@ export class ArticlesController {
     trimester: string[],
     @Headers('x-mh-v3-user-id') userId: string,
     @Query('searchText') searchText?: string,
+    @Query('isUnsubscribed') isUnsubscribed: boolean = false,
   ) {
     let trimesterList = [1, 2, 3];
     if (trimester && trimester.length >= 0)
@@ -50,6 +51,7 @@ export class ArticlesController {
       trimesterList,
       parseInt(userId),
       searchText,
+      isUnsubscribed,
     );
   }
 
