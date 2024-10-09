@@ -31,6 +31,8 @@ import {
   DietCardTabIcons,
 } from 'src/constants/diet-plan.constants';
 import { Status } from 'src/entities/base.entity';
+import { processTimeStatus } from 'src/common/utils/date-time.utils';
+import { SYSTEM_SETTING } from 'src/configs/system.config';
 
 @Injectable()
 export class DietPlansService {
@@ -339,9 +341,21 @@ export class DietPlansService {
         },
       );
 
+      const formSubmitTime = userMedicalHistory.updatedAt;
+
+      const isSent = processTimeStatus(
+        formSubmitTime,
+        SYSTEM_SETTING.dietReviewTime1,
+      );
+
+      const isReviewed = processTimeStatus(
+        formSubmitTime,
+        SYSTEM_SETTING.dietReviewTime2,
+      );
+
       const parsedDietPlan = this.parseDietPlan(dietPlanRaw);
 
-      return parsedDietPlan;
+      return { isSent, isReviewed, ...parsedDietPlan };
     } catch (error) {
       this.logger.error('unable to fetch diet plan', error.stack || error);
       throw error;
