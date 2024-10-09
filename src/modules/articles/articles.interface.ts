@@ -41,11 +41,11 @@ interface ArticleStoryCardRaw {
 }
 
 export interface ParsedFilteredArticles {
-  trimester: number;
   articles: ParsedArticles[];
 }
 
 interface ParsedArticles {
+  trimester: string;
   title: string;
   coverImg: string;
   storyCards: ParsedStoryCard[];
