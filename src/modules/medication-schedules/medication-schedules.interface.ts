@@ -8,6 +8,7 @@ export interface MedicationScheduleResponseObj {
     rank: number;
     tabIcon: string;
     intakeTiming: string;
+    reminderInfo: { id: number; time: string } | Record<string, any>;
     schedule: Array<{
       id: number;
       name: string;
