@@ -132,7 +132,7 @@ export class ActivitiesService {
         return {
           week: attrs.week ?? 0,
           name: attrs.name ?? '',
-          videoUrl: attrs.videoUrl ?? '',
+          videoUrl: getImageUrl(attrs.videoUrl?.data?.attributes?.url) ?? '',
           thumbnailUrl: getImageUrl(attrs.thumbnail?.data?.attributes?.url),
           subHeading: attrs.subHeading ?? '',
           duration: attrs?.duration ?? 10,

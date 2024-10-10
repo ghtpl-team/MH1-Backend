@@ -136,7 +136,9 @@ export interface ConsentForm {
 interface FitnessActivity {
   week: number;
   name: string;
-  videoUrl: string;
+  videoUrl: {
+    data: ImageData;
+  };
   thumbnail: Thumbnail;
   subHeading: string;
   description: Description;
