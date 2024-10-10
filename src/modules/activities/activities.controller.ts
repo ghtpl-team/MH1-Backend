@@ -19,8 +19,8 @@ export class ActivitiesController {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   @Get('mind')
-  async mindActivities() {
-    return this.activitiesService.fetchMindActivities();
+  async mindActivities(@Query('week') weekNumber: string = '1') {
+    return this.activitiesService.fetchMindActivities(parseInt(weekNumber));
   }
 
   @Get('fitness')

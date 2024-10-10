@@ -59,22 +59,27 @@ export class ActivitiesService {
       const parsedData: MindActivitiesOverview = {
         heading: heading || '',
         subHeading: subHeading || '',
-        mindActivities: mind_activities.data.map((activity) => ({
-          name: activity.attributes.name || '',
-          duration: activity.attributes.duration || '',
-          benefits: activity.attributes.benefits || '',
-          thumbnail: getImageUrl(
-            activity.attributes.thumbnail?.data?.attributes?.url,
-          ),
-          imageUrl: getImageUrl(
-            activity.attributes.imageUrl?.data?.attributes?.url,
-          ),
-          thumbnailUrl: getImageUrl(
-            activity.attributes.thumbnailUrl?.data?.attributes?.url,
-          ),
-          description: activity.attributes.description || '',
-          videoUrl: activity.attributes.videoUrl || '',
-        })),
+        mindActivities: mind_activities.data.map((activity) => {
+          const videos = activity.attributes.videos.data.map((video) => {
+            return video?.attributes?.videoUrl?.data?.attributes?.url ?? '';
+          });
+          return {
+            name: activity.attributes.name || '',
+            duration: activity.attributes.duration || '',
+            benefits: activity.attributes.benefits || '',
+            thumbnail: getImageUrl(
+              activity.attributes.thumbnail?.data?.attributes?.url,
+            ),
+            imageUrl: getImageUrl(
+              activity.attributes.imageUrl?.data?.attributes?.url,
+            ),
+            thumbnailUrl: getImageUrl(
+              activity.attributes.thumbnailUrl?.data?.attributes?.url,
+            ),
+            description: activity.attributes.description || '',
+            videoUrl: videos && videos.length ? videos[0] : '',
+          };
+        }),
       };
       return parsedData;
     } catch (error) {
@@ -86,10 +91,12 @@ export class ActivitiesService {
     }
   }
 
-  async fetchMindActivities() {
+  async fetchMindActivities(weekNumber: number) {
     try {
       const mindActivitiesRaw: MindActivitiesRaw =
-        await this.graphqlClient.query(MIND_ACTIVITIES, {});
+        await this.graphqlClient.query(MIND_ACTIVITIES, {
+          weekNumber: weekNumber,
+        });
 
       const parsedMindActivityOverview: MindActivitiesOverview =
         this.parseMindActivities(mindActivitiesRaw);
