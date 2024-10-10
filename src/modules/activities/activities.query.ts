@@ -39,7 +39,7 @@ export const MIND_ACTIVITIES = gql`
                   data {
                     attributes {
                       week
-                      video {
+                      videoUrl: video {
                         data {
                           attributes {
                             url
