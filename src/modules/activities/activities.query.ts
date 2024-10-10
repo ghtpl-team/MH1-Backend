@@ -1,7 +1,7 @@
 import { gql } from 'apollo-server-express';
 
 export const MIND_ACTIVITIES = gql`
-  query GetMindActivities {
+  query GetMindActivities($weekNumber: Int!) {
     mindActivitiesOverview {
       data {
         attributes {
@@ -35,7 +35,20 @@ export const MIND_ACTIVITIES = gql`
                   }
                 }
                 description
-                videoUrl
+                videos: mind_videos(filters: { week: { eq: $weekNumber } }) {
+                  data {
+                    attributes {
+                      week
+                      video {
+                        data {
+                          attributes {
+                            url
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
               }
             }
           }

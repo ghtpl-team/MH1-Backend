@@ -41,7 +41,16 @@ export interface MindActivitiesRaw {
                 };
               };
               description: string;
-              videoUrl: string;
+              videos: {
+                data: Array<{
+                  attributes: {
+                    week: number;
+                    videoUrl: {
+                      data: ImageData;
+                    };
+                  };
+                }>;
+              };
             };
           }>;
         };
