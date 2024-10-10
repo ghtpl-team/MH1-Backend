@@ -145,6 +145,7 @@ export class MedicationSchedulesService {
                 rank: TimeSlot[intakeTimeType],
                 tabIcon: MedicationTabIcons[intakeTimeType],
                 intakeTiming: intakeTimeType,
+                reminderInfo: {} as unknown as Record<string, any>,
                 schedule: [],
               };
             }
@@ -167,6 +168,15 @@ export class MedicationSchedulesService {
                   medication.schedule[index].scheduledTasks[0].id,
               },
             });
+
+            groupedObj[intakeTimeType].schedule.sort((a, b) =>
+              a.timing.reminderTime.localeCompare(b.timing.reminderTime, 'en'),
+            );
+            groupedObj[intakeTimeType].reminderInfo = {
+              id: groupedObj[intakeTimeType].schedule[0].timing.id,
+              time: groupedObj[intakeTimeType].schedule[0].timing.reminderTime,
+            };
+
             index += 1;
           }
 
