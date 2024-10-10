@@ -61,7 +61,10 @@ export class ActivitiesService {
         subHeading: subHeading || '',
         mindActivities: mind_activities.data.map((activity) => {
           const videos = activity.attributes.videos.data.map((video) => {
-            return video?.attributes?.videoUrl?.data?.attributes?.url ?? '';
+            return (
+              getImageUrl(video?.attributes?.videoUrl?.data?.attributes?.url) ??
+              ''
+            );
           });
           return {
             name: activity.attributes.name || '',
