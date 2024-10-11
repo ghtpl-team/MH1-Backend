@@ -334,23 +334,23 @@ export class ActivitiesService {
           ),
         },
         {
-          ...staticContent.nutritionCard,
-          ...this.findStatusByType(activityHistory, ReminderType.DIET_REMINDER),
+          ...staticContent.fitnessCard,
+          ...this.findStatusByType(
+            activityHistory,
+            ReminderType.FITNESS_REMINDER,
+          ),
         },
         {
-          ...parsedSoulActivity,
-          ...this.findStatusByType(activityHistory, ReminderType.SOUL_REMINDER),
+          ...staticContent.nutritionCard,
+          ...this.findStatusByType(activityHistory, ReminderType.DIET_REMINDER),
         },
         {
           ...staticContent.mindCard,
           ...this.findStatusByType(activityHistory, ReminderType.MIND_REMINDER),
         },
         {
-          ...staticContent.fitnessCard,
-          ...this.findStatusByType(
-            activityHistory,
-            ReminderType.FITNESS_REMINDER,
-          ),
+          ...parsedSoulActivity,
+          ...this.findStatusByType(activityHistory, ReminderType.SOUL_REMINDER),
         },
       ],
     };
