@@ -31,6 +31,7 @@ import {
   Subscriptions,
 } from 'src/entities/subscriptions.entity';
 import { DayjsService } from 'src/utils/dayjs/dayjs.service';
+import { SYSTEM_SETTING } from 'src/configs/system.config';
 @Injectable()
 export class UsersService {
   private readonly logger = new Logger(UsersService.name);
@@ -111,6 +112,7 @@ export class UsersService {
       const schedules = activityTasks.map((task) => {
         return this.em.create(Schedule, {
           type: task,
+          reminderTime: SYSTEM_SETTING.defaultReminders[task],
           scheduledTasks: {
             type: task,
             user: user,
