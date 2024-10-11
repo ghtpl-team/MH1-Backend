@@ -140,6 +140,7 @@ export class ActivitiesService {
             benefits: attrs.description?.benefits ?? '',
             precautions: attrs.description?.precautions ?? '',
           },
+          notSuitableFor: attrs?.notSuitableFor ?? [],
         };
       })
       .filter(

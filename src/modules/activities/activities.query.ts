@@ -69,6 +69,7 @@ export const FITNESS_ACTIVITIES = gql`
           duration
           week
           name
+          notSuitableFor
           videoUrl {
             data {
               attributes {

@@ -143,6 +143,7 @@ interface FitnessActivity {
   subHeading: string;
   description: Description;
   duration: number;
+  notSuitableFor: string[];
   consent_form: {
     data: {
       attributes: ConsentForm;
