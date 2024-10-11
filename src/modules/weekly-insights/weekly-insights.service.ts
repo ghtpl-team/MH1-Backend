@@ -257,10 +257,10 @@ export class WeeklyInsightsService {
         hmsDoctorId: attributes.hmsDoctorId,
         image: getImageUrl(attributes.image.data?.attributes.url) ?? null,
         specialty: {
-          name: attributes.specialty.data.attributes.name,
+          name: attributes?.specialty?.data?.attributes?.name,
           image:
             getImageUrl(
-              attributes.specialty.data.attributes.image.data?.attributes.url,
+              attributes.specialty.data?.attributes?.image.data?.attributes.url,
             ) ?? null,
         },
       };
