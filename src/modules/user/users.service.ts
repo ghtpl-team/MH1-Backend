@@ -382,13 +382,15 @@ export class UsersService {
               goTo: button.goTo,
             })),
             docInfo: {
-              name: card.hmsDoctor.data.attributes.name,
+              name: card.hmsDoctor?.data?.attributes?.name,
               image: getImageUrl(
-                card.hmsDoctor.data.attributes.image.data.attributes.url,
+                card.hmsDoctor?.data?.attributes?.image?.data?.attributes?.url,
               ),
               specialty:
-                card.hmsDoctor.data.attributes.specialty.data.attributes.name,
-              experienceYears: card.hmsDoctor.data.attributes.experienceYears,
+                card.hmsDoctor?.data?.attributes?.specialty?.data?.attributes
+                  ?.name,
+              experienceYears:
+                card.hmsDoctor?.data?.attributes?.experienceYears,
             },
           } as ParsedDocCard;
         }
