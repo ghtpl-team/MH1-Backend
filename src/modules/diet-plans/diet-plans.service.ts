@@ -321,15 +321,17 @@ export class DietPlansService {
       );
 
       if (!userMedicalHistory) {
-        throw new HttpException(
-          'User medical history not found',
-          HttpStatus.FAILED_DEPENDENCY,
-        );
+        return {
+          success: false,
+          isMedicalHistoryFilled: false,
+          message: 'Please fill medical history',
+        };
       }
 
       if (userPreferences?.allergies?.length >= 2) {
         return {
           success: false,
+          isMedicalHistoryFilled: true,
           message: 'consult doctor',
         };
       }
@@ -355,7 +357,13 @@ export class DietPlansService {
 
       const parsedDietPlan = this.parseDietPlan(dietPlanRaw);
 
-      return { isSent, isReviewed, ...parsedDietPlan };
+      return {
+        success: true,
+        isSent,
+        isReviewed,
+        isMedicalHistoryFilled: true,
+        ...parsedDietPlan,
+      };
     } catch (error) {
       this.logger.error('unable to fetch diet plan', error.stack || error);
       throw error;
