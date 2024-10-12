@@ -157,7 +157,7 @@ export class MedicationSchedulesService {
               strengthUnit: medication.strengthUnit,
               intakeTime: medication.intakeTime,
               intakeTimes: medication.intakeTimes,
-              ...medication,
+              ...{ ...medication, schedule: undefined },
               isTaken:
                 medication.schedule[index]?.scheduledTasks[0]?.taskStatus ===
                 ScheduledTaskStatus.DONE,
@@ -212,7 +212,7 @@ export class MedicationSchedulesService {
           ],
           true,
         )
-        .innerJoinAndSelect('ms.schedule', 'sc', { user: userId }, [
+        .innerJoinAndSelect('ms.schedule', 'sc', { status: Status.ACTIVE }, [
           'sc.id',
           'sc.reminderTime',
         ])
@@ -220,10 +220,8 @@ export class MedicationSchedulesService {
           'sc.scheduledTasks',
           'st',
           {
-            date: {
-              $gte: new Date().toISOString().split('T')[0],
-            },
-            user: userId,
+            status: Status.ACTIVE,
+            date: { $eq: this.dayjsService.getCurrentDate() },
           },
           ['st.id', 'st.taskStatus'],
         )
@@ -271,7 +269,7 @@ export class MedicationSchedulesService {
     id: number,
     updateMedicationScheduleDto: UpdateMedicationScheduleDto,
   ) {
-    return await this.em.nativeUpdate(
+    const updateStatus = await this.em.nativeUpdate(
       MedicationSchedule,
       {
         id,
@@ -283,5 +281,85 @@ export class MedicationSchedulesService {
         }),
       },
     );
+
+    if (!updateStatus)
+      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+
+    const updatedMedicalSchedule = await this.em.findOne(MedicationSchedule, {
+      id,
+      status: Status.ACTIVE,
+    });
+
+    const schedules = await this.em
+      .createQueryBuilder(Schedule)
+      .select(['id', 'scheduledTasks'])
+      .where({
+        medicationSchedule: updatedMedicalSchedule.id,
+        status: Status.ACTIVE,
+      });
+
+    await this.em.transactional(async (em) => {
+      await em.nativeUpdate(
+        Schedule,
+        {
+          id: {
+            $in: schedules.map((schedule) => schedule.id),
+          },
+        },
+        {
+          status: Status.DELETED,
+        },
+      );
+    });
+
+    await this.em.nativeUpdate(
+      ScheduledTask,
+      {
+        schedule: {
+          $in: schedules.map((schedule) => schedule.id),
+        },
+      },
+      {
+        status: Status.DELETED,
+      },
+    );
+
+    const newSchedules = updatedMedicalSchedule.intakeTimes.map(
+      (medicationTime) => {
+        return this.em.create(Schedule, {
+          medicationSchedule: updatedMedicalSchedule,
+          recurrenceRule: updatedMedicalSchedule.frequency,
+          scheduledBy: ScheduledBy.USER,
+          selectedDays:
+            updatedMedicalSchedule.frequency === Frequency.DAILY
+              ? undefined
+              : (updatedMedicalSchedule?.selectedDays ?? undefined),
+          type: ReminderType.MEDICATION_SCHEDULE,
+          reminderTime: medicationTime,
+          user: updatedMedicalSchedule.user,
+        });
+      },
+    );
+
+    const scheduledTasks = [];
+    const startDate = this.dayjsService.formatDate(
+      updatedMedicalSchedule.startDate,
+      'YYYY-MM-DD',
+    );
+    const currentDate = this.dayjsService.getCurrentDate();
+    if (!this.dayjsService.isAfter(startDate, currentDate)) {
+      newSchedules.forEach((schedule) => {
+        scheduledTasks.push(
+          this.em.create(ScheduledTask, {
+            type: ReminderType.MEDICATION_SCHEDULE,
+            schedule: schedule,
+            user: updatedMedicalSchedule.user,
+          }),
+        );
+      });
+    }
+
+    await this.em.persistAndFlush([...newSchedules, ...scheduledTasks]);
+    return updatedMedicalSchedule;
   }
 }
