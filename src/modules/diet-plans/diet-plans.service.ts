@@ -331,7 +331,7 @@ export class DietPlansService {
       if (userPreferences?.allergies?.length >= 2) {
         return {
           success: false,
-          isMedicalHistoryFilled: false,
+          isMedicalHistoryFilled: true,
           message: 'consult doctor',
         };
       }
