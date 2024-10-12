@@ -210,6 +210,7 @@ export interface ParsedCard {
     bgColor: string;
   };
   chatUrl?: string;
+  msgText?: string;
   image?: string;
   insightType?: string;
   doctor?: {
