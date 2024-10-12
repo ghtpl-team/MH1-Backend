@@ -175,8 +175,8 @@ export class WeeklyInsightsService {
       const counselingCard =
         rawData[0].attributes?.counselingCard?.data?.attributes?.counselingCard;
 
+      const msgCount = [1, 3, 7];
       const parsedCards: ParsedCard[] = [];
-
       [scanCard, counselingCard].forEach((card, index) => {
         if (card) {
           parsedCards.push({
@@ -193,7 +193,7 @@ export class WeeklyInsightsService {
         }
       });
 
-      data.cards.forEach((card) => {
+      data.cards.forEach((card, index) => {
         const { bgColor, bottomBgColor } = this.getCardColor(
           card.insightType as any,
         );
@@ -205,6 +205,7 @@ export class WeeklyInsightsService {
             : null,
           image: getImageUrl(card.image.data.attributes.url),
           type: 'NOTE_CARD' as const,
+          msgText: `${msgCount[index]} unread message`,
           insightType: card.insightType,
           bgColor,
           bottomBgColor,
