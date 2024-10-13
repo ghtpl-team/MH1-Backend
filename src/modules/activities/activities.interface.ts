@@ -372,6 +372,7 @@ export interface ActivityHistoryRaw {
 
 export interface ParsedActivityHistory {
   header: string;
+  totalPointsEarned: number;
   headerImgUrl: string;
   pointsCards: Array<{
     id: string;

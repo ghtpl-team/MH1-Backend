@@ -13,6 +13,7 @@ import {
 import { ActivitiesService } from './activities.service';
 import { FeedbackFromDto } from './dto/activities.dto';
 import { CustomAuthGuard } from '../auth/custom-auth.guard';
+import { ReminderType } from 'src/entities/schedules.entity';
 
 @Controller('activities')
 export class ActivitiesController {
@@ -84,12 +85,14 @@ export class ActivitiesController {
   async updateActivityStatus(
     @Headers('x-mh-v3-user-id') userId: string,
     @Query('taskId') taskId: string,
+    @Query('activityType') activityType: ReminderType = null,
   ) {
     if (!taskId || !userId)
       throw new HttpException('task id is required', HttpStatus.BAD_REQUEST);
     return this.activitiesService.updateActivityStatus(
       parseInt(userId),
       parseInt(taskId),
+      activityType,
     );
   }
 }

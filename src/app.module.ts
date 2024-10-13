@@ -34,6 +34,7 @@ import { RequestContextModule } from './common/request-context/request-context.m
 import { RequestContextMiddleware } from './middlewares/request.context.middleware';
 import { TimezoneModule } from './common/timezone/timezone.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { RewardPointsModule } from './modules/reward-points/reward-points.module';
 
 @Module({
   imports: [
@@ -65,6 +66,7 @@ import { AuthModule } from './modules/auth/auth.module';
     RequestContextModule,
     TimezoneModule,
     AuthModule,
+    RewardPointsModule,
   ],
   controllers: [AppController],
   providers: [
