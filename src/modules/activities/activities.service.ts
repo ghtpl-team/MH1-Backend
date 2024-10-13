@@ -39,6 +39,8 @@ import { UserPreferences } from 'src/entities/user-preferences.entity';
 import { UserConsent } from 'src/entities/user-consent.entity';
 import { formatDateFromDateTime } from 'src/common/utils/date-time.utils';
 import { RewardPointsEarnedType } from 'src/entities/reward-point-aggregation.entity';
+import { RewardPointsService } from '../reward-points/reward-points.service';
+import { SYSTEM_SETTING } from 'src/configs/system.config';
 
 @Injectable()
 export class ActivitiesService {
@@ -47,6 +49,7 @@ export class ActivitiesService {
   constructor(
     private readonly graphqlClient: GraphQLClientService,
     private readonly em: EntityManager,
+    private readonly rewardPointService: RewardPointsService,
   ) {}
 
   private parseMindActivities(
@@ -463,18 +466,25 @@ export class ActivitiesService {
   private parseActivityHistory(
     activityHistoryContent: ActivityHistoryRaw,
     activityHistory: Partial<ScheduledTask>[],
+    rewardPoints: Record<'total' | RewardPointsEarnedType, number>,
   ): ParsedActivityHistory {
     const attributes =
       activityHistoryContent?.activityHistory?.data?.attributes;
     return {
       header: attributes.header,
+      totalPointsEarned: rewardPoints.total,
       headerImgUrl: getImageUrl(attributes.headerImg?.data?.attributes?.url),
       pointsCards: attributes?.pointsCard?.map((card) => {
         return {
           id: card.id,
           bgImgUrl: getImageUrl(card.bgImg?.data?.attributes?.url),
           title: card.title,
-          points: 125, //TODO: static rn
+          points:
+            rewardPoints[
+              this.convertToRewardPointsEarnedType(
+                card.title.toLocaleLowerCase(),
+              )
+            ],
         };
       }),
       historyHeader: attributes.historyHeader,
@@ -495,7 +505,10 @@ export class ActivitiesService {
               imageUrl: getImageUrl(data.image?.data?.attributes?.url),
               label: data.label,
               title: data.title,
-              pointEarned: 10, //TODO: static rn
+              pointEarned:
+                SYSTEM_SETTING.activityPoints[
+                  this.convertToRewardPointsEarnedType(history.type)
+                ],
             };
           }
         })
@@ -523,13 +536,20 @@ export class ActivitiesService {
           },
         });
 
+      const rewardPoints =
+        await this.rewardPointService.getRewardPoints(userId);
+
       if (isHelper) return activityHistory;
       const activityHistoryContent = await this.graphqlClient.query(
         ACTIVITY_HISTORY,
         {},
       );
 
-      return this.parseActivityHistory(activityHistoryContent, activityHistory);
+      return this.parseActivityHistory(
+        activityHistoryContent,
+        activityHistory,
+        rewardPoints,
+      );
     } catch (error) {
       throw error;
     }
@@ -551,7 +571,11 @@ export class ActivitiesService {
         return RewardPointsEarnedType.WATER_GOAL_ACHIEVED;
     }
   }
-  async updateActivityStatus(userId: number, taskId: number) {
+  async updateActivityStatus(
+    userId: number,
+    taskId: number,
+    activityType?: ReminderType,
+  ) {
     try {
       const updatedStatus = await this.em
         .createQueryBuilder(ScheduledTask)
@@ -562,6 +586,17 @@ export class ActivitiesService {
           id: taskId,
           user: userId,
         });
+
+      if (!updatedStatus)
+        throw new HttpException('No Data Available', HttpStatus.NOT_FOUND);
+
+      await this.em.flush();
+      if (activityType) {
+        this.rewardPointService.upsert(
+          userId,
+          this.convertToRewardPointsEarnedType(activityType),
+        );
+      }
 
       return `Task status updated for ${updatedStatus} entries`;
     } catch (error) {

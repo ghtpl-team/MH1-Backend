@@ -1,3 +1,4 @@
+import { RewardPointsEarnedType } from 'src/entities/reward-point-aggregation.entity';
 import { ReminderType } from 'src/entities/schedules.entity';
 
 export const SYSTEM_SETTING = {
@@ -10,5 +11,12 @@ export const SYSTEM_SETTING = {
     [ReminderType.DIET_REMINDER]: '07:00:00',
     [ReminderType.SOUL_REMINDER]: '17:00:00',
     [ReminderType.MIND_REMINDER]: '20:00:00',
+  },
+  activityPoints: {
+    [RewardPointsEarnedType.WATER_GOAL_ACHIEVED]: 10,
+    [RewardPointsEarnedType.FITNESS_GOAL_ACHIEVED]: 10,
+    [RewardPointsEarnedType.MIND_GOAL_ACHIEVED]: 10,
+    [RewardPointsEarnedType.NUTRITION_GOAL_ACHIEVED]: 10,
+    [RewardPointsEarnedType.SOUL_GOAL_ACHIEVED]: 10,
   },
 };
