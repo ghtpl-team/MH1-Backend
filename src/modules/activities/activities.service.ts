@@ -41,6 +41,7 @@ import { formatDateFromDateTime } from 'src/common/utils/date-time.utils';
 import { RewardPointsEarnedType } from 'src/entities/reward-point-aggregation.entity';
 import { RewardPointsService } from '../reward-points/reward-points.service';
 import { SYSTEM_SETTING } from 'src/configs/system.config';
+import { DoctorDetails } from 'src/constants/pregnancy-coach.constants';
 
 @Injectable()
 export class ActivitiesService {
@@ -208,10 +209,13 @@ export class ActivitiesService {
 
   private parseDoctorInfo(doctor?: Doctor): ParsedDoctor {
     return {
-      name: doctor?.name ?? 'Dr. Nidhi Chada',
-      imageUrl: getImageUrl(doctor?.image?.data?.attributes?.url),
-      specialty: doctor?.specialty?.data?.attributes?.name ?? 'Nephrologist',
-      experienceYears: doctor?.experienceYears ?? 10,
+      name: doctor?.name ?? DoctorDetails.name,
+      imageUrl:
+        getImageUrl(doctor?.image?.data?.attributes?.url) ??
+        DoctorDetails.imageUrl,
+      specialty:
+        doctor?.specialty?.data?.attributes?.name ?? DoctorDetails.specialty,
+      experienceYears: doctor?.experienceYears ?? DoctorDetails.experienceYears,
     };
   }
 
