@@ -208,10 +208,10 @@ export class ActivitiesService {
 
   private parseDoctorInfo(doctor?: Doctor): ParsedDoctor {
     return {
-      name: doctor?.name ?? '',
+      name: doctor?.name ?? 'Dr. Nidhi Chada',
       imageUrl: getImageUrl(doctor?.image?.data?.attributes?.url),
-      specialty: doctor?.specialty?.data?.attributes?.name ?? '',
-      experienceYears: doctor?.experienceYears ?? 0,
+      specialty: doctor?.specialty?.data?.attributes?.name ?? 'Nephrologist',
+      experienceYears: doctor?.experienceYears ?? 10,
     };
   }
 
