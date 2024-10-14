@@ -17,12 +17,12 @@ export class RewardPointsService {
   async upsert(userId: number, type: RewardPointsEarnedType) {
     try {
       const qb = this.em.createQueryBuilder(RewardPointsAggregate);
-      const entryExist = await this.em.count(RewardPointsAggregate, {
+      const entryExist = await this.em.findOne(RewardPointsAggregate, {
         user: userId,
         type,
       });
 
-      if (entryExist === 0) {
+      if (entryExist) {
         this.em.create(RewardPointsAggregate, {
           user: userId,
           type,
@@ -31,9 +31,13 @@ export class RewardPointsService {
         await this.em.flush();
       }
 
-      const updatedPoints = await qb.update({
-        points: raw(`points + ${SYSTEM_SETTING.activityPoints[type]}`),
-      });
+      const updatedPoints = await qb
+        .update({
+          points: raw(`points + ${SYSTEM_SETTING.activityPoints[type]}`),
+        })
+        .where({
+          id: entryExist.id,
+        });
       return updatedPoints;
     } catch (error) {
       this.logger.error(
