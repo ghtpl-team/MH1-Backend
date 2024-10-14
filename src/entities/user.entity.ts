@@ -19,6 +19,7 @@ import { UserProfile } from './user-profile.entity';
 import { MedicalRecord } from './medical-records.entity';
 import { BookmarkedArticle } from './bookmarked-articles.entity';
 import { RewardPointsAggregate } from './reward-point-aggregation.entity';
+import { UserComment } from './user-comments.entity';
 
 @Entity({ tableName: 'mh_users' })
 export class User extends BaseClass {
@@ -88,4 +89,7 @@ export class User extends BaseClass {
     (bookmarkedArticle) => bookmarkedArticle.user,
   )
   bookmarkedArticles = new Collection<BookmarkedArticle>(this);
+
+  @OneToMany(() => UserComment, 'user')
+  userComments = new Collection<UserComment>(this);
 }
