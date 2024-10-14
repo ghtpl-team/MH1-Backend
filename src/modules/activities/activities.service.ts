@@ -41,7 +41,10 @@ import { formatDateFromDateTime } from 'src/common/utils/date-time.utils';
 import { RewardPointsEarnedType } from 'src/entities/reward-point-aggregation.entity';
 import { RewardPointsService } from '../reward-points/reward-points.service';
 import { SYSTEM_SETTING } from 'src/configs/system.config';
-import { DoctorDetails } from 'src/constants/pregnancy-coach.constants';
+import {
+  DoctorDetails,
+  MindActivityVideos,
+} from 'src/constants/pregnancy-coach.constants';
 
 @Injectable()
 export class ActivitiesService {
@@ -64,6 +67,7 @@ export class ActivitiesService {
         heading: heading || '',
         subHeading: subHeading || '',
         mindActivities: mind_activities.data.map((activity) => {
+          const activityId = parseInt(activity.id);
           const videos = activity.attributes.videos.data.map((video) => {
             return (
               getImageUrl(video?.attributes?.videoUrl?.data?.attributes?.url) ??
@@ -84,7 +88,10 @@ export class ActivitiesService {
               activity.attributes.thumbnailUrl?.data?.attributes?.url,
             ),
             description: activity.attributes.description || '',
-            videoUrl: videos && videos.length ? videos[0] : '',
+            videoUrl:
+              videos && videos.length
+                ? videos[0]
+                : MindActivityVideos[activityId],
           };
         }),
       };
