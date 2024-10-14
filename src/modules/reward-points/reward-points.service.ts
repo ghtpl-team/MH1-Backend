@@ -17,13 +17,13 @@ export class RewardPointsService {
   async upsert(userId: number, type: RewardPointsEarnedType) {
     try {
       const qb = this.em.createQueryBuilder(RewardPointsAggregate);
-      const entryExist = await this.em.findOne(RewardPointsAggregate, {
+      let entryExist = await this.em.findOne(RewardPointsAggregate, {
         user: userId,
         type,
       });
 
-      if (entryExist) {
-        this.em.create(RewardPointsAggregate, {
+      if (!entryExist) {
+        entryExist = this.em.create(RewardPointsAggregate, {
           user: userId,
           type,
           points: 0,
