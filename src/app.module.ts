@@ -35,6 +35,7 @@ import { RequestContextMiddleware } from './middlewares/request.context.middlewa
 import { TimezoneModule } from './common/timezone/timezone.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { RewardPointsModule } from './modules/reward-points/reward-points.module';
+import { PostsModule } from './modules/posts/posts.module';
 
 @Module({
   imports: [
@@ -67,6 +68,7 @@ import { RewardPointsModule } from './modules/reward-points/reward-points.module
     TimezoneModule,
     AuthModule,
     RewardPointsModule,
+    PostsModule,
   ],
   controllers: [AppController],
   providers: [

@@ -269,7 +269,7 @@ export class ActivitiesService {
 
   async acknowledgeConsentForm(userId: number) {
     try {
-      this.em.upsert(UserConsent, {
+      await this.em.upsert(UserConsent, {
         user: userId,
         lastAcknowledgedAt: formatDateFromDateTime(new Date()),
       });
