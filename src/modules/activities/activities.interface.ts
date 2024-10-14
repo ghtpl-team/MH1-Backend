@@ -23,6 +23,7 @@ export interface MindActivitiesRaw {
         subHeading: string;
         mind_activities: {
           data: Array<{
+            id: string;
             attributes: {
               name: string;
               duration: string;

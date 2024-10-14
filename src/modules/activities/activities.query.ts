@@ -9,6 +9,7 @@ export const MIND_ACTIVITIES = gql`
           subHeading
           mind_activities {
             data {
+              id
               attributes {
                 imageUrl {
                   data {
