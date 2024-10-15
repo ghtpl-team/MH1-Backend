@@ -81,6 +81,7 @@ interface Description {
 
 export interface Doctor {
   name: string;
+  imageUrl: string;
   image: {
     data: {
       attributes: {
@@ -266,6 +267,7 @@ interface ImageData {
 interface DoctorData {
   attributes: {
     name: string;
+    imageUrl: string;
     image: {
       data: ImageData;
     };

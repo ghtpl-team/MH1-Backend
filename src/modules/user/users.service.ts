@@ -386,7 +386,8 @@ export class UsersService {
             docInfo: {
               name: card.hmsDoctor?.data?.attributes?.name,
               image: getImageUrl(
-                card.hmsDoctor?.data?.attributes?.image?.data?.attributes?.url,
+                card.hmsDoctor?.data?.attributes?.imageUrl,
+                false,
               ),
               specialty:
                 card.hmsDoctor?.data?.attributes?.specialty?.data?.attributes

@@ -81,6 +81,7 @@ interface DoctorRaw {
   data: {
     attributes: {
       name: string;
+      imageUrl: string;
       image: ImageRaw;
       specialty: {
         data: {

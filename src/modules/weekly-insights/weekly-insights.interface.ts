@@ -53,6 +53,7 @@ export interface ImageAttributes {
 export interface ApprovedByAttributes {
   hmsDoctorId: string;
   name: string;
+  imageUrl: string;
   experienceYears: number;
   image: {
     data: {
@@ -168,6 +169,7 @@ export interface HmsDoctorAttributes {
   name: string;
   experienceYears: number;
   hmsDoctorId: string;
+  imageUrl: string;
   image: {
     data: {
       attributes: ImageAttributes;

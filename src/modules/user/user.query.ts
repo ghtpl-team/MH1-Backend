@@ -71,6 +71,7 @@ export const DYNAMIC_FORM = gql`
       data {
         attributes {
           name
+          imageUrl
           image {
             data {
               attributes {

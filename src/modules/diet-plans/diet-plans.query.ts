@@ -13,6 +13,7 @@ export const LEARN_MORE = gql`
             data {
               attributes {
                 name
+                imageUrl
                 image {
                   data {
                     attributes {
@@ -84,6 +85,7 @@ export const INTRO_CARDS = gql`
                     data {
                       attributes {
                         name
+                        imageUrl
                         image {
                           data {
                             attributes {

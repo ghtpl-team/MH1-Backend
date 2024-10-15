@@ -72,7 +72,7 @@ export class SymptomsService {
           '',
         doctor: {
           name: docInfo?.name ?? '',
-          imageUrl: getImageUrl(docInfo?.image?.data?.attributes?.url) ?? '',
+          imageUrl: getImageUrl(docInfo?.imageUrl, false) ?? '',
           specialty: docInfo?.specialty?.data?.attributes?.name ?? '',
           hmsDoctorId: docInfo?.hmsDoctorId ?? '',
           experienceYears: docInfo?.experienceYears ?? 0,

@@ -217,9 +217,7 @@ export class ActivitiesService {
   private parseDoctorInfo(doctor?: Doctor): ParsedDoctor {
     return {
       name: doctor?.name ?? DoctorDetails.name,
-      imageUrl:
-        getImageUrl(doctor?.image?.data?.attributes?.url) ??
-        DoctorDetails.imageUrl,
+      imageUrl: getImageUrl(doctor?.imageUrl, false) ?? DoctorDetails.imageUrl,
       specialty:
         doctor?.specialty?.data?.attributes?.name ?? DoctorDetails.specialty,
       experienceYears: doctor?.experienceYears ?? DoctorDetails.experienceYears,

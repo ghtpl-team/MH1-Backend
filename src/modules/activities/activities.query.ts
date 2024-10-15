@@ -110,6 +110,7 @@ export const FITNESS_ACTIVITIES = gql`
                     data {
                       attributes {
                         name
+                        imageUrl
                         image {
                           data {
                             attributes {
@@ -182,6 +183,7 @@ export const PREGNANCY_COACH = gql`
           hms_doctor {
             data {
               attributes {
+                imageUrl
                 name
                 image {
                   data {
@@ -249,6 +251,7 @@ export const FEEDBACK_FORM = gql`
               data {
                 attributes {
                   name
+                  imageUrl
                   image {
                     data {
                       attributes {
