@@ -73,6 +73,9 @@ export class UnsubscribedHomeService {
         ),
         animationText: attributes.dietPlanAd.animationText,
       },
+      promoVideos: attributes.promoVideos.data.map((video) =>
+        getImageUrl(video.attributes.url),
+      ),
       symptoms: {
         heading: attributes.unsubSymptom.heading,
         description: attributes.unsubSymptom.description,

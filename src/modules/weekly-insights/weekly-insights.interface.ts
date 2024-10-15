@@ -278,6 +278,7 @@ export interface ParsedUnsubscribedHome {
       bgColor: string | null;
     };
   }>;
+  promoVideos: string[];
   dietPlanAd: {
     text: string;
     bgImage: string | null;
