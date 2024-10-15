@@ -72,6 +72,13 @@ export const GET_UNSUBSCRIBED_HOME = gql`
             }
             animationText
           }
+          promoVideos {
+            data {
+              attributes {
+                url
+              }
+            }
+          }
           unsubSymptom {
             id
             heading
