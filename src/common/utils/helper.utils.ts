@@ -1,8 +1,11 @@
 import 'dotenv/config';
 import { LogLevel } from '@nestjs/common/services/logger.service';
 
-export function getImageUrl(str: string) {
-  return str ? `${process.env.STRAPI_BASE_URL}${str}` : null;
+export function getImageUrl(str: string, fromStrapi: boolean = true) {
+  const baseUrl = fromStrapi
+    ? process.env.STRAPI_BASE_URL
+    : process.env.MEDIA_SERVER_BASE_URL;
+  return str ? `${baseUrl}${str}` : null;
 }
 
 export function generateId(length: number = 12) {

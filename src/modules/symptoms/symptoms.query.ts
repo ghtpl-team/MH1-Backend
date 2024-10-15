@@ -47,6 +47,7 @@ export const GET_LOGGED_SYMPTOMS = gql`
             data {
               attributes {
                 name
+                imageUrl
                 image {
                   data {
                     attributes {

@@ -50,9 +50,7 @@ export class WeeklyInsightsService {
                   ?.data?.attributes?.url,
               ) ?? null,
           },
-          docImage: getImageUrl(
-            approvedBy?.data?.attributes?.image?.data?.attributes?.url,
-          ),
+          docImage: getImageUrl(approvedBy?.data?.attributes?.imageUrl, false),
         },
         babyGrowthInsight:
           insightType === InsightType.BABY
@@ -256,7 +254,7 @@ export class WeeklyInsightsService {
         name: attributes.name,
         experienceYears: attributes.experienceYears,
         hmsDoctorId: attributes.hmsDoctorId,
-        image: getImageUrl(attributes.image.data?.attributes.url) ?? null,
+        image: getImageUrl(attributes?.imageUrl, false) ?? null,
         specialty: {
           name: attributes?.specialty?.data?.attributes?.name,
           image:

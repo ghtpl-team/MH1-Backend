@@ -50,6 +50,7 @@ export interface LoggedSymptomsRaw {
           data?: {
             attributes?: {
               name?: string;
+              imageUrl: string;
               image?: {
                 data?: {
                   attributes?: {

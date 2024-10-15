@@ -15,6 +15,7 @@ export interface GetLearnMoreRaw {
           data: {
             attributes: {
               name: string;
+              imageUrl: string;
               image: {
                 data: {
                   attributes: {

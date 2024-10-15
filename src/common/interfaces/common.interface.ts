@@ -17,6 +17,7 @@ export interface DocInfo {
   data: {
     attributes: {
       name: string;
+      imageUrl: string;
       image: {
         data: ImageData;
       };

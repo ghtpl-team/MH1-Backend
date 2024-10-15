@@ -78,7 +78,7 @@ export class DietPlansService {
   ): ParsedDoctor {
     return {
       name: doctor.name,
-      imageUrl: getImageUrl(doctor.image.data.attributes.url),
+      imageUrl: getImageUrl(doctor.imageUrl, false),
       experienceYears: doctor.experienceYears,
       specialty: doctor.specialty.data.attributes.name,
     };
@@ -112,8 +112,8 @@ export class DietPlansService {
           experienceYears:
             firstCardRaw.docInfo?.data?.attributes?.experienceYears,
           imageUrl: getImageUrl(
-            firstCardRaw.docInfo?.data?.attributes?.image?.data?.attributes
-              ?.url,
+            firstCardRaw.docInfo?.data?.attributes?.imageUrl,
+            false,
           ),
           specialty:
             firstCardRaw?.docInfo?.data?.attributes?.specialty?.data?.attributes

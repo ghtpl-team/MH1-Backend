@@ -200,6 +200,7 @@ export const GET_PERSONALIZED_CARD_LISTING = gql`
       data {
         attributes {
           name
+          imageUrl
           image {
             data {
               attributes {
