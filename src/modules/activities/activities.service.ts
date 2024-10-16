@@ -131,6 +131,7 @@ export class ActivitiesService {
     activities: ParsedFitnessActivity[];
     consentForm: ParsedConsentForm;
     showConsentForm: boolean;
+    notSuitableFor: string[];
   } {
     let consentForm;
     const activities = response.fitnessActivities?.data
@@ -164,6 +165,9 @@ export class ActivitiesService {
           (activity1, activity2) => activity1.week - activity2.week,
         ) ?? [],
       showConsentForm,
+      notSuitableFor: [
+        ...new Set(activities.flatMap((activity) => activity.notSuitableFor)),
+      ],
       consentForm,
     };
   }
