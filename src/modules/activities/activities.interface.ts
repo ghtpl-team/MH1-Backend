@@ -128,6 +128,13 @@ export interface ConsentForm {
     subHeading: string;
     button: Button;
   }[];
+  disclaimerVideo: {
+    data: {
+      attributes: {
+        url: string;
+      };
+    };
+  };
   unlockActivityCard: {
     heading: string;
     subHeading: string;
@@ -232,6 +239,7 @@ export interface ParsedConsentForm {
     heading2: string;
     subHeading: string;
     button: Button;
+    videoUrl: string;
   }[];
   unlockActivityCard: {
     heading: string;

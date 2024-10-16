@@ -3,9 +3,11 @@ import * as dayjs from 'dayjs';
 import * as utc from 'dayjs/plugin/utc';
 import * as timezone from 'dayjs/plugin/timezone';
 import { TimezoneService } from 'src/common/timezone/timezone.service';
+import * as customParseFormat from 'dayjs/plugin/customParseFormat';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
+dayjs.extend(customParseFormat);
 
 @Injectable()
 export class DayjsService {
@@ -75,5 +77,9 @@ export class DayjsService {
     return dayjs(date1)
       .tz(this.getCurrentTimezone())
       .diff(dayjs(date2).tz(this.getCurrentTimezone()), diffUnit);
+  }
+
+  formatTimeTo12hour(time: string): string {
+    return dayjs(time, 'HH:mm:ss').format('hh:mm A');
   }
 }

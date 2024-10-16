@@ -145,6 +145,13 @@ export const FITNESS_ACTIVITIES = gql`
                     textColor
                   }
                 }
+                disclaimerVideo {
+                  data {
+                    attributes {
+                      url
+                    }
+                  }
+                }
                 disclaimer {
                   heading
                   heading2
