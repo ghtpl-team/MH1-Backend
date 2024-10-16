@@ -239,6 +239,7 @@ export interface ParsedConsentForm {
     heading2: string;
     subHeading: string;
     button: Button;
+    notSuitableFor: string[];
     videoUrl: string;
   }[];
   unlockActivityCard: {

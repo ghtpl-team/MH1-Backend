@@ -131,7 +131,6 @@ export class ActivitiesService {
     activities: ParsedFitnessActivity[];
     consentForm: ParsedConsentForm;
     showConsentForm: boolean;
-    notSuitableFor: string[];
   } {
     let consentForm;
     const activities = response.fitnessActivities?.data
@@ -165,10 +164,22 @@ export class ActivitiesService {
           (activity1, activity2) => activity1.week - activity2.week,
         ) ?? [],
       showConsentForm,
-      notSuitableFor: [
-        ...new Set(activities.flatMap((activity) => activity.notSuitableFor)),
-      ],
-      consentForm,
+
+      consentForm: {
+        ...consentForm,
+        disclaimer: consentForm.disclaimer.map((disclaimer, index) => {
+          return {
+            ...disclaimer,
+            notSuitableFor: index
+              ? undefined
+              : [
+                  ...new Set(
+                    activities.flatMap((activity) => activity.notSuitableFor),
+                  ),
+                ],
+          };
+        }),
+      },
     };
   }
 
@@ -205,6 +216,7 @@ export class ActivitiesService {
               videoUrl: getImageUrl(
                 consentForm.disclaimerVideo?.data?.attributes?.url,
               ),
+              notSuitableFor: null,
             };
           }) ?? [],
         unlockActivityCard: {
