@@ -1,15 +1,32 @@
 import { Request, Response } from 'express'; // Ensure you import from 'express'
-import { Controller, Req, Res } from '@nestjs/common';
+import { Body, Controller, Post, Req, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { CreateUserDto } from '../user/dto/users.dto';
+import { ApiHeaders } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  async logIn(@Req() request: Request, @Res() response: Response) {
-    const v1Token = request.headers['authorization']?.split(' ')[1];
-    const cookie = await this.authService.getCookieWithJwtToken(v1Token);
-    response.setHeader('Set-Cookie', cookie);
-    return response.json({ msg: 'login successful' });
+  @Post('token')
+  @ApiHeaders([
+    {
+      name: 'authorization',
+      description: 'Bearer token',
+    },
+  ])
+  async logIn(
+    @Req() request: Request,
+    @Body() userData: CreateUserDto,
+    @Res() response: Response,
+  ) {
+    const v1Token = request.headers['authorization'];
+    console.log('v1Token', v1Token);
+
+    const cookie = await this.authService.getNewTokenWithJwtToken(
+      v1Token,
+      userData,
+    );
+    return response.json({ success: true, mh1Token: cookie });
   }
 }
