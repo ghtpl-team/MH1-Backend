@@ -6,6 +6,7 @@ import { getLogLevels } from './common/utils/helper.utils';
 import helmet from 'helmet';
 import { HeaderInjectorInterceptor } from './interceptors/inject-headers.interceptor';
 import * as cookieParser from 'cookie-parser';
+import { ValidationPipe } from '@nestjs/common/pipes/validation.pipe';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: getLogLevels(process.env.NODE_ENV === 'production'),
@@ -15,6 +16,7 @@ async function bootstrap() {
   app.use(cookieParser());
   app.setGlobalPrefix('api');
   app.useGlobalInterceptors(new HeaderInjectorInterceptor());
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
   const config = new DocumentBuilder()
     .setTitle('Motherhood One')
