@@ -31,10 +31,6 @@ export class User extends BaseClass {
   @Property({ unique: true })
   deviceId!: string;
 
-  @Index()
-  @Property({ unique: true })
-  mongoId!: string;
-
   @Property({ type: 'date' })
   expectedDueDate!: string;
 
