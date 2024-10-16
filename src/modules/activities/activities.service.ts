@@ -170,7 +170,7 @@ export class ActivitiesService {
         disclaimer: consentForm.disclaimer.map((disclaimer, index) => {
           return {
             ...disclaimer,
-            notSuitableFor: index
+            notSuitableFor: !index
               ? undefined
               : [
                   ...new Set(
