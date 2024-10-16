@@ -32,6 +32,7 @@ import {
 } from 'src/entities/subscriptions.entity';
 import { DayjsService } from 'src/utils/dayjs/dayjs.service';
 import { SYSTEM_SETTING } from 'src/configs/system.config';
+import { CreateUserDto } from './dto/users.dto';
 @Injectable()
 export class UsersService {
   private readonly logger = new Logger(UsersService.name);
@@ -156,6 +157,24 @@ export class UsersService {
         currentWeek: predictedCurrentWeek,
         trimester: predictedCurrentTrimester,
       };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async upsert(id: number, userData: CreateUserDto) {
+    try {
+      const upsertResult = await this.em.nativeUpdate(
+        User,
+        {
+          id,
+        },
+        {
+          expectedDueDate: userData.expectedDueDate,
+        },
+      );
+
+      return upsertResult;
     } catch (error) {
       throw error;
     }
