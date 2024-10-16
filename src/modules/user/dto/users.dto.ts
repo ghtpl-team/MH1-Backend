@@ -10,12 +10,4 @@ export class CreateUserDto {
   })
   @IsString()
   expectedDueDate: string;
-
-  @ApiProperty({
-    example: '649800000000000000000000',
-    description: 'Mongo ID',
-    required: true,
-  })
-  @IsString()
-  mongoId: string;
 }
