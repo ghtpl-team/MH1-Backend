@@ -67,6 +67,15 @@ export class MedicationSchedule extends BaseClass {
       );
     }
   }
+
+  @BeforeCreate()
+  @BeforeUpdate()
+  formatIntakeTimes() {
+    this.intakeTimes = this.intakeTimes.map((time) => {
+      const [hours, minutes] = time.split(':');
+      return `${hours}:${minutes}:00`;
+    });
+  }
 }
 
 export enum MedicationType {

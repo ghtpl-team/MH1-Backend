@@ -202,6 +202,9 @@ export class ActivitiesService {
               heading2: disclaimer?.heading2 ?? '',
               subHeading: disclaimer?.subHeading ?? '',
               button: this.parseButton(disclaimer?.button),
+              videoUrl: getImageUrl(
+                consentForm.disclaimerVideo?.data?.attributes?.url,
+              ),
             };
           }) ?? [],
         unlockActivityCard: {
