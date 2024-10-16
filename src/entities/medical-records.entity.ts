@@ -39,7 +39,7 @@ export enum MedicalCondition {
 }
 
 export enum PregnancyComplications {
-  NONE = 'None',
+  NONE = 'none',
   GDM = 'gestational_diabetes_mellitus',
   HYPEREMESIS = 'hyperemesis',
   LOW_FOETAL_WEIGHT = 'low_expected_foetal_weight',
