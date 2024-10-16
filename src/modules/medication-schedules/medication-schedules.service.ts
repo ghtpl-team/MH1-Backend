@@ -221,7 +221,9 @@ export class MedicationSchedulesService {
           'st',
           {
             status: Status.ACTIVE,
-            date: { $eq: this.dayjsService.getCurrentDate() },
+            date: {
+              $eq: new Date().toISOString().split('T')[0],
+            },
           },
           ['st.id', 'st.taskStatus'],
         )
@@ -347,6 +349,8 @@ export class MedicationSchedulesService {
       'YYYY-MM-DD',
     );
     const currentDate = this.dayjsService.getCurrentDate();
+    console.log(startDate, currentDate);
+
     if (!this.dayjsService.isAfter(startDate, currentDate)) {
       newSchedules.forEach((schedule) => {
         scheduledTasks.push(
