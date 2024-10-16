@@ -44,7 +44,7 @@ export class DietPlanInfoFormDto {
   @ApiProperty()
   @IsEnum(MedicalCondition)
   @IsOptional()
-  medicalCondition: MedicalCondition;
+  medicalCondition: MedicalCondition[];
 
   @ApiProperty()
   @IsBoolean()
