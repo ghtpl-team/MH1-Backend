@@ -166,7 +166,7 @@ export class UsersService {
     subscriptionStatus: string,
     isDietFormFilled: boolean,
   ) {
-    const expectedDate = '2025-05-30'; // TODO: Static Fix this
+    const expectedDate = userData[0].expectedDueDate;
     const { userPreferences } = userData[0];
     const isPreferencesLogged = userPreferences.lunchTime ? true : false;
     return {
