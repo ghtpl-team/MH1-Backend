@@ -189,6 +189,7 @@ export class DietPlansService {
           user: userId,
           ...formData,
           medicalCondition: formData.medicalCondition[0],
+          pregnancyComplications: formData.pregnancyComplications[0],
           afterFastBloodSugar: formData.afterFastBloodSugarLevel,
           afterMealBloodSugar1: formData.afterMealBloodSugarLevel,
           afterMealBloodSugar2: formData.afterMealBloodSugarLevel2,

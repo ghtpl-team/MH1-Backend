@@ -42,7 +42,7 @@ export class DietPlanInfoFormDto {
   physicalActivity: ActivityLevel;
 
   @ApiProperty()
-  @IsEnum(MedicalCondition)
+  @IsArray()
   @IsOptional()
   medicalCondition: MedicalCondition[];
 
@@ -52,9 +52,9 @@ export class DietPlanInfoFormDto {
   onInsulin: boolean;
 
   @ApiProperty()
-  @IsEnum(PregnancyComplications)
+  @IsArray()
   @IsOptional()
-  pregnancyComplications: PregnancyComplications;
+  pregnancyComplications: PregnancyComplications[];
 
   @ApiProperty()
   @IsEnum(BloodSugarLevel)
