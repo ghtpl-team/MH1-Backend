@@ -1,17 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsDateString, IsOptional } from 'class-validator';
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
 export class UserPreferencesDto {
   @ApiProperty()
-  @IsDateString()
+  @IsString()
   breakfastTiming: string;
 
   @ApiProperty()
-  @IsDateString()
+  @IsString()
   lunchTiming: string;
 
   @ApiProperty()
-  @IsDateString()
+  @IsString()
   dinnerTiming: string;
 
   @ApiProperty()
