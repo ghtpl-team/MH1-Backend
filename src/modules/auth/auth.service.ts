@@ -59,9 +59,10 @@ export class AuthService {
         deviceId,
         phone: mobileNumber,
         expectedDueDate: userData.expectedDueDate,
-        mongoId: userData.mongoId,
       });
     }
+
+    await this.userService.upsert(user.id, userData);
 
     return user;
   }

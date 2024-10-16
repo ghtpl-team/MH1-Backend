@@ -5,6 +5,9 @@ import {
   OneToMany,
   Collection,
   OneToOne,
+  BeforeCreate,
+  BeforeUpdate,
+  BeforeUpsert,
 } from '@mikro-orm/core';
 import { ActivityFeedBack } from './activity-feedback.entity';
 import { BaseClass } from './base.entity';
@@ -88,4 +91,13 @@ export class User extends BaseClass {
 
   @OneToMany(() => UserComment, 'user')
   userComments = new Collection<UserComment>(this);
+
+  @BeforeCreate()
+  @BeforeUpdate()
+  @BeforeUpsert()
+  setDefaultEDD() {
+    if (!this.expectedDueDate || this.expectedDueDate === '') {
+      this.expectedDueDate = '1990-10-02';
+    }
+  }
 }
