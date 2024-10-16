@@ -67,24 +67,24 @@ export class UsersService {
     }
   }
 
-  async findOneByDeviceId(deviceId: string) {
-    try {
-      const user = await this.em.findOneOrFail(
-        User,
-        { deviceId: deviceId },
-        { strict: true },
-      );
-      return {
-        id: user.id,
-        phone: user.phone,
-        status: user.status,
-        expectedDueDate: user.expectedDueDate,
-        uuid: user.publicUuid,
-      };
-    } catch (error) {
-      return null;
-    }
-  }
+  // async findOneByDeviceId(deviceId: string) {
+  //   try {
+  //     const user = await this.em.findOneOrFail(
+  //       User,
+  //       { deviceId: deviceId },
+  //       { strict: true },
+  //     );
+  //     return {
+  //       id: user.id,
+  //       phone: user.phone,
+  //       status: user.status,
+  //       expectedDueDate: user.expectedDueDate,
+  //       uuid: user.publicUuid,
+  //     };
+  //   } catch (error) {
+  //     return null;
+  //   }
+  // }
 
   /**
    * Creates a new user

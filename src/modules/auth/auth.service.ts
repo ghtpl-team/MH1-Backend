@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UsersService } from '../user/users.service';
 import { JwtService } from '@nestjs/jwt';
+import { CreateUserDto } from '../user/dto/users.dto';
 
 @Injectable()
 export class AuthService {
@@ -9,11 +10,17 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async getCookieWithJwtToken(v1Token: string) {
-    const { deviceId } = this.jwtService.verify(v1Token);
-    const payload = await this.loginOrCreate(deviceId);
-    const token = this.jwtService.sign(payload);
-    return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${8400 * 365 * 2000}`;
+  async getNewTokenWithJwtToken(v1Token: string, reqBody: CreateUserDto) {
+    const { payload } = this.jwtService.decode(v1Token);
+
+    const userPayload = await this.loginOrCreate(
+      payload.deviceId,
+      payload.mobileNumber,
+      reqBody,
+    );
+
+    const token = this.jwtService.sign(userPayload);
+    return token;
   }
 
   /**
@@ -25,10 +32,10 @@ export class AuthService {
   async validateToken(token: string) {
     try {
       const payload = this.jwtService.decode(token, {});
-      console.log(payload);
-
-      const user = await this.loginOrCreate(payload.deviceId);
-      return user;
+      if (!payload) {
+        return null;
+      }
+      return payload;
     } catch (error) {
       return null;
     }
@@ -40,18 +47,21 @@ export class AuthService {
    * @param phoneNumber - The phone number of the user to log in or create.
    * @returns A promise that resolves to the user object, either found or newly created.
    */
-  async loginOrCreate(deviceId: string): Promise<any> {
-    let user = await this.userService.findOneByDeviceId(deviceId);
+  async loginOrCreate(
+    deviceId: string,
+    mobileNumber: string,
+    userData: CreateUserDto,
+  ): Promise<any> {
+    let user = await this.userService.findOneByPhoneNumber(mobileNumber);
 
     if (!user) {
       user = await this.userService.create({
         deviceId,
-        phone: '9352178961',
-        expectedDueDate: '2025-05-30',
-        mongoId: '1234567890',
+        phone: mobileNumber,
+        expectedDueDate: userData.expectedDueDate,
+        mongoId: userData.mongoId,
       });
     }
-    console.log(user);
 
     return user;
   }
