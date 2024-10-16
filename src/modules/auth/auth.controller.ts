@@ -21,7 +21,6 @@ export class AuthController {
     @Res() response: Response,
   ) {
     const v1Token = request.headers['authorization'];
-    console.log('v1Token', v1Token);
 
     const cookie = await this.authService.getNewTokenWithJwtToken(
       v1Token,
