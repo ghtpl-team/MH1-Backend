@@ -1,5 +1,5 @@
 import { EntityManager, QueryOrder } from '@mikro-orm/mysql';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import {
   CreateJournalEntryDTO,
   UpdateJournalEntryDto,
@@ -9,10 +9,15 @@ import {
 import { Status } from 'src/entities/base.entity';
 import { JournalNotes } from 'src/entities/journal-notes.entity';
 import { UserPreferences } from 'src/entities/user-preferences.entity';
+import { DayjsService } from 'src/utils/dayjs/dayjs.service';
 
 @Injectable()
 export class JournalsService {
-  constructor(private readonly em: EntityManager) {}
+  private readonly logger = new Logger(JournalsService.name);
+  constructor(
+    private readonly em: EntityManager,
+    private readonly dayjsService: DayjsService,
+  ) {}
 
   async createEntry(
     journalData: CreateJournalEntryDTO & { user: number },
@@ -22,6 +27,10 @@ export class JournalsService {
       await this.em.flush();
       return `journal entry with id ${journalEntry.id} created successfully.`;
     } catch (error) {
+      this.logger.error(
+        'Error while creating journal entry',
+        error?.stack ?? error,
+      );
       throw error;
     }
   }
@@ -30,7 +39,7 @@ export class JournalsService {
     try {
       const journalEntries = await this.em
         .createQueryBuilder(JournalNotes)
-        .select(['id', 'date', 'title', 'content', 'isShared'])
+        .select(['id', 'date', 'title', 'content', 'isShared', 'updatedAt'])
         .where({
           user: {
             id: userId,
@@ -39,9 +48,14 @@ export class JournalsService {
         })
         .orderBy({
           updatedAt: QueryOrder.DESC,
-        });
+        })
+        .execute();
 
-      return journalEntries;
+      return journalEntries.map((entry) => ({
+        ...entry,
+        updatedAt: undefined,
+        time: this.dayjsService.convertToLocalTime(entry.updatedAt),
+      }));
     } catch (error) {
       throw error;
     }
@@ -124,6 +138,10 @@ export class JournalsService {
         return { status: true, message: `${updateStatus} records updated!` };
       throw new HttpException('No data for given Id', HttpStatus.NOT_FOUND);
     } catch (error) {
+      this.logger.error(
+        'Error while updating journal entry',
+        error?.stack ?? error,
+      );
       throw error;
     }
   }

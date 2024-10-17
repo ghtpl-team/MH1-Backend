@@ -82,4 +82,8 @@ export class DayjsService {
   formatTimeTo12hour(time: string): string {
     return dayjs(time, 'HH:mm:ss').format('hh:mm A');
   }
+
+  convertToLocalTime(date: Date | string): string {
+    return dayjs(date).tz(this.getCurrentTimezone()).format('hh:mm A');
+  }
 }
