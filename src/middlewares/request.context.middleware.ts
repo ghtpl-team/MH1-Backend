@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  Logger,
   NestMiddleware,
 } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
@@ -14,6 +15,8 @@ dayjs.extend(timezone);
 
 @Injectable()
 export class RequestContextMiddleware implements NestMiddleware {
+  private readonly logger = new Logger(RequestContextMiddleware.name);
+
   constructor(private readonly requestContextService: RequestContextService) {}
 
   use(req: Request, res: Response, next: NextFunction) {
@@ -28,6 +31,15 @@ export class RequestContextMiddleware implements NestMiddleware {
     } catch (error) {
       throw new BadRequestException(`Invalid timezone: ${timezoneToUse}`);
     }
+
+    this.logger.debug({
+      path: req.path,
+      method: req.method,
+      params: req.params,
+      query: req.query,
+      body: req.body,
+      timezone: timezoneToUse,
+    });
 
     this.requestContextService.run(
       () => {
