@@ -7,5 +7,6 @@ import { ConfigService } from '@nestjs/config';
 @Module({
   controllers: [SubscriptionsController],
   providers: [SubscriptionsService, ConfigService, RazorpayService],
+  exports: [SubscriptionsService],
 })
 export class SubscriptionModule {}

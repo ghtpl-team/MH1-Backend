@@ -261,7 +261,7 @@ export class DietPlansService {
 
   private parseDietPlan(rawData: DietChartsRawResponse) {
     try {
-      const data = rawData.dietCharts.data[0].attributes;
+      const data = rawData.dietCharts.data[0]?.attributes;
       const dietPlanRaw = data.dietPlan;
       const weekNumber = data.week;
 

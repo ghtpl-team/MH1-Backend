@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import RazorpayInstance from 'razorpay';
 import { ConfigService } from '@nestjs/config';
-import { SubscriptionWebhookPayload } from 'src/webhooks/webhooks.interface';
+import { SubscriptionWebhookPayload } from 'src/modules/webhooks/webhooks.interface';
 import {
   CreateSubscriptionDto,
   SubscriptionPlanDto,

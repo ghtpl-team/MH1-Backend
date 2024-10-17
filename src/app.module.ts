@@ -16,7 +16,7 @@ import { SymptomsModule } from './modules/symptoms/symptoms.module';
 import { ActivitiesModule } from './modules/activities/activities.module';
 import { SchedulesModule } from './modules/schedules/schedules.module';
 import { DietPlansModule } from './modules/diet-plans/diet-plans.module';
-import { WebhooksModule } from './webhooks/webhooks.module';
+import { WebhooksModule } from './modules/webhooks/webhooks.module';
 import { RazorpayModule } from './utils/razorpay/razorpay.module';
 import { ConfigModule } from '@nestjs/config';
 import { SubscriptionModule } from './modules/subscriptions/subscription.module';

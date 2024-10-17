@@ -1,6 +1,6 @@
 /* The SubscriptionsService class in TypeScript handles creating new subscription plans, subscribing
 users to plans, retrieving subscription details, and canceling subscriptions. */
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { RazorpayService } from 'src/utils/razorpay/razorpay.service';
 import {
   CreateSubscriptionDto,
@@ -17,9 +17,14 @@ import {
   SubscriptionPlans,
   SubscriptionPlanPeriod,
 } from 'src/entities/subscripton-plan.entity';
+import { SubscriptionUsage } from 'src/entities/subscription-usage.entity';
+import { Status } from 'src/entities/base.entity';
+import { Operation } from '../user/dto/users.dto';
+import { SYSTEM_SETTING } from 'src/configs/system.config';
 
 @Injectable()
 export class SubscriptionsService {
+  private readonly logger = new Logger();
   constructor(
     private readonly razorPayService: RazorpayService,
     private readonly em: EntityManager,
@@ -131,6 +136,92 @@ export class SubscriptionsService {
       return updateRpSubscription;
     } catch (error) {
       return error;
+    }
+  }
+
+  async updateUsage(userId: number, updateUsageDto: any) {
+    try {
+      const usageData = await this.em.findOne(SubscriptionUsage, {
+        user: userId,
+        status: Status.ACTIVE,
+      });
+
+      if (!usageData) {
+        throw new HttpException('No data available', HttpStatus.NOT_FOUND);
+      }
+
+      const maxLimit = usageData.totalFreeBookings;
+      const operation = updateUsageDto.operation;
+      let currentUsage = usageData.usedFreeBookings;
+
+      if (operation === Operation.INCREASE) {
+        if (currentUsage + 1 >= maxLimit) {
+          throw new HttpException(
+            'You have reached the maximum limit',
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+        currentUsage++;
+      } else {
+        if (currentUsage - 1 < 0) {
+          throw new HttpException(
+            'You have reached the minimum limit',
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+        currentUsage--;
+      }
+      await this.em.nativeUpdate(
+        SubscriptionUsage,
+        {
+          user: userId,
+        },
+        {
+          usedFreeBookings: currentUsage,
+        },
+      );
+    } catch (error) {
+      this.logger.error(
+        `Error while updating usage for user ${userId}`,
+        error?.stack || error,
+      );
+      throw error;
+    }
+  }
+
+  async resetUsage(userId: number, subscription: Subscriptions) {
+    try {
+      const { subscriptionStatus } = subscription;
+      const totalUsage =
+        subscriptionStatus === SubscriptionStatus.ACTIVE
+          ? SYSTEM_SETTING.freeBookingCount
+          : 0;
+      const updateUsage = await this.em.nativeUpdate(
+        SubscriptionUsage,
+        {
+          user: userId,
+        },
+        {
+          ...(subscriptionStatus === SubscriptionStatus.COMPLETED && {
+            usedFreeBooking: 0,
+          }),
+          totalFreeBookings: totalUsage,
+          currentSubscription: subscription.id,
+        },
+      );
+
+      if (!updateUsage)
+        throw new HttpException(
+          'Error while updating usage',
+          HttpStatus.NOT_FOUND,
+        );
+      return updateUsage;
+    } catch (error) {
+      this.logger.error(
+        `Error while updating usage for user ${userId}`,
+        error?.stack || error,
+      );
+      throw error;
     }
   }
 }

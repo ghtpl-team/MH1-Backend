@@ -23,6 +23,7 @@ import { MedicalRecord } from './medical-records.entity';
 import { BookmarkedArticle } from './bookmarked-articles.entity';
 import { RewardPointsAggregate } from './reward-point-aggregation.entity';
 import { UserComment } from './user-comments.entity';
+import { SubscriptionUsage } from './subscription-usage.entity';
 
 @Entity({ tableName: 'mh_users' })
 export class User extends BaseClass {
@@ -33,6 +34,10 @@ export class User extends BaseClass {
   @Index()
   @Property({ unique: true })
   deviceId!: string;
+
+  @Index()
+  @Property({ nullable: true })
+  mongoId: string;
 
   @Property({ type: 'date' })
   expectedDueDate!: string;
@@ -91,6 +96,12 @@ export class User extends BaseClass {
 
   @OneToMany(() => UserComment, 'user')
   userComments = new Collection<UserComment>(this);
+
+  @OneToOne(
+    () => SubscriptionUsage,
+    (subscriptionUsage) => subscriptionUsage.user,
+  )
+  subscriptionUsage: SubscriptionUsage = new SubscriptionUsage();
 
   @BeforeCreate()
   @BeforeUpdate()

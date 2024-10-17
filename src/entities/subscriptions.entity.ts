@@ -1,8 +1,16 @@
-import { Entity, ManyToOne, Property, Index, Enum } from '@mikro-orm/core';
+import {
+  Entity,
+  ManyToOne,
+  Property,
+  Index,
+  Enum,
+  OneToOne,
+} from '@mikro-orm/core';
 import { BaseClass } from './base.entity';
 import { SubscriptionPlans } from './subscripton-plan.entity';
 import { User } from './user.entity';
 import { IsInt, IsNotEmpty, Min } from 'class-validator';
+import { SubscriptionUsage } from './subscription-usage.entity';
 
 @Entity({ tableName: 'mh_subscriptions' })
 export class Subscriptions extends BaseClass {
@@ -40,6 +48,12 @@ export class Subscriptions extends BaseClass {
 
   @ManyToOne(() => User)
   user: User;
+
+  @OneToOne(
+    () => SubscriptionUsage,
+    (subscriptionUsage) => subscriptionUsage.currentSubscription,
+  )
+  subscriptionUsage: SubscriptionUsage;
 }
 
 export enum SubscriptionStatus {

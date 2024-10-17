@@ -5,6 +5,7 @@ export const SYSTEM_SETTING = {
   symptomReviewTime: 1000 * 60 * 60,
   dietReviewTime1: 1000 * 60 * 30,
   dietReviewTime2: 1000 * 60 * 30,
+  freeBookingCount: 2,
   defaultReminders: {
     [ReminderType.FITNESS_REMINDER]: '08:00:00',
     [ReminderType.WATER_REMINDER]: '06:00:00',
