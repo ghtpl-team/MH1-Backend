@@ -1,5 +1,5 @@
 import { EntityManager, QueryOrder } from '@mikro-orm/mysql';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import {
   CreateJournalEntryDTO,
   UpdateJournalEntryDto,
@@ -138,7 +138,10 @@ export class JournalsService {
         return { status: true, message: `${updateStatus} records updated!` };
       throw new HttpException('No data for given Id', HttpStatus.NOT_FOUND);
     } catch (error) {
-      this.logger('Error while updating journal entry', error?.stack ?? error);
+      this.logger.error(
+        'Error while updating journal entry',
+        error?.stack ?? error,
+      );
       throw error;
     }
   }
