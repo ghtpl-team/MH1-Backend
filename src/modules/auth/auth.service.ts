@@ -19,7 +19,9 @@ export class AuthService {
       reqBody,
     );
 
-    const token = this.jwtService.sign(userPayload);
+    const token = this.jwtService.sign(userPayload, {
+      secret: process.env.JWT_SECRET,
+    });
     return token;
   }
 
@@ -59,6 +61,7 @@ export class AuthService {
         deviceId,
         phone: mobileNumber,
         expectedDueDate: userData.expectedDueDate,
+        mongoId: userData?.mongoId,
       });
     }
 

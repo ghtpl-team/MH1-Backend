@@ -33,6 +33,7 @@ import {
 import { DayjsService } from 'src/utils/dayjs/dayjs.service';
 import { SYSTEM_SETTING } from 'src/configs/system.config';
 import { CreateUserDto } from './dto/users.dto';
+import { SubscriptionUsage } from 'src/entities/subscription-usage.entity';
 @Injectable()
 export class UsersService {
   private readonly logger = new Logger(UsersService.name);
@@ -427,6 +428,30 @@ export class UsersService {
         {},
       );
       return this.parseDynamicForm(formDataRaw);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getSubscriptionUsageDetails(userId: number) {
+    try {
+      const subscriptionUsages = await this.em.findOne(SubscriptionUsage, {
+        user: userId,
+        status: Status.ACTIVE,
+      });
+      if (!subscriptionUsages)
+        throw new HttpException(
+          'No subscription usage found',
+          HttpStatus.NOT_FOUND,
+        );
+      return {
+        success: true,
+        remainingFreeBookings: Math.max(
+          subscriptionUsages.totalFreeBookings -
+            subscriptionUsages.usedFreeBookings,
+          0,
+        ),
+      };
     } catch (error) {
       throw error;
     }

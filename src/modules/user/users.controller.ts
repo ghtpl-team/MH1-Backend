@@ -3,18 +3,23 @@ import {
   Controller,
   Get,
   Headers,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/users.dto';
+import { CreateUserDto, SubscriptionUsageUpdateDto } from './dto/users.dto';
 import { User } from 'src/entities/user.entity';
 import { CustomAuthGuard } from '../auth/custom-auth.guard';
 import { ApiHeader } from '@nestjs/swagger';
+import { SubscriptionsService } from '../subscriptions/subscriptions.service';
 
 @Controller('users')
 export class UserController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly subscriptionService: SubscriptionsService,
+  ) {}
 
   @UseGuards(CustomAuthGuard)
   @Post()
@@ -45,5 +50,23 @@ export class UserController {
   @Get('info/form')
   async getInfoForm() {
     return this.usersService.fetchUserInfoForm();
+  }
+
+  @UseGuards(CustomAuthGuard)
+  @Patch('free-bookings')
+  async updateFreeBookingsUsage(
+    @Headers('x-mh-v3-user-id') userId: string,
+    @Body() updateUsageDto: SubscriptionUsageUpdateDto,
+  ) {
+    return this.subscriptionService.updateUsage(
+      parseInt(userId),
+      updateUsageDto,
+    );
+  }
+
+  @UseGuards(CustomAuthGuard)
+  @Get('free-bookings')
+  async getFreeBookingsUsage(@Headers('x-mh-v3-user-id') userId: string) {
+    return this.usersService.getSubscriptionUsageDetails(parseInt(userId));
   }
 }

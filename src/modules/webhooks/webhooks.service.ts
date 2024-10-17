@@ -61,8 +61,18 @@ export class WebhooksService {
               razorPaySubscriptionId: rawBody.payload?.subscription?.entity?.id,
             },
             {
-              populate: ['user', 'subscriptionStatus'],
+              populate: [
+                'id',
+                'razorPaySubscriptionId',
+                'user',
+                'subscriptionStatus',
+              ],
             },
+          );
+
+          this.subscriptionService.resetUsage(
+            subscriptionDetails.user.id,
+            subscriptionDetails,
           );
 
           await this.cacheService.set(

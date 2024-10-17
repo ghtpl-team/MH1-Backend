@@ -5,9 +5,10 @@ import { UserController } from './users.controller';
 import { GraphQLClientService } from 'src/utils/graphql/graphql.service';
 import { User } from 'src/entities/user.entity';
 import { DayjsModule } from 'src/utils/dayjs/dayjs.module';
+import { SubscriptionModule } from '../subscriptions/subscription.module';
 
 @Module({
-  imports: [MikroOrmModule.forFeature([User]), DayjsModule],
+  imports: [MikroOrmModule.forFeature([User]), DayjsModule, SubscriptionModule],
   controllers: [UserController],
   providers: [UsersService, GraphQLClientService],
   exports: [UsersService],
