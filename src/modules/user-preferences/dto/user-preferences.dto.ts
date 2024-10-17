@@ -4,14 +4,17 @@ import { IsBoolean, IsOptional, IsString } from 'class-validator';
 export class UserPreferencesDto {
   @ApiProperty()
   @IsString()
+  @IsOptional()
   breakfastTiming: string;
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   lunchTiming: string;
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   dinnerTiming: string;
 
   @ApiProperty()
