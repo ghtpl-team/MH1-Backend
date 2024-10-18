@@ -29,6 +29,7 @@ import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
   DietCardColor,
   DietCardTabIcons,
+  DietDoctorDetails,
 } from 'src/constants/diet-plan.constants';
 import { Status } from 'src/entities/base.entity';
 import { processTimeStatus } from 'src/common/utils/date-time.utils';
@@ -295,6 +296,12 @@ export class DietPlansService {
       });
 
       return {
+        doctorInfo: {
+          name: DietDoctorDetails.name,
+          imageUrl: DietDoctorDetails.imageUrl,
+          experienceYears: DietDoctorDetails.experienceYears,
+          specialty: DietDoctorDetails.specialty,
+        },
         weekNumber,
         dietPlan,
       };

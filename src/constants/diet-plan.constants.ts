@@ -16,3 +16,11 @@ export const DietCardTabIcons = {
   Afternoon_snack: getImageUrl('/uploads/afternoonsnack_59f7e449eb.png'),
   Dinner: getImageUrl('/uploads/dinner_bdd7466657.png'),
 };
+
+export const DietDoctorDetails = {
+  name: 'Dr. Swathi Reddy',
+  imageUrl:
+    'https://mh-dev-cms.oicharts.in/uploads/Screenshot_2024_10_15_at_19_53_35_c7ea4e0cc4.png',
+  specialty: 'Physiotherapy',
+  experienceYears: 10,
+};
