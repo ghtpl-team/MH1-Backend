@@ -438,6 +438,12 @@ export class DietPlansService {
           success: false,
           isMedicalHistoryFilled: true,
           isDietPlanCreated: false,
+          doctorInfo: {
+            name: DietDoctorDetails.name,
+            imageUrl: DietDoctorDetails.imageUrl,
+            experienceYears: DietDoctorDetails.experienceYears,
+            specialty: DietDoctorDetails.specialty,
+          },
           message: 'consult doctor',
         };
       }
