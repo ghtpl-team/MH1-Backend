@@ -5,6 +5,7 @@ import {
   Headers,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -13,6 +14,7 @@ import { User } from 'src/entities/user.entity';
 import { CustomAuthGuard } from '../auth/custom-auth.guard';
 import { ApiHeader } from '@nestjs/swagger';
 import { SubscriptionsService } from '../subscriptions/subscriptions.service';
+import { StaticAuthGuard } from '../auth/static-auth.guard';
 
 @Controller('users')
 export class UserController {
@@ -52,21 +54,26 @@ export class UserController {
     return this.usersService.fetchUserInfoForm();
   }
 
-  @UseGuards(CustomAuthGuard)
+  @UseGuards(StaticAuthGuard)
   @Patch('free-bookings')
   async updateFreeBookingsUsage(
-    @Headers('x-mh-v3-user-id') userId: string,
+    @Query('mobileNumber') mobileNumber: string,
     @Body() updateUsageDto: SubscriptionUsageUpdateDto,
   ) {
-    return this.subscriptionService.updateUsage(
-      parseInt(userId),
-      updateUsageDto,
-    );
+    const user = await this.usersService.findOneByPhoneNumber(mobileNumber);
+    return this.subscriptionService.updateUsage(user.id, updateUsageDto);
   }
 
-  @UseGuards(CustomAuthGuard)
+  @UseGuards(StaticAuthGuard)
   @Get('free-bookings')
-  async getFreeBookingsUsage(@Headers('x-mh-v3-user-id') userId: string) {
-    return this.usersService.getSubscriptionUsageDetails(parseInt(userId));
+  async getFreeBookingsUsage(@Query('mobileNumber') mobileNumber: string) {
+    const user = await this.usersService.findOneByPhoneNumber(mobileNumber);
+    if (!user) {
+      return {
+        success: true,
+        remainingFreeBookings: 0,
+      };
+    }
+    return this.usersService.getSubscriptionUsageDetails(user.id);
   }
 }

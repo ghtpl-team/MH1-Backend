@@ -33,7 +33,7 @@ export class AuthService {
    */
   async validateToken(token: string) {
     try {
-      const payload = this.jwtService.decode(token, {});
+      const payload = this.jwtService.verify(token, {});
       if (!payload) {
         return null;
       }
