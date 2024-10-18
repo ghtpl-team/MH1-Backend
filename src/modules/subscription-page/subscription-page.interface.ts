@@ -15,6 +15,7 @@ export interface IBannerHeading {
 export interface IBannerSlide {
   id: string;
   title: string;
+  subTitle: string;
   image: IImage;
 }
 
