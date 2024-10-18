@@ -222,10 +222,7 @@ export class UsersService {
               id: schedule.id,
               scheduledBy: schedule.scheduledBy,
               type: schedule.type,
-              time:
-                schedule.scheduledBy === ScheduledBy.SYSTEM
-                  ? null
-                  : schedule.reminderTime,
+              time: schedule.reminderTime,
             };
           })
         : [],
