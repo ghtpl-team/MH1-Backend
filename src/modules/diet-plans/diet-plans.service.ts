@@ -356,13 +356,9 @@ export class DietPlansService {
         userMedicalHistory.pregnancyComplications.length >= 2 ||
         userPreferences.allergies.length >= 2;
 
-      const hasWeightIssues =
-        userMedicalHistory.medicalCondition.includes(
-          MedicalCondition.OBESITY,
-        ) ||
-        userMedicalHistory.medicalCondition.includes(
-          MedicalCondition.OVERWEIGHT,
-        );
+      const hasWeightIssues = userMedicalHistory.medicalCondition.includes(
+        MedicalCondition.OBESITY,
+      );
 
       const hasDiabetesWithInsulin =
         userMedicalHistory.medicalCondition.includes(
