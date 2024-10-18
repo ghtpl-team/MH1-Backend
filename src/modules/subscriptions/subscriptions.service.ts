@@ -156,18 +156,18 @@ export class SubscriptionsService {
 
       if (operation === Operation.INCREASE) {
         if (currentUsage + 1 >= maxLimit) {
-          throw new HttpException(
-            'You have reached the maximum limit',
-            HttpStatus.BAD_REQUEST,
-          );
+          return {
+            success: false,
+            message: 'You have reached the maximum limit',
+          };
         }
         currentUsage++;
       } else {
         if (currentUsage - 1 < 0) {
-          throw new HttpException(
-            'You have reached the minimum limit',
-            HttpStatus.BAD_REQUEST,
-          );
+          return {
+            success: false,
+            message: 'You have reached the minimum limit',
+          };
         }
         currentUsage--;
       }
@@ -180,6 +180,10 @@ export class SubscriptionsService {
           usedFreeBookings: currentUsage,
         },
       );
+      return {
+        success: true,
+        message: 'updated successfully',
+      };
     } catch (error) {
       this.logger.error(
         `Error while updating usage for user ${userId}`,
