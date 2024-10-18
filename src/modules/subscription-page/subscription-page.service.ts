@@ -12,6 +12,9 @@ export class SubscriptionPageService {
     const assetsUrl = process.env.STRAPI_BASE_URL;
 
     const parsed = {
+      remainingDiscountCount: 100,
+      originalCost: 1999,
+      discountedCost: 499,
       banner_heading:
         data.mhOneSubscriptionPage.data.attributes.banner_heading.map(
           (heading) => ({
