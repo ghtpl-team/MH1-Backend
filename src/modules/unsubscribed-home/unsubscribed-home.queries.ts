@@ -73,9 +73,18 @@ export const GET_UNSUBSCRIBED_HOME = gql`
             animationText
           }
           promoVideos {
-            data {
-              attributes {
-                url
+            videoUrl {
+              data {
+                attributes {
+                  url
+                }
+              }
+            }
+            imageUrl {
+              data {
+                attributes {
+                  url
+                }
               }
             }
           }

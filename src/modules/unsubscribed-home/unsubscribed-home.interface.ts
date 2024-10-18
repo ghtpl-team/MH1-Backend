@@ -7,7 +7,10 @@ export interface GetUnsubscribedHome {
         pregnancyCoachAd: PregnancyCoachAd;
         dietPlanPromo: DietPlanPromo[];
         dietPlanAd: DietPlanAd;
-        promoVideos: { data: { attributes: { url: string } }[] };
+        promoVideos: {
+          videoUrl: { data: { attributes: { url: string } } };
+          imageUrl: { data: { attributes: { url: string } } };
+        }[];
         unsubSymptom: UnsubscribedSymptoms;
       };
     };
