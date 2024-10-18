@@ -11,6 +11,8 @@ import {
 } from 'class-validator';
 import {
   BloodSugarLevel,
+  BloodSugarLevel1,
+  BloodSugarLevel2,
   MedicalCondition,
   PregnancyComplications,
 } from 'src/entities/medical-records.entity';
@@ -62,14 +64,14 @@ export class DietPlanInfoFormDto {
   afterFastBloodSugarLevel: BloodSugarLevel;
 
   @ApiProperty()
-  @IsEnum(BloodSugarLevel)
+  @IsEnum(BloodSugarLevel1)
   @IsOptional()
-  afterMealBloodSugarLevel: BloodSugarLevel;
+  afterMealBloodSugarLevel: BloodSugarLevel1;
 
   @ApiProperty()
-  @IsEnum(BloodSugarLevel)
+  @IsEnum(BloodSugarLevel2)
   @IsOptional()
-  afterMealBloodSugarLevel2: BloodSugarLevel;
+  afterMealBloodSugarLevel2: BloodSugarLevel2;
 
   @ApiProperty({ isArray: true })
   @IsArray()

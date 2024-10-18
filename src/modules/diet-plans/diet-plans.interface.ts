@@ -233,3 +233,9 @@ export interface Recipe {
     bgColor: string;
   }>;
 }
+
+export enum DietType {
+  NORMAL = 'normal',
+  GDM = 'gdm',
+  OVERWEIGHT = 'overweight',
+}

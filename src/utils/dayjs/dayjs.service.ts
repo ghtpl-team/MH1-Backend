@@ -29,6 +29,10 @@ export class DayjsService {
     return dayjs().tz(this.getCurrentTimezone()).format('HH:mm:ss');
   }
 
+  getCurrentHour(): number {
+    return dayjs().tz(this.getCurrentTimezone()).hour();
+  }
+
   getCurrentDay(): string {
     return dayjs().tz(this.getCurrentTimezone()).format('dddd');
   }

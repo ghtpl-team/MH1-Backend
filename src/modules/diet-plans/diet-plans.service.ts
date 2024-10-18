@@ -19,10 +19,18 @@ import {
   ParsedIntroStory,
   ParsedDietIntroStories,
   DietChartsRawResponse,
+  DietType,
 } from './diet-plans.interface';
 import { DietPlanInfoFormDto } from './dto/diet-plan.dto';
 import { EntityManager } from '@mikro-orm/mysql';
-import { MedicalRecord } from 'src/entities/medical-records.entity';
+import {
+  BloodSugarLevel,
+  BloodSugarLevel1,
+  BloodSugarLevel2,
+  MedicalCondition,
+  MedicalRecord,
+  PregnancyComplications,
+} from 'src/entities/medical-records.entity';
 import { UserProfile } from 'src/entities/user-profile.entity';
 import { UserPreferences } from 'src/entities/user-preferences.entity';
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
@@ -34,12 +42,14 @@ import {
 import { Status } from 'src/entities/base.entity';
 import { processTimeStatus } from 'src/common/utils/date-time.utils';
 import { SYSTEM_SETTING } from 'src/configs/system.config';
+import { DayjsService } from 'src/utils/dayjs/dayjs.service';
 
 @Injectable()
 export class DietPlansService {
   constructor(
     private readonly graphqlClient: GraphQLClientService,
     private readonly em: EntityManager,
+    private readonly dayjsService: DayjsService,
     @Inject(CACHE_MANAGER) private readonly cacheService: Cache,
   ) {}
 
@@ -260,6 +270,30 @@ export class DietPlansService {
     }
   }
 
+  private isDefaultTab(mealTiming: string): boolean {
+    try {
+      const currentHour = this.dayjsService.getCurrentHour();
+
+      switch (mealTiming.toLowerCase()) {
+        case 'breakfast':
+          return currentHour >= 6 && currentHour < 10;
+        case 'mid_morning_snack':
+          return currentHour >= 10 && currentHour < 12;
+        case 'lunch':
+          return currentHour >= 12 && currentHour < 15;
+        case 'afternoon_snack':
+          return currentHour >= 15 && currentHour < 18;
+        case 'dinner':
+          return currentHour >= 18 && currentHour < 22;
+        default:
+          return false;
+      }
+    } catch (error) {
+      this.logger.error('Unable to check if default tab', error.stack || error);
+      throw error;
+    }
+  }
+
   private parseDietPlan(rawData: DietChartsRawResponse) {
     try {
       const data = rawData.dietCharts.data[0]?.attributes;
@@ -271,6 +305,7 @@ export class DietPlansService {
           id: meal.id,
           tabIcon: DietCardTabIcons[meal.mealTiming],
           mealTiming: meal.mealTiming.replaceAll('_', ' '),
+          isActive: this.isDefaultTab(meal.mealTiming),
           mealPlan: meal.recipes.data.map((recipe, index) => {
             return {
               bgColor: this.assignBgColor(index),
@@ -311,6 +346,66 @@ export class DietPlansService {
     }
   }
 
+  private canShowDietChart(
+    userMedicalHistory: MedicalRecord,
+    userPreferences: UserPreferences,
+  ) {
+    try {
+      const hasMultipleConditions =
+        userMedicalHistory.medicalCondition.length >= 2 ||
+        userMedicalHistory.pregnancyComplications.length >= 2 ||
+        userPreferences.allergies.length >= 2;
+
+      const hasWeightIssues =
+        userMedicalHistory.medicalCondition.includes(
+          MedicalCondition.OBESITY,
+        ) ||
+        userMedicalHistory.medicalCondition.includes(
+          MedicalCondition.OVERWEIGHT,
+        );
+
+      const hasDiabetesWithInsulin =
+        userMedicalHistory.medicalCondition.includes(
+          MedicalCondition.DIABETES,
+        ) && userMedicalHistory.onInsulin;
+
+      const hasGDMWithAbnormalBloodSugar =
+        userMedicalHistory.pregnancyComplications.includes(
+          PregnancyComplications.GDM,
+        ) && userMedicalHistory.afterFastBloodSugar !== BloodSugarLevel.NORMAL;
+
+      const hasAbnormalBloodSugar =
+        userMedicalHistory.afterMealBloodSugar1 !== BloodSugarLevel1.NORMAL ||
+        userMedicalHistory.afterMealBloodSugar2 !== BloodSugarLevel2.NORMAL;
+
+      const hasObesityWithGDM =
+        userMedicalHistory.medicalCondition.includes(
+          MedicalCondition.OBESITY,
+        ) &&
+        userMedicalHistory.pregnancyComplications.includes(
+          PregnancyComplications.GDM,
+        );
+
+      if (
+        hasMultipleConditions ||
+        hasWeightIssues ||
+        hasDiabetesWithInsulin ||
+        hasGDMWithAbnormalBloodSugar ||
+        hasAbnormalBloodSugar ||
+        hasObesityWithGDM
+      )
+        return false;
+
+      return true;
+    } catch (error) {
+      this.logger.debug(
+        'unable to check if user can show diet chart',
+        error.stack || error,
+      );
+      return false;
+    }
+  }
+
   async fetchDietPlan(userId: number, weekNumber: number) {
     try {
       const userMedicalHistory = await this.em.findOne(MedicalRecord, {
@@ -337,7 +432,7 @@ export class DietPlansService {
         };
       }
 
-      if (userPreferences?.allergies?.length >= 2) {
+      if (!this.canShowDietChart(userMedicalHistory, userPreferences)) {
         return {
           success: false,
           isMedicalHistoryFilled: true,
@@ -345,10 +440,24 @@ export class DietPlansService {
         };
       }
 
+      const pregnancyComplications = userMedicalHistory.pregnancyComplications;
+      const medicalCondition = userMedicalHistory.medicalCondition;
+
+      let dietType = DietType.NORMAL;
+
+      if (medicalCondition.includes(MedicalCondition.OVERWEIGHT)) {
+        dietType = DietType.OVERWEIGHT;
+        weekNumber = weekNumber % 8;
+        if (weekNumber === 0) weekNumber = 8;
+      } else if (pregnancyComplications.includes(PregnancyComplications.GDM)) {
+        dietType = DietType.GDM;
+      }
+
       const dietPlanRaw: DietChartsRawResponse = await this.graphqlClient.query(
         DIET_PLAN,
         {
           weekNumber: weekNumber,
+          dietType: dietType,
         },
       );
 

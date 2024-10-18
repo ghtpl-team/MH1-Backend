@@ -164,11 +164,16 @@ export const INTRO_CARDS = gql`
 `;
 
 export const DIET_PLAN = gql`
-  query GetDietPlan($weekNumber: Int!) {
-    dietCharts(filters: { week: { eq: $weekNumber } }) {
+  query GetDietPlan($weekNumber: Int!, $dietType: String!) {
+    dietCharts(
+      filters: { week: { lte: $weekNumber }, type: { eq: $dietType } }
+      pagination: { pageSize: 1 }
+      sort: "week:desc"
+    ) {
       data {
         attributes {
           week
+          type
           dietPlan {
             ...GetDietPlan
           }
