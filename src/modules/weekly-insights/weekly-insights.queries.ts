@@ -130,7 +130,7 @@ export const GET_PERSONALIZED_CARD_LISTING = gql`
         attributes {
           heading
           weekNumber
-          weekly_scan {
+          weeklyScanCard: weekly_scan {
             data {
               attributes {
                 scanDetails {
@@ -152,7 +152,7 @@ export const GET_PERSONALIZED_CARD_LISTING = gql`
               }
             }
           }
-          counseling {
+          counselingCard: counseling {
             data {
               attributes {
                 counselingCard {
