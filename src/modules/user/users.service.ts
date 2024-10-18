@@ -21,11 +21,7 @@ import { getImageUrl } from 'src/common/utils/helper.utils';
 import { Status } from 'src/entities/base.entity';
 
 import { User } from 'src/entities/user.entity';
-import {
-  ReminderType,
-  Schedule,
-  ScheduledBy,
-} from 'src/entities/schedules.entity';
+import { ReminderType, Schedule } from 'src/entities/schedules.entity';
 import {
   SubscriptionStatus,
   Subscriptions,
