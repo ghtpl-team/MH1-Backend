@@ -46,7 +46,9 @@ export class ArticlesService {
                   return {
                     title: storyCard.title,
                     id: storyCard.id,
-                    image: getImageUrl(storyCard.image?.data?.attributes?.url),
+                    imageUrl: getImageUrl(
+                      storyCard.image?.data?.attributes?.url,
+                    ),
                     bgColor: storyCard.bgColor,
                     description: storyCard.description,
                   };

@@ -54,7 +54,7 @@ interface ParsedArticles {
 interface ParsedStoryCard {
   id: string;
   title: string;
-  image: string;
+  imageUrl: string;
   bgColor: string;
   description: string;
 }
