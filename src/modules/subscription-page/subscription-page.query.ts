@@ -15,6 +15,7 @@ export const SUBSCRIPTION_PAGE = gql`
           banner_slides {
             id
             title
+            subTitle
             image {
               data {
                 attributes {

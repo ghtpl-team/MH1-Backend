@@ -27,6 +27,7 @@ export class SubscriptionPageService {
           (slide) => ({
             id: slide.id,
             title: slide.title,
+            subTitle: slide.subTitle,
             image: assetsUrl + slide.image.data.attributes.url,
           }),
         ),
