@@ -428,6 +428,7 @@ export class DietPlansService {
         return {
           success: false,
           isMedicalHistoryFilled: false,
+          isDietPlanCreated: false,
           message: 'Please fill medical history',
         };
       }
@@ -436,6 +437,7 @@ export class DietPlansService {
         return {
           success: false,
           isMedicalHistoryFilled: true,
+          isDietPlanCreated: false,
           message: 'consult doctor',
         };
       }
@@ -480,6 +482,7 @@ export class DietPlansService {
         isSent,
         isReviewed,
         isMedicalHistoryFilled: true,
+        isDietPlanCreated: true,
         ...parsedDietPlan,
       };
     } catch (error) {
