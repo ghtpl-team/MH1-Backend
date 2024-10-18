@@ -34,6 +34,7 @@ import { DayjsService } from 'src/utils/dayjs/dayjs.service';
 import { SYSTEM_SETTING } from 'src/configs/system.config';
 import { CreateUserDto } from './dto/users.dto';
 import { SubscriptionUsage } from 'src/entities/subscription-usage.entity';
+import { MedicalRecord } from 'src/entities/medical-records.entity';
 @Injectable()
 export class UsersService {
   private readonly logger = new Logger(UsersService.name);
@@ -231,6 +232,19 @@ export class UsersService {
     };
   }
 
+  private async checkIfUserMedicalHistoryAvailable(userId: number) {
+    try {
+      const medicalHistory = await this.em.findOne(MedicalRecord, {
+        user: userId,
+        status: Status.ACTIVE,
+      });
+      if (medicalHistory) return true;
+      return false;
+    } catch (error) {
+      return false;
+    }
+  }
+
   private async cachedData(userId: number) {
     try {
       let subscriptionStatus = await this.cacheService.get(userId.toString());
@@ -242,7 +256,7 @@ export class UsersService {
         `diet-plan-form-${userId}`,
       ))
         ? true
-        : false;
+        : await this.checkIfUserMedicalHistoryAvailable(userId);
       return [subscriptionStatus, isDietFormFilled];
     } catch (error) {
       throw error;
