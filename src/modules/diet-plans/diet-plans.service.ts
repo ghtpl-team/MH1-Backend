@@ -386,6 +386,16 @@ export class DietPlansService {
           PregnancyComplications.GDM,
         );
 
+      console.log(
+        'diet chart info',
+        hasMultipleConditions,
+        hasWeightIssues,
+        hasDiabetesWithInsulin,
+        hasGDMWithAbnormalBloodSugar,
+        hasAbnormalBloodSugar,
+        hasObesityWithGDM,
+      );
+
       if (
         hasMultipleConditions ||
         hasWeightIssues ||
