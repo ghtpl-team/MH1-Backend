@@ -39,6 +39,7 @@ export class RequestContextMiddleware implements NestMiddleware {
       query: req.query,
       body: req.body,
       timezone: timezoneToUse,
+      token: req.headers.authorization,
     });
 
     this.requestContextService.run(
