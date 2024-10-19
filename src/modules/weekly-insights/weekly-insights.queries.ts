@@ -95,6 +95,7 @@ export const GET_WEEKLY_INSIGHTS = gql`
                     }
                   }
                 }
+                imageUrl
                 specialty {
                   data {
                     attributes {

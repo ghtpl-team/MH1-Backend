@@ -160,7 +160,7 @@ export class SchedulesService {
             skippedSchedules.push(skippedStatus);
           }
         }
-        await fork.persistAndFlush([...tasks]);
+        await fork.insertMany(ScheduledTask, [...tasks]);
         this.logger.debug(
           `Scheduled ${tasks.length} tasks for ${schedules.items.length} schedules`,
         );
