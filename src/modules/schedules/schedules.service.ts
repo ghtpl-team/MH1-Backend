@@ -132,6 +132,8 @@ export class SchedulesService {
       const skippedSchedules = [];
       try {
         for (const schedule of schedules.items) {
+          console.log(schedule.id, this.needToSchedule(schedule));
+
           if (this.needToSchedule(schedule)) {
             const task = fork.create(ScheduledTask, {
               schedule: schedule,
