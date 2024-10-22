@@ -1,4 +1,4 @@
-import { EntityManager } from '@mikro-orm/mysql';
+import { EntityManager, QueryOrder } from '@mikro-orm/mysql';
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { ReminderCreateReqDto } from './dto/schedules.dto';
 import { Cron } from '@nestjs/schedule';
@@ -120,6 +120,9 @@ export class SchedulesService {
           first: 50,
           after: {
             endCursor,
+          },
+          orderBy: {
+            id: QueryOrder.ASC,
           },
         },
       );
