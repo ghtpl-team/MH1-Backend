@@ -6,7 +6,10 @@ import { GET_LOGGED_SYMPTOMS, GET_SYMPTOM_CATEGORIES } from './symptoms.query';
 import { generateId, getImageUrl } from 'src/common/utils/helper.utils';
 
 import { LogSymptomsDto } from './dto/symptoms.dto';
-import { formatDateFromDateTime } from 'src/common/utils/date-time.utils';
+import {
+  formatDateFromDateTime,
+  processTimeStatus,
+} from 'src/common/utils/date-time.utils';
 import { Status } from 'src/entities/base.entity';
 import { LoggedSymptoms } from 'src/entities/logged_symptoms';
 import { SYSTEM_SETTING } from 'src/configs/system.config';
@@ -102,17 +105,17 @@ export class SymptomsService {
     });
   }
 
-  private isSymptomReviewed(updatedAt: string | Date) {
-    try {
-      const reviewTime = SYSTEM_SETTING.symptomReviewTime;
-      const currentTime = new Date().getTime();
-      const updatedTime = new Date(updatedAt).getTime();
-      return currentTime - updatedTime > reviewTime;
-    } catch (error) {
-      this.logger.error(error);
-      throw error;
-    }
-  }
+  // private isSymptomReviewed(updatedAt: string | Date) {
+  //   try {
+  //     const reviewTime = SYSTEM_SETTING.symptomReviewTime;
+  //     const currentTime = new Date().getTime();
+  //     const updatedTime = new Date(updatedAt).getTime();
+  //     return currentTime - updatedTime > reviewTime;
+  //   } catch (error) {
+  //     this.logger.error(error);
+  //     throw error;
+  //   }
+  // }
 
   async fetchLoggedSymptoms(userId: number, page: number, limit: number) {
     try {
@@ -135,8 +138,13 @@ export class SymptomsService {
             pageSize: limit,
           },
         );
+        const [reviewCountdown, isReviewed] = processTimeStatus(
+          loggedSymptoms[0].updatedAt,
+          SYSTEM_SETTING.symptomReviewTime,
+        ) as any;
         return {
-          isReviewed: this.isSymptomReviewed(loggedSymptoms[0].updatedAt),
+          reviewCountdown: reviewCountdown,
+          isReviewed: isReviewed,
           id: loggedSymptoms[0].id,
           pagination: {
             currentPage: page,
