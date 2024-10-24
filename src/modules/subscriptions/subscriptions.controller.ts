@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { SubscriptionsService } from './subscriptions.service';
 import {
+  CancelSubscriptionDto,
   CreateSubscriptionDto,
   SubscriptionPlanDto,
 } from './dto/subscriptions.dto';
@@ -41,13 +42,19 @@ export class SubscriptionsController {
 
   @Patch('cancel')
   @UseGuards(CustomAuthGuard)
-  async cancelSubscription(@Headers('x-mh-v3-user-id') userId: string) {
+  async cancelSubscription(
+    @Headers('x-mh-v3-user-id') userId: string,
+    cancelSubscriptionDto: CancelSubscriptionDto,
+  ) {
     if (!userId)
       throw new HttpException(
         'required params are missing',
         HttpStatus.BAD_REQUEST,
       );
-    return this.subscriptionService.cancel(parseInt(userId));
+    return this.subscriptionService.cancel(
+      parseInt(userId),
+      cancelSubscriptionDto,
+    );
   }
 
   @Get('active')

@@ -35,3 +35,9 @@ export class CreateSubscriptionDto {
   @ApiProperty()
   totalBillingCycle: number = 1;
 }
+
+export class CancelSubscriptionDto {
+  @IsString()
+  @ApiProperty()
+  reasonOfCancellation: string;
+}

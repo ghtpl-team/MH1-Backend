@@ -34,7 +34,10 @@ export class Subscriptions extends BaseClass {
     items: () => SubscriptionStatus,
     nativeEnumName: 'subscription_status',
   })
-  subscriptionStatus: SubscriptionStatus = SubscriptionStatus.ACTIVE;
+  subscriptionStatus: SubscriptionStatus = SubscriptionStatus.CREATED;
+
+  @Property({ nullable: true })
+  reasonOfCancellation?: string;
 
   @Index()
   @Property({ nullable: false })
