@@ -3,6 +3,7 @@ users to plans, retrieving subscription details, and canceling subscriptions. */
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { RazorpayService } from 'src/utils/razorpay/razorpay.service';
 import {
+  CancelSubscriptionDto,
   CreateSubscriptionDto,
   SubscriptionPlanDto,
 } from './dto/subscriptions.dto';
@@ -118,7 +119,7 @@ export class SubscriptionsService {
     }
   }
 
-  async cancel(userId: number) {
+  async cancel(userId: number, cancelSubscriptionDto: CancelSubscriptionDto) {
     try {
       const subscriptionData = await this.em.findOne(Subscriptions, {
         user: userId,
@@ -133,6 +134,15 @@ export class SubscriptionsService {
           subscriptionData.razorPaySubscriptionId,
         );
 
+      await this.em.nativeUpdate(
+        Subscriptions,
+        {
+          id: subscriptionData.id,
+        },
+        {
+          reasonOfCancellation: cancelSubscriptionDto.reasonOfCancellation,
+        },
+      );
       return updateRpSubscription;
     } catch (error) {
       return error;
