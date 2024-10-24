@@ -27,7 +27,10 @@ import { getImageUrl } from 'src/common/utils/helper.utils';
 import { pregnancyCoachOverview } from 'src/common/content/activity.content';
 import { EntityManager } from '@mikro-orm/mysql';
 
-import { FeedbackFromDto } from './dto/activities.dto';
+import {
+  DailyActivityWatchHistoryDto,
+  FeedbackFromDto,
+} from './dto/activities.dto';
 import { Status } from 'src/entities/base.entity';
 import { ActivityFeedBack } from 'src/entities/activity-feedback.entity';
 import {
@@ -45,6 +48,10 @@ import {
   DoctorDetails,
   MindActivityVideos,
 } from 'src/constants/pregnancy-coach.constants';
+import {
+  ActivityWatchHistory,
+  ActivityType,
+} from 'src/entities/activity-watch-history.entity';
 
 @Injectable()
 export class ActivitiesService {
@@ -599,6 +606,7 @@ export class ActivitiesService {
         return RewardPointsEarnedType.WATER_GOAL_ACHIEVED;
     }
   }
+
   async updateActivityStatus(
     userId: number,
     taskId: number,
@@ -628,6 +636,67 @@ export class ActivitiesService {
 
       return `Task status updated for ${updatedStatus} entries`;
     } catch (error) {
+      throw error;
+    }
+  }
+
+  async recordDailyProgress(
+    userId: number,
+    activityType: ActivityType,
+    dailyActivityWatchHistoryDto: DailyActivityWatchHistoryDto,
+  ) {
+    try {
+      const isEntryExist = await this.em.findOne(ActivityWatchHistory, {
+        status: Status.ACTIVE,
+        date: new Date().toISOString().split('T')[0],
+        user: userId,
+        type: activityType,
+      });
+
+      if (isEntryExist) {
+        isEntryExist.history.push(
+          dailyActivityWatchHistoryDto.mindActivityName,
+        );
+        this.em.flush();
+      } else {
+        await this.em.create(ActivityWatchHistory, {
+          user: userId,
+          history: [dailyActivityWatchHistoryDto.mindActivityName],
+          type: activityType,
+        });
+        await this.em.flush();
+      }
+
+      return {
+        message: 'Recorded Successfully',
+        success: true,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async fetchDailyActivityWatchHistory(userId: number, type: ActivityType) {
+    try {
+      const dailyActivityWatchHistory = await this.em
+        .createQueryBuilder(ActivityWatchHistory)
+        .select(['id', 'history'])
+        .where({
+          status: Status.ACTIVE,
+          user: userId,
+          type: type,
+          date: new Date().toISOString().split('T')[0],
+        })
+        .limit(1);
+
+      return {
+        success: true,
+        completedVideos: dailyActivityWatchHistory.length
+          ? dailyActivityWatchHistory[0].history
+          : [],
+      };
+    } catch (error) {
+      this.logger.error('something went wrong', error?.stack || error);
       throw error;
     }
   }

@@ -7,13 +7,18 @@ import {
   HttpStatus,
   Patch,
   Post,
+  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
 import { ActivitiesService } from './activities.service';
-import { FeedbackFromDto } from './dto/activities.dto';
+import {
+  DailyActivityWatchHistoryDto,
+  FeedbackFromDto,
+} from './dto/activities.dto';
 import { CustomAuthGuard } from '../auth/custom-auth.guard';
 import { ReminderType } from 'src/entities/schedules.entity';
+import { ActivityType } from 'src/entities/activity-watch-history.entity';
 
 @Controller('activities')
 export class ActivitiesController {
@@ -92,6 +97,38 @@ export class ActivitiesController {
     return this.activitiesService.updateActivityStatus(
       parseInt(userId),
       parseInt(taskId),
+      activityType,
+    );
+  }
+
+  @Put('watch-history')
+  @UseGuards(CustomAuthGuard)
+  async record(
+    @Headers('x-mh-v3-user-id') userId: string,
+    @Query('activityType') activityType: ActivityType,
+    @Body() dailyActivityLedgerDto: DailyActivityWatchHistoryDto,
+  ) {
+    if (!userId || !activityType)
+      throw new HttpException(
+        'required params missing',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    return this.activitiesService.recordDailyProgress(
+      parseInt(userId),
+      activityType,
+      dailyActivityLedgerDto,
+    );
+  }
+
+  @Get('watch-history')
+  @UseGuards(CustomAuthGuard)
+  async records(
+    @Headers('x-mh-v3-user-id') userId: string,
+    @Query('activityType') activityType: ActivityType,
+  ) {
+    return this.activitiesService.fetchDailyActivityWatchHistory(
+      parseInt(userId),
       activityType,
     );
   }

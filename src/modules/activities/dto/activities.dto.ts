@@ -18,3 +18,8 @@ export class FeedbackFromDto {
   @ApiProperty()
   discomfort: string;
 }
+
+export class DailyActivityWatchHistoryDto {
+  @ApiProperty()
+  mindActivityName: string;
+}

@@ -24,6 +24,7 @@ import { BookmarkedArticle } from './bookmarked-articles.entity';
 import { RewardPointsAggregate } from './reward-point-aggregation.entity';
 import { UserComment } from './user-comments.entity';
 import { SubscriptionUsage } from './subscription-usage.entity';
+import { ActivityWatchHistory } from './activity-watch-history.entity';
 
 @Entity({ tableName: 'mh_users' })
 export class User extends BaseClass {
@@ -102,6 +103,12 @@ export class User extends BaseClass {
     (subscriptionUsage) => subscriptionUsage.user,
   )
   subscriptionUsage: SubscriptionUsage = new SubscriptionUsage();
+
+  @OneToMany(
+    () => ActivityWatchHistory,
+    (ActivityWatchHistory) => ActivityWatchHistory.user,
+  )
+  ActivityWatchHistory = new Collection<ActivityWatchHistory>(this);
 
   @BeforeCreate()
   @BeforeUpdate()
