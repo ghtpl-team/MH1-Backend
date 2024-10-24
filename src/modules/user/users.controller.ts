@@ -12,11 +12,13 @@ import { UsersService } from './users.service';
 import { CreateUserDto, SubscriptionUsageUpdateDto } from './dto/users.dto';
 import { User } from 'src/entities/user.entity';
 import { CustomAuthGuard } from '../auth/custom-auth.guard';
-import { ApiHeader } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiHeader, ApiTags } from '@nestjs/swagger';
 import { SubscriptionsService } from '../subscriptions/subscriptions.service';
 import { StaticAuthGuard } from '../auth/static-auth.guard';
 
 @Controller('users')
+@ApiTags('Users')
+@ApiBearerAuth()
 export class UserController {
   constructor(
     private readonly usersService: UsersService,

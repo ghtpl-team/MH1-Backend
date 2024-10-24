@@ -1,9 +1,11 @@
 import { Controller, Get } from '@nestjs/common';
 import { MediaService } from './media.service';
-import { ApiParam } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Week } from 'src/decorators/week/week.decorator';
 
 @Controller('media')
+@ApiTags('Embryo Media')
+@ApiBearerAuth()
 export class MediaController {
   constructor(private readonly mediaService: MediaService) {}
 

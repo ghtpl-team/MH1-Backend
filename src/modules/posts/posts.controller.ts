@@ -11,8 +11,11 @@ import {
 import { PostsService } from './posts.service';
 import { CreateCommentDto, CreateUserImpressionDto } from './dto/posts.dto';
 import { CustomAuthGuard } from '../auth/custom-auth.guard';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('posts')
+@ApiTags('Posts')
+@ApiBearerAuth()
 export class PostsController {
   constructor(private readonly PostsService: PostsService) {}
 

@@ -2,8 +2,11 @@ import { Body, Controller, Headers, Post } from '@nestjs/common';
 import { WebhooksService } from './webhooks.service';
 import { SubscriptionWebhookPayload } from './webhooks.interface';
 import { WebhookCreateDto } from './dto/webhooks.dto';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('webhooks')
+@ApiTags('Webhooks')
+@ApiBearerAuth()
 export class WebhooksController {
   constructor(private readonly razorPayWebhookService: WebhooksService) {}
 

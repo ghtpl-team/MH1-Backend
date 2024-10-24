@@ -10,8 +10,11 @@ import {
 import { UserPreferencesService } from './user-preferences.service';
 import { UserPreferencesDto } from './dto/user-preferences.dto';
 import { CustomAuthGuard } from '../auth/custom-auth.guard';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('user-preferences')
+@ApiTags('User Preferences')
+@ApiBearerAuth()
 export class UserPreferencesController {
   constructor(
     private readonly userPreferencesService: UserPreferencesService,

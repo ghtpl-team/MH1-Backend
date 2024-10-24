@@ -11,10 +11,12 @@ import {
 } from '@nestjs/common';
 import { SchedulesService } from './schedules.service';
 import { ReminderCreateReqDto } from './dto/schedules.dto';
-import { ApiQuery } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CustomAuthGuard } from '../auth/custom-auth.guard';
 
 @Controller('schedules')
+@ApiTags('Schedules')
+@ApiBearerAuth()
 export class SchedulesController {
   constructor(private readonly schedulingService: SchedulesService) {}
 

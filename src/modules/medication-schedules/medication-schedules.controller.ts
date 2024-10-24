@@ -16,7 +16,10 @@ import {
   UpdateMedicationScheduleDto,
 } from './dto/medication-schedules.dto';
 import { CustomAuthGuard } from '../auth/custom-auth.guard';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 @Controller('users/:userId/medication-schedule')
+@ApiTags('Medication Scheduler')
+@ApiBearerAuth()
 export class MedicationSchedulesController {
   constructor(
     private readonly medicationScheduleService: MedicationSchedulesService,

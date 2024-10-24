@@ -1,7 +1,10 @@
 import { Controller, Get } from '@nestjs/common';
 import { UnsubscribedHomeService } from './unsubscribed-home.service';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('unsubscribed-home')
+@ApiTags('Unsubscribed Home')
+@ApiBearerAuth()
 export class UnsubscribedHomeController {
   constructor(
     private readonly unsubscribedHomeService: UnsubscribedHomeService,

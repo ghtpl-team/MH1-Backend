@@ -11,10 +11,12 @@ import {
 } from '@nestjs/common';
 import { DietPlansService } from './diet-plans.service';
 import { DietPlanInfoFormDto } from './dto/diet-plan.dto';
-import { ApiQuery } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CustomAuthGuard } from '../auth/custom-auth.guard';
 
 @Controller('diet-plans')
+@ApiTags('Diet Plans')
+@ApiBearerAuth()
 export class DietPlansController {
   constructor(private readonly dietPlanService: DietPlansService) {}
 

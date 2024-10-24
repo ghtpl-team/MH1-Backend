@@ -16,8 +16,11 @@ import {
   SubscriptionPlanDto,
 } from './dto/subscriptions.dto';
 import { CustomAuthGuard } from '../auth/custom-auth.guard';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('subscriptions')
+@ApiTags('Subscriptions')
+@ApiBearerAuth()
 export class SubscriptionsController {
   constructor(private readonly subscriptionService: SubscriptionsService) {}
 

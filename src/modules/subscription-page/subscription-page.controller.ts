@@ -1,7 +1,10 @@
 import { Controller, Get } from '@nestjs/common';
 import { SubscriptionPageService } from './subscription-page.service';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('subscription-page')
+@ApiTags('Subscription Page')
+@ApiBearerAuth()
 export class SubscriptionPageController {
   constructor(
     private readonly subscriptionPageService: SubscriptionPageService,
