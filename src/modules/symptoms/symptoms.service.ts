@@ -141,6 +141,7 @@ export class SymptomsService {
         const [reviewCountdown, isReviewed] = processTimeStatus(
           loggedSymptoms[0].updatedAt,
           SYSTEM_SETTING.symptomReviewTime,
+          true,
         ) as any;
         return {
           reviewCountdown: reviewCountdown,
