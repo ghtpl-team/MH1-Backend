@@ -352,7 +352,7 @@ export class ActivitiesService {
 
     const parsedSoulActivity = {
       label: {
-        text: soulActivityCard[0]?.label?.text,
+        text: 'Earn 10 points', //soulActivityCard[0]?.label?.text,
         bgColor: soulActivityCard[0]?.label?.backgroundColor,
       },
       isJournalRelated: data.journalRelated ? true : false,

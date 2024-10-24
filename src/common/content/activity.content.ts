@@ -27,7 +27,7 @@ export function pregnancyCoachOverview() {
     waterActivityCard: {
       type: 'water',
       label: {
-        text: 'Earn 1 water point',
+        text: 'Earn 10 points',
         bgColor: '#B7CCF0',
       },
       heading: 'Drink 8 glasses of water today',
@@ -36,7 +36,7 @@ export function pregnancyCoachOverview() {
     nutritionCard: {
       type: 'nutrition',
       label: {
-        text: 'Earn 1 nutrition point',
+        text: 'Earn 10 points',
         bgColor: '#9CC688',
       },
       heading: 'Follow the diet plan for today',
@@ -45,7 +45,7 @@ export function pregnancyCoachOverview() {
     mindCard: {
       type: 'mind',
       label: {
-        text: 'Earn 1 mind point',
+        text: 'Earn 10 points',
         bgColor: '#F6BDDE',
       },
       heading: 'Begin your mind activities for today',
@@ -54,7 +54,7 @@ export function pregnancyCoachOverview() {
     fitnessCard: {
       type: 'fitness',
       label: {
-        text: 'Earn 1 fitness point',
+        text: 'Earn 10 points',
         bgColor: '#CBC8F4',
       },
       heading: 'Complete your fitness regime for the day',
