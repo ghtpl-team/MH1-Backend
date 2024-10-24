@@ -477,15 +477,17 @@ export class DietPlansService {
 
       const formSubmitTime = userMedicalHistory.updatedAt;
 
-      const isSent = processTimeStatus(
+      const [isSentCountdown, isSent] = processTimeStatus(
         formSubmitTime,
         SYSTEM_SETTING.dietReviewTime1,
-      );
+        true,
+      ) as any[];
 
-      const isReviewed = processTimeStatus(
+      const [reviewCountdown, isReviewed] = processTimeStatus(
         formSubmitTime,
         SYSTEM_SETTING.dietReviewTime2,
-      );
+        true,
+      ) as any;
 
       const parsedDietPlan = this.parseDietPlan(dietPlanRaw);
 
@@ -493,6 +495,8 @@ export class DietPlansService {
         success: true,
         isSent,
         isReviewed,
+        reviewCountdown,
+        isSentCountdown,
         isMedicalHistoryFilled: true,
         isDietPlanCreated: true,
         ...parsedDietPlan,
