@@ -12,6 +12,7 @@ export interface MindActivity {
 export interface MindActivitiesOverview {
   heading: string;
   subHeading: string;
+  rewardCoins: number;
   mindActivities: MindActivity[];
 }
 

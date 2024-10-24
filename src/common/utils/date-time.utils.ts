@@ -53,12 +53,18 @@ export function timeDifferenceInSeconds(time1, time2) {
 export function processTimeStatus(
   updatedAt: string | Date,
   reviewTime: number,
+  returnTime: boolean = false,
 ) {
   try {
     const currentTime = new Date().getTime();
     const updatedTime = new Date(updatedAt).getTime();
 
-    return currentTime - updatedTime > reviewTime;
+    return returnTime
+      ? [
+          Math.max(reviewTime - (currentTime - updatedTime), 0),
+          currentTime - updatedTime > reviewTime,
+        ]
+      : currentTime - updatedTime > reviewTime;
   } catch (error) {
     throw error;
   }

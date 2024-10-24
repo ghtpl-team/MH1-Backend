@@ -73,6 +73,7 @@ export class ActivitiesService {
       const parsedData: MindActivitiesOverview = {
         heading: heading || '',
         subHeading: subHeading || '',
+        rewardCoins: 10,
         mindActivities: mind_activities.data.map((activity) => {
           const activityId = parseInt(activity.id);
           const videos = activity.attributes.videos.data.map((video) => {
@@ -136,6 +137,7 @@ export class ActivitiesService {
     showConsentForm: boolean,
   ): {
     activities: ParsedFitnessActivity[];
+    rewardCoins: number;
     consentForm: ParsedConsentForm;
     showConsentForm: boolean;
   } {
@@ -171,7 +173,7 @@ export class ActivitiesService {
           (activity1, activity2) => activity1.week - activity2.week,
         ) ?? [],
       showConsentForm,
-
+      rewardCoins: 10,
       consentForm: {
         ...consentForm,
         disclaimer: consentForm.disclaimer.map((disclaimer, index) => {
