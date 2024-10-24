@@ -1,8 +1,9 @@
 export const DoctorDetails = {
-  name: 'Dr. Swati Gaikwad',
-  imageUrl: 'https://mh-dev-cms.oicharts.in/uploads/1701_eefd1d3f28.png',
-  specialty: 'Obstetrician and Gynaecologist',
-  experienceYears: 18,
+  name: 'Dr. Swathi Reddy',
+  imageUrl:
+    process.env.MEDIA_SERVER_BASE_URL + '/images/doctors/upload/999999.png',
+  specialty: 'Physiotherapy',
+  experienceYears: 10,
 };
 
 const SERVER_URL = 'https://mh-dev.oicharts.in/images/videos/mind-activities';
