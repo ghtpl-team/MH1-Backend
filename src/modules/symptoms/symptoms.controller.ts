@@ -13,10 +13,12 @@ import {
 } from '@nestjs/common';
 import { SymptomsService } from './symptoms.service';
 import { LogSymptomsDto } from './dto/symptoms.dto';
-import { ApiQuery } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CustomAuthGuard } from '../auth/custom-auth.guard';
 
 @Controller('symptoms')
+@ApiTags('Symptoms')
+@ApiBearerAuth()
 export class SymptomsController {
   constructor(private readonly symptomsService: SymptomsService) {}
 

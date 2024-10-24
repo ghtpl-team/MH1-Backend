@@ -19,8 +19,11 @@ import {
 import { CustomAuthGuard } from '../auth/custom-auth.guard';
 import { ReminderType } from 'src/entities/schedules.entity';
 import { ActivityType } from 'src/entities/activity-watch-history.entity';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('activities')
+@ApiTags('Activities')
+@ApiBearerAuth()
 export class ActivitiesController {
   constructor(private readonly activitiesService: ActivitiesService) {}
 

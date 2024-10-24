@@ -11,10 +11,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
-import { ApiQuery } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CustomAuthGuard } from '../auth/custom-auth.guard';
 
 @Controller('articles')
+@ApiTags('Articles')
+@ApiBearerAuth()
 export class ArticlesController {
   constructor(private readonly articleService: ArticlesService) {}
 

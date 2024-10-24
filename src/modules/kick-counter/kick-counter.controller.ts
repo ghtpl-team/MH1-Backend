@@ -18,8 +18,11 @@ import {
   UpdateKickSessionDto,
 } from './dto/kick-counter.dto';
 import { CustomAuthGuard } from '../auth/custom-auth.guard';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('user/:userId/kick-counter')
+@ApiTags('Kick Counter')
+@ApiBearerAuth()
 export class KickCounterController {
   constructor(private readonly kcService: KickCounterService) {}
 

@@ -19,8 +19,11 @@ import {
   UpdateJournalSecurityDto,
 } from './dto/journals.dto';
 import { CustomAuthGuard } from '../auth/custom-auth.guard';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('users/:userId/journals')
+@ApiTags('Journals')
+@ApiBearerAuth()
 export class JournalsController {
   constructor(private readonly journalService: JournalsService) {}
 

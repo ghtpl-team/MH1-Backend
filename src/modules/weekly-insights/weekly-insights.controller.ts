@@ -2,8 +2,11 @@ import { Controller, Get, Query } from '@nestjs/common';
 import { WeeklyInsightsService } from './weekly-insights.service';
 import { InsightType } from './weekly-insights.interface';
 import { Week } from 'src/decorators/week/week.decorator';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('weekly-insights')
+@ApiTags('Weekly Insights')
+@ApiBearerAuth()
 export class WeeklyInsightsController {
   constructor(private readonly weeklyInsightsService: WeeklyInsightsService) {}
 
