@@ -25,7 +25,7 @@ import {
 } from './activities.interface';
 import { getImageUrl } from 'src/common/utils/helper.utils';
 import { pregnancyCoachOverview } from 'src/common/content/activity.content';
-import { EntityManager } from '@mikro-orm/mysql';
+import { EntityManager, QueryOrder } from '@mikro-orm/mysql';
 
 import {
   DailyActivityWatchHistoryDto,
@@ -557,9 +557,10 @@ export class ActivitiesService {
     try {
       const activityHistory = await this.em
         .createQueryBuilder(ScheduledTask)
+        .distinct()
         .select(['date', 'id', 'type', 'taskStatus', 'schedule'])
         .where({
-          date: new Date().toISOString().slice(0, 10),
+          // date: new Date().toISOString().slice(0, 10),
           status: Status.ACTIVE,
           user: userId,
           type: {
@@ -571,7 +572,9 @@ export class ActivitiesService {
               ReminderType.FITNESS_REMINDER,
             ],
           },
-        });
+        })
+        .orderBy({ date: QueryOrder.DESC })
+        .limit(35);
 
       const rewardPoints =
         await this.rewardPointService.getRewardPoints(userId);
