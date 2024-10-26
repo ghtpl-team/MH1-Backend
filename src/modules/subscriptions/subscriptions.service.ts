@@ -160,7 +160,7 @@ export class SubscriptionsService {
         throw new HttpException('No data available', HttpStatus.NOT_FOUND);
       }
 
-      const maxLimit = usageData.totalFreeBookings;
+      const maxLimit = 1;
       const operation = updateUsageDto.operation;
       let currentUsage = usageData.usedFreeBookings;
 

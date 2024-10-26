@@ -458,6 +458,7 @@ export class UsersService {
             subscriptionUsages.usedFreeBookings,
           0,
         ),
+        eligibleFreeBookings: 1,
       };
     } catch (error) {
       throw error;
