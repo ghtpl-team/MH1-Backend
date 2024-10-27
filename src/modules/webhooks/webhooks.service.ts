@@ -44,6 +44,8 @@ export class WebhooksService {
       }
 
       if (rawBody.payload?.subscription) {
+        console.log(JSON.stringify(rawBody, null, 2));
+
         const updateCount = await this.em.nativeUpdate(
           Subscriptions,
           {
