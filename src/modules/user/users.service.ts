@@ -139,16 +139,7 @@ export class UsersService {
   }
 
   async findAll(): Promise<User[]> {
-    const users = await this.em.find(User, { status: Status.ACTIVE });
-    for (const user of users) {
-      if (!user.subscriptionUsage) {
-        await this.em.create(SubscriptionUsage, {
-          user: user.id,
-        });
-      }
-    }
-    this.em.flush();
-    return users;
+    return await this.em.find(User, { status: Status.ACTIVE });
   }
 
   private calculateCurrentPregnancyWeek(expectedDate: string) {
