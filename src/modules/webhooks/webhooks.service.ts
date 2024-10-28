@@ -28,7 +28,8 @@ export class WebhooksService {
   }
 
   async resolveRazorPayWebhook(
-    rawBody: SubscriptionWebhookPayload,
+    rawBody: any,
+    webhookPayload: SubscriptionWebhookPayload,
     signature: string,
   ) {
     try {
@@ -44,15 +45,18 @@ export class WebhooksService {
         );
       }
 
-      if (rawBody.payload?.subscription) {
+      if (webhookPayload.payload?.subscription) {
         const updateCount = await this.em.nativeUpdate(
           Subscriptions,
           {
-            razorPaySubscriptionId: rawBody.payload?.subscription?.entity?.id,
+            razorPaySubscriptionId:
+              webhookPayload.payload?.subscription?.entity?.id,
           },
           {
-            subscriptionStatus: rawBody?.payload?.subscription?.entity?.status,
-            remainingCount: rawBody?.payload?.subscription?.remaining_count,
+            subscriptionStatus:
+              webhookPayload?.payload?.subscription?.entity?.status,
+            remainingCount:
+              webhookPayload?.payload?.subscription?.remaining_count,
           },
         );
 
@@ -60,7 +64,8 @@ export class WebhooksService {
           const subscriptionDetails = await this.em.findOne(
             Subscriptions,
             {
-              razorPaySubscriptionId: rawBody.payload?.subscription?.entity?.id,
+              razorPaySubscriptionId:
+                webhookPayload.payload?.subscription?.entity?.id,
             },
             {
               populate: [
@@ -75,7 +80,7 @@ export class WebhooksService {
           await this.subscriptionService.resetUsage(
             subscriptionDetails.user.id,
             subscriptionDetails,
-            rawBody.payload?.payment ? true : false,
+            webhookPayload.payload?.payment ? true : false,
           );
 
           await this.cacheService.set(
@@ -84,13 +89,14 @@ export class WebhooksService {
             3000000,
           );
 
-          if (rawBody.payload?.payment) {
-            const { amount, currency, id } = rawBody?.payload?.payment?.entity;
+          if (webhookPayload.payload?.payment) {
+            const { amount, currency, id } =
+              webhookPayload?.payload?.payment?.entity;
             const paymentData = await this.em.create(BillingLedger, {
               amount: amount,
               currency: currency,
               razorpayPaymentId: id,
-              paymentResponse: rawBody.payload.payment.entity,
+              paymentResponse: webhookPayload.payload.payment.entity,
               user: subscriptionDetails.user.id,
               subscription: subscriptionDetails.id,
             });

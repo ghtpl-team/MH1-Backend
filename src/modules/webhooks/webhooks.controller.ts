@@ -1,8 +1,16 @@
-import { Body, Controller, Headers, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Headers,
+  Post,
+  RawBodyRequest,
+  Req,
+} from '@nestjs/common';
 import { WebhooksService } from './webhooks.service';
 import { SubscriptionWebhookPayload } from './webhooks.interface';
 import { WebhookCreateDto } from './dto/webhooks.dto';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { Request } from 'express';
 
 @Controller('webhooks')
 @ApiTags('Webhooks')
@@ -17,11 +25,14 @@ export class WebhooksController {
 
   @Post('subscription')
   async resolveWebhook(
-    @Body() rawBody: SubscriptionWebhookPayload,
+    @Body() body: SubscriptionWebhookPayload,
+    @Req() req: RawBodyRequest<Request>,
     @Headers('x-razorpay-signature') signature: string,
   ) {
+    const rawBody = req.rawBody;
     return this.razorPayWebhookService.resolveRazorPayWebhook(
       rawBody,
+      body,
       signature,
     );
   }
