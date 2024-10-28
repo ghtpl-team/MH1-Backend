@@ -446,6 +446,7 @@ export class UsersService {
         user: userId,
         status: Status.ACTIVE,
       });
+
       if (!subscriptionUsages)
         throw new HttpException(
           'No subscription usage found',
@@ -458,7 +459,7 @@ export class UsersService {
             subscriptionUsages.usedFreeBookings,
           0,
         ),
-        eligibleFreeBookings: 1,
+        eligibleFreeBookings: subscriptionUsages.eligibleFreeBookings,
       };
     } catch (error) {
       throw error;

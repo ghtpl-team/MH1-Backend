@@ -14,6 +14,9 @@ export class SubscriptionUsage extends BaseClass {
   @Property({ type: 'int', default: 0 })
   usedFreeBookings: number;
 
+  @Property({ type: 'int', default: 0 })
+  eligibleFreeBookings: number;
+
   @OneToOne(() => Subscriptions, { nullable: true })
   currentSubscription: Subscriptions;
 }
