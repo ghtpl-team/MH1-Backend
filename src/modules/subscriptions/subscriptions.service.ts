@@ -259,7 +259,9 @@ export class SubscriptionsService {
             usedFreeBooking: 0,
           }),
           totalFreeBookings: totalUsage,
-          ...(newPayment && { eligibleFreeBookings: Math.max(1, totalPaid) }),
+          ...(newPayment && {
+            eligibleFreeBookings: Math.min(2, Math.max(1, totalPaid)),
+          }),
           currentSubscription: subscription.id,
         },
       );

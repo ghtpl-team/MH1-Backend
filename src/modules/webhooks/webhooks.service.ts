@@ -73,14 +73,21 @@ export class WebhooksService {
                 'razorPaySubscriptionId',
                 'user',
                 'subscriptionStatus',
+                'totalBillingCycle',
+                'remainingCount',
               ],
             },
           );
 
+          const totalPaid =
+            subscriptionDetails.totalBillingCycle -
+            (subscriptionDetails.remainingCount ??
+              subscriptionDetails.totalBillingCycle);
           await this.subscriptionService.resetUsage(
             subscriptionDetails.user.id,
             subscriptionDetails,
             webhookPayload.payload?.payment ? true : false,
+            totalPaid,
           );
 
           await this.cacheService.set(
