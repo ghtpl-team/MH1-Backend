@@ -41,3 +41,5 @@ export class CancelSubscriptionDto {
   @ApiProperty()
   reasonOfCancellation: string;
 }
+
+export class UpdateSubscriptionDto {}
