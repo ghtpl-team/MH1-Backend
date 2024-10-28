@@ -1,6 +1,12 @@
 /* The SubscriptionsService class in TypeScript handles creating new subscription plans, subscribing
 users to plans, retrieving subscription details, and canceling subscriptions. */
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { RazorpayService } from 'src/utils/razorpay/razorpay.service';
 import {
   CancelSubscriptionDto,
@@ -22,6 +28,8 @@ import { SubscriptionUsage } from 'src/entities/subscription-usage.entity';
 import { Status } from 'src/entities/base.entity';
 import { Operation } from '../user/dto/users.dto';
 import { SYSTEM_SETTING } from 'src/configs/system.config';
+import { Cache } from 'cache-manager';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Injectable()
 export class SubscriptionsService {
@@ -29,6 +37,7 @@ export class SubscriptionsService {
   constructor(
     private readonly razorPayService: RazorpayService,
     private readonly em: EntityManager,
+    @Inject(CACHE_MANAGER) private readonly cacheService: Cache,
   ) {}
 
   async createNewPlan(createPlanDto: SubscriptionPlanDto) {
@@ -146,7 +155,17 @@ export class SubscriptionsService {
         },
       );
 
-      console.log(updatedSubscription);
+      await this.cacheService.set(
+        userId.toString(),
+        SubscriptionStatus.CANCELLED,
+        3000000,
+      );
+
+      console.log(
+        'subscription update status',
+        updatedSubscription,
+        updateRpSubscription,
+      );
 
       await this.em.flush();
       return updateRpSubscription;
