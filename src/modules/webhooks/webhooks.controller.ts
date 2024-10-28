@@ -29,7 +29,7 @@ export class WebhooksController {
     @Req() req: RawBodyRequest<Request>,
     @Headers('x-razorpay-signature') signature: string,
   ) {
-    const rawBody = req.rawBody;
+    const rawBody = req.rawBody.toString();
     console.log('Webhook Raw Body', rawBody);
     console.log('Signature', signature);
 
