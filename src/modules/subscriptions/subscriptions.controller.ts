@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { SubscriptionsService } from './subscriptions.service';
@@ -14,6 +15,7 @@ import {
   CancelSubscriptionDto,
   CreateSubscriptionDto,
   SubscriptionPlanDto,
+  UpdateSubscriptionDto,
 } from './dto/subscriptions.dto';
 import { CustomAuthGuard } from '../auth/custom-auth.guard';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
@@ -69,5 +71,24 @@ export class SubscriptionsController {
         HttpStatus.BAD_REQUEST,
       );
     return this.subscriptionService.getSubscriptionDetails(parseInt(userId));
+  }
+
+  @Patch('update')
+  @UseGuards(CustomAuthGuard)
+  async updateSubscription(
+    @Headers('x-mh-v3-user-id') userId: string,
+    @Query('rpSubscriptionId') rpSubscriptionId: string,
+    updateSubscriptionDto: UpdateSubscriptionDto,
+  ) {
+    if (!userId)
+      throw new HttpException(
+        'required params are missing',
+        HttpStatus.BAD_REQUEST,
+      );
+    return this.subscriptionService.update(
+      parseInt(userId),
+      rpSubscriptionId,
+      updateSubscriptionDto,
+    );
   }
 }

@@ -12,6 +12,7 @@ import {
   CancelSubscriptionDto,
   CreateSubscriptionDto,
   SubscriptionPlanDto,
+  UpdateSubscriptionDto,
 } from './dto/subscriptions.dto';
 import { EntityManager, QueryOrder, raw } from '@mikro-orm/mysql';
 
@@ -269,6 +270,36 @@ export class SubscriptionsService {
         `Error while updating usage for user ${userId}`,
         error?.stack || error,
       );
+      throw error;
+    }
+  }
+
+  async update(
+    userId: number,
+    rpSubscriptionId: string,
+    updateSubscriptionDto: UpdateSubscriptionDto,
+  ) {
+    try {
+      const updateSubscription = await this.em.nativeUpdate(
+        Subscriptions,
+        {
+          razorPaySubscriptionId: rpSubscriptionId,
+          status: Status.ACTIVE,
+          user: userId,
+        },
+        {
+          subscriptionStatus: SubscriptionStatus.ACTIVE,
+        },
+      );
+
+      console.log(updateSubscriptionDto);
+
+      return {
+        success: true,
+        rowUpdated: updateSubscription,
+      };
+    } catch (error) {
+      this.logger.error("can't set subscription to active");
       throw error;
     }
   }
