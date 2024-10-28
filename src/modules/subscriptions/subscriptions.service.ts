@@ -171,6 +171,10 @@ export class SubscriptionsService {
       await this.em.flush();
       return updateRpSubscription;
     } catch (error) {
+      this.logger.error(
+        'error occurred while canceling the subscription',
+        error?.stack || error,
+      );
       return error;
     }
   }
