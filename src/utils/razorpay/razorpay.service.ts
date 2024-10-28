@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import RazorpayInstance from 'razorpay';
 import { ConfigService } from '@nestjs/config';
-import { SubscriptionWebhookPayload } from 'src/modules/webhooks/webhooks.interface';
+// import { SubscriptionWebhookPayload } from 'src/modules/webhooks/webhooks.interface';
 import {
   CreateSubscriptionDto,
   SubscriptionPlanDto,
 } from 'src/modules/subscriptions/dto/subscriptions.dto';
-
+import * as crypto from 'crypto';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { validateWebhookSignature } = require('razorpay');
+// const { validateWebhookSignature } = require('razorpay');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Razorpay = require('razorpay');
 @Injectable()
@@ -53,13 +53,15 @@ export class RazorpayService {
     }
   }
 
-  verifyWebhookSignature(body: SubscriptionWebhookPayload, signature: string) {
+  verifyWebhookSignature(body: any, signature: string) {
     try {
-      return validateWebhookSignature(
-        JSON.stringify(body),
-        signature,
-        this.configService.get<string>('SECRET'),
+      return (
+        crypto
+          .createHmac('sha256', this.configService.get<string>('SECRET'))
+          .update(body)
+          .digest('hex') === signature
       );
+      // return validateWebhookSignature(JSON.stringify(body), signature);
     } catch (err) {
       console.error('Webhook signature verification failed:', err);
       return false;
