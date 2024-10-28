@@ -144,6 +144,7 @@ export class SubscriptionsService {
           reasonOfCancellation: cancelSubscriptionDto.reasonOfCancellation,
         },
       );
+      await this.em.flush();
       return updateRpSubscription;
     } catch (error) {
       return error;
