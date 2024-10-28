@@ -447,6 +447,20 @@ export class UsersService {
         status: Status.ACTIVE,
       });
 
+      const subscription = await this.em.findOne(Subscriptions, {
+        user: userId,
+        subscriptionStatus: SubscriptionStatus.ACTIVE,
+        status: Status.ACTIVE,
+      });
+
+      if (!subscription) {
+        return {
+          success: true,
+          remainingFreeBookings: 0,
+          eligibleFreeBookings: 0,
+        };
+      }
+
       if (!subscriptionUsages)
         throw new HttpException(
           'No subscription usage found',
