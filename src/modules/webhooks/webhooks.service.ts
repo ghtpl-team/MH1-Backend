@@ -85,12 +85,12 @@ export class WebhooksService {
           );
 
           if (rawBody.payload?.payment) {
-            const { amount, currency, invoice_id } = rawBody?.payload?.payment;
+            const { amount, currency, id } = rawBody?.payload?.payment?.entity;
             const paymentData = await this.em.create(BillingLedger, {
               amount: amount,
               currency: currency,
-              razorpayPaymentId: invoice_id,
-              paymentResponse: rawBody.payload.payment,
+              razorpayPaymentId: id,
+              paymentResponse: rawBody.payload.payment.entity,
               user: subscriptionDetails.user.id,
               subscription: subscriptionDetails.id,
             });
