@@ -72,6 +72,7 @@ export class SubscriptionsService {
         subscriptionStatus: subscriptionData.status as SubscriptionStatus,
         subscriptionUrl: subscriptionData.short_url,
         totalBillingCycle: subscriptionData.total_count,
+        remainingCount: parseInt(subscriptionData?.remaining_count ?? '0'),
         user: userId,
       });
 
@@ -160,7 +161,10 @@ export class SubscriptionsService {
         throw new HttpException('No data available', HttpStatus.NOT_FOUND);
       }
 
-      const maxLimit = 1;
+      const maxLimit = Math.min(
+        usageData.eligibleFreeBookings,
+        usageData.totalFreeBookings,
+      );
       const operation = updateUsageDto.operation;
       let currentUsage = usageData.usedFreeBookings;
 
@@ -188,6 +192,7 @@ export class SubscriptionsService {
         },
         {
           usedFreeBookings: currentUsage,
+          eligibleFreeBookings: 0,
         },
       );
       return {
@@ -203,7 +208,11 @@ export class SubscriptionsService {
     }
   }
 
-  async resetUsage(userId: number, subscription: Subscriptions) {
+  async resetUsage(
+    userId: number,
+    subscription: Subscriptions,
+    newPayment: boolean,
+  ) {
     try {
       const { subscriptionStatus } = subscription;
       const totalUsage =
@@ -220,6 +229,7 @@ export class SubscriptionsService {
             usedFreeBooking: 0,
           }),
           totalFreeBookings: totalUsage,
+          ...(newPayment && { eligibleFreeBookings: 1 }),
           currentSubscription: subscription.id,
         },
       );

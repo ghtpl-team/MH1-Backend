@@ -25,6 +25,7 @@ import { RewardPointsAggregate } from './reward-point-aggregation.entity';
 import { UserComment } from './user-comments.entity';
 import { SubscriptionUsage } from './subscription-usage.entity';
 import { ActivityWatchHistory } from './activity-watch-history.entity';
+import { BillingLedger } from './billing-ledger.entity';
 
 @Entity({ tableName: 'mh_users' })
 export class User extends BaseClass {
@@ -45,6 +46,9 @@ export class User extends BaseClass {
 
   @OneToMany(() => MedicationSchedule, (schedule) => schedule.user)
   medicationSchedules = new Collection<MedicationSchedule>(this);
+
+  @OneToMany(() => BillingLedger, (billingLedger) => billingLedger.user)
+  billingLedger = new Collection<BillingLedger>(this);
 
   @OneToMany(() => ActivityFeedBack, (feedback) => feedback.user)
   activityFeedbacks = new Collection<ActivityFeedBack>(this);

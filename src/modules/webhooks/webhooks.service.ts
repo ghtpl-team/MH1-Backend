@@ -7,6 +7,7 @@ import { SubscriptionsService } from 'src/modules/subscriptions/subscriptions.se
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Subscriptions } from 'src/entities/subscriptions.entity';
+import { BillingLedger } from 'src/entities/billing-ledger.entity';
 
 @Injectable()
 export class WebhooksService {
@@ -44,8 +45,6 @@ export class WebhooksService {
       }
 
       if (rawBody.payload?.subscription) {
-        console.log(JSON.stringify(rawBody, null, 2));
-
         const updateCount = await this.em.nativeUpdate(
           Subscriptions,
           {
@@ -53,6 +52,7 @@ export class WebhooksService {
           },
           {
             subscriptionStatus: rawBody?.payload?.subscription?.entity?.status,
+            remainingCount: rawBody?.payload?.subscription?.remaining_count,
           },
         );
 
@@ -75,6 +75,7 @@ export class WebhooksService {
           this.subscriptionService.resetUsage(
             subscriptionDetails.user.id,
             subscriptionDetails,
+            rawBody.payload?.payment ? true : false,
           );
 
           await this.cacheService.set(
@@ -83,6 +84,18 @@ export class WebhooksService {
             3000000,
           );
         }
+      }
+
+      if (rawBody.payload?.payment) {
+        const { amount, currency, invoice_id } = rawBody?.payload?.payment;
+        const paymentData = await this.em.create(BillingLedger, {
+          amount: amount,
+          currency: currency,
+          razorpayPaymentId: invoice_id,
+          paymentResponse: rawBody.payload.payment,
+        });
+
+        await this.em.persistAndFlush(paymentData);
       }
     } catch (error) {
       throw error;

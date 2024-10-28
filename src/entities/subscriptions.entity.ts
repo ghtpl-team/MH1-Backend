@@ -5,12 +5,15 @@ import {
   Index,
   Enum,
   OneToOne,
+  OneToMany,
+  Collection,
 } from '@mikro-orm/core';
 import { BaseClass } from './base.entity';
 import { SubscriptionPlans } from './subscripton-plan.entity';
 import { User } from './user.entity';
 import { IsInt, IsNotEmpty, Min } from 'class-validator';
 import { SubscriptionUsage } from './subscription-usage.entity';
+import { BillingLedger } from './billing-ledger.entity';
 
 @Entity({ tableName: 'mh_subscriptions' })
 export class Subscriptions extends BaseClass {
@@ -51,6 +54,12 @@ export class Subscriptions extends BaseClass {
 
   @ManyToOne(() => User)
   user: User;
+
+  @OneToMany(() => BillingLedger, (billingLedger) => billingLedger.subscription)
+  billingLedger = new Collection<BillingLedger>(this);
+
+  @Property({ type: 'numeric' })
+  remainingCount?: number = 0;
 
   @OneToOne(
     () => SubscriptionUsage,
