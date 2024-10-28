@@ -72,7 +72,7 @@ export class WebhooksService {
             },
           );
 
-          this.subscriptionService.resetUsage(
+          await this.subscriptionService.resetUsage(
             subscriptionDetails.user.id,
             subscriptionDetails,
             rawBody.payload?.payment ? true : false,
@@ -83,19 +83,21 @@ export class WebhooksService {
             subscriptionDetails.subscriptionStatus,
             3000000,
           );
+
+          if (rawBody.payload?.payment) {
+            const { amount, currency, invoice_id } = rawBody?.payload?.payment;
+            const paymentData = await this.em.create(BillingLedger, {
+              amount: amount,
+              currency: currency,
+              razorpayPaymentId: invoice_id,
+              paymentResponse: rawBody.payload.payment,
+              user: subscriptionDetails.user.id,
+              subscription: subscriptionDetails.id,
+            });
+
+            await this.em.persistAndFlush(paymentData);
+          }
         }
-      }
-
-      if (rawBody.payload?.payment) {
-        const { amount, currency, invoice_id } = rawBody?.payload?.payment;
-        const paymentData = await this.em.create(BillingLedger, {
-          amount: amount,
-          currency: currency,
-          razorpayPaymentId: invoice_id,
-          paymentResponse: rawBody.payload.payment,
-        });
-
-        await this.em.persistAndFlush(paymentData);
       }
     } catch (error) {
       throw error;
