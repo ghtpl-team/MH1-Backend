@@ -9,6 +9,7 @@ import * as cookieParser from 'cookie-parser';
 import { ValidationPipe } from '@nestjs/common/pipes/validation.pipe';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
+    rawBody: true,
     logger: getLogLevels(process.env.NODE_ENV === 'production'),
   });
   app.use(helmet());
