@@ -135,15 +135,19 @@ export class SubscriptionsService {
           subscriptionData.razorPaySubscriptionId,
         );
 
-      await this.em.nativeUpdate(
+      const updatedSubscription = await this.em.nativeUpdate(
         Subscriptions,
         {
           id: subscriptionData.id,
         },
         {
+          subscriptionStatus: SubscriptionStatus.CANCELLED,
           reasonOfCancellation: cancelSubscriptionDto.reasonOfCancellation,
         },
       );
+
+      console.log(updatedSubscription);
+
       await this.em.flush();
       return updateRpSubscription;
     } catch (error) {
