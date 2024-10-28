@@ -241,6 +241,7 @@ export class SubscriptionsService {
     userId: number,
     subscription: Subscriptions,
     newPayment: boolean,
+    totalPaid: number,
   ) {
     try {
       const { subscriptionStatus } = subscription;
@@ -258,7 +259,7 @@ export class SubscriptionsService {
             usedFreeBooking: 0,
           }),
           totalFreeBookings: totalUsage,
-          ...(newPayment && { eligibleFreeBookings: 1 }),
+          ...(newPayment && { eligibleFreeBookings: Math.max(1, totalPaid) }),
           currentSubscription: subscription.id,
         },
       );
