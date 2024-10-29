@@ -86,3 +86,17 @@ export const SUBSCRIPTION_PAGE = gql`
     }
   }
 `;
+
+export const TERMS_AND_CONDITIONS = gql`
+  query GetTermsAndConditions {
+    termsAndCondition {
+      data {
+        attributes {
+          title
+          content
+          updatedDate
+        }
+      }
+    }
+  }
+`;

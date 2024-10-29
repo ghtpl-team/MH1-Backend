@@ -80,3 +80,21 @@ export interface ISubscriptionPageData {
     };
   };
 }
+
+export interface TermsAndConditionsRawData {
+  termsAndCondition: {
+    data: {
+      attributes: {
+        title: string;
+        content: string;
+        updatedDate: string;
+      };
+    };
+  };
+}
+
+export interface ParsedTermsAndConditions {
+  title: string;
+  content: string;
+  updatedAt: string;
+}

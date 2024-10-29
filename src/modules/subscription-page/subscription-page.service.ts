@@ -1,7 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { GraphQLClientService } from 'src/utils/graphql/graphql.service';
-import { ISubscriptionPageData } from './subscription-page.interface';
-import { SUBSCRIPTION_PAGE } from './subscription-page.query';
+import {
+  ISubscriptionPageData,
+  ParsedTermsAndConditions,
+  TermsAndConditionsRawData,
+} from './subscription-page.interface';
+import {
+  SUBSCRIPTION_PAGE,
+  TERMS_AND_CONDITIONS,
+} from './subscription-page.query';
 
 @Injectable()
 export class SubscriptionPageService {
@@ -96,6 +103,35 @@ export class SubscriptionPageService {
     } catch (error) {
       this.logger.error(
         'Error fetching subscription page data',
+        error.stack || error,
+      );
+      throw error;
+    }
+  }
+
+  private parseTermsAndConditions(
+    rawData: TermsAndConditionsRawData,
+  ): ParsedTermsAndConditions {
+    try {
+      const data = rawData.termsAndCondition.data.attributes;
+      return {
+        title: data.title,
+        content: data.content,
+        updatedAt: data.updatedDate,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async fetchTermsAndCondition() {
+    try {
+      const data: TermsAndConditionsRawData =
+        await this.graphqlClient.query(TERMS_AND_CONDITIONS);
+      return this.parseTermsAndConditions(data);
+    } catch (error) {
+      this.logger.error(
+        'Error fetching terms and conditions',
         error.stack || error,
       );
       throw error;
