@@ -31,6 +31,7 @@ import { SYSTEM_SETTING } from 'src/configs/system.config';
 import { CreateUserDto } from './dto/users.dto';
 import { SubscriptionUsage } from 'src/entities/subscription-usage.entity';
 import { MedicalRecord } from 'src/entities/medical-records.entity';
+import { MoEngageService } from 'src/utils/moengage/moengage.service';
 @Injectable()
 export class UsersService {
   private readonly logger = new Logger(UsersService.name);
@@ -39,6 +40,7 @@ export class UsersService {
     @Inject(CACHE_MANAGER) private readonly cacheService: Cache,
     private readonly graphqlClient: GraphQLClientService,
     private readonly dayjsService: DayjsService,
+    private readonly moEngageService: MoEngageService,
   ) {}
 
   /**
@@ -142,7 +144,7 @@ export class UsersService {
     return await this.em.find(User, { status: Status.ACTIVE });
   }
 
-  private calculateCurrentPregnancyWeek(expectedDate: string) {
+  calculateCurrentPregnancyWeek(expectedDate: string) {
     try {
       const today = this.dayjsService.getCurrentDate();
       const predictedStartDate = this.dayjsService.addDays(expectedDate, -280);
@@ -169,6 +171,7 @@ export class UsersService {
         },
         {
           expectedDueDate: userData.expectedDueDate,
+          mongoId: userData.mongoId,
         },
       );
 
