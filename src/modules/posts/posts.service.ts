@@ -11,11 +11,15 @@ import {
   UserImpressionsResponse,
 } from './posts.interface';
 import { UserComment } from 'src/entities/user-comments.entity';
+import { AxiosService } from 'src/utils/axios/axios.service';
 
 @Injectable()
 export class PostsService {
   private readonly logger = new Logger(PostsService.name);
-  constructor(private readonly em: EntityManager) {}
+  constructor(
+    private readonly em: EntityManager,
+    private readonly axiosService: AxiosService,
+  ) {}
 
   async addUserImpression(
     userId: number,
@@ -189,18 +193,45 @@ export class PostsService {
 
   async findAllComments(userId: number, postId: string) {
     try {
-      const comments = await this.em
+      let comments = await this.em
         .createQueryBuilder(UserComment, 'userComment')
-        .select(['id', raw('comment_text as comment'), 'updatedAt'])
+        .select(['id', raw('comment_text as comment'), 'user', 'updatedAt'])
         .where({
           status: Status.ACTIVE,
           postId,
         })
+        .leftJoinAndSelect('userComment.user', 'us', {}, ['mongoId'])
         .orderBy({
           updatedAt: QueryOrder.DESC,
         })
         .execute();
 
+      const mongoIds = comments.map((comment) => comment.user.mongoId);
+      const requestUrl = `${process.env.V1_BACKEND_BASE_URL}/api/v2/getBulkUserInfo`;
+      const responseObj = (await this.axiosService.get(requestUrl, {
+        params: {
+          userIdList: mongoIds.join(','),
+        },
+        headers: {
+          Authorization: process.env.V1_BACKEND_AUTH_TOKEN,
+        },
+      })) as any;
+      const userInfo = responseObj.data.userList.reduce((acc, user) => {
+        acc[user._id] = user;
+        return acc;
+      }, {});
+
+      console.log(userInfo);
+
+      comments = comments.map((comment) => {
+        return {
+          ...comment,
+          user: undefined,
+          username: userInfo[comment.user.mongoId].name,
+          profilePic: userInfo[comment.user.mongoId].profilePic,
+          gender: userInfo[comment.user.mongoId].gender,
+        };
+      });
       return comments;
     } catch (error) {
       this.logger.error(
