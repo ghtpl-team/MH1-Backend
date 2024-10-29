@@ -8,20 +8,20 @@ export function pregnancyCoachOverview() {
         label: 'Water',
       },
       {
-        color: '#9CC688',
-        label: 'Nutrition',
+        color: '#CBC8F4',
+        label: 'Fitness',
       },
       {
-        color: '#F4DD95',
-        label: 'Soul',
+        color: '#9CC688',
+        label: 'Nutrition',
       },
       {
         color: '#F6BDDE',
         label: 'Mind',
       },
       {
-        color: '#CBC8F4',
-        label: 'Fitness',
+        color: '#F4DD95',
+        label: 'Soul',
       },
     ],
     waterActivityCard: {
