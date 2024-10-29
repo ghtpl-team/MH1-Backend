@@ -14,4 +14,9 @@ export class SubscriptionPageController {
   async fetchSubscriptionPage() {
     return await this.subscriptionPageService.fetch();
   }
+
+  @Get('terms-and-conditions')
+  async fetchTermsAndConditions() {
+    return await this.subscriptionPageService.fetchTermsAndCondition();
+  }
 }
