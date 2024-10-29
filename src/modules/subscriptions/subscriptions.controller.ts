@@ -49,7 +49,7 @@ export class SubscriptionsController {
   @UseGuards(CustomAuthGuard)
   async cancelSubscription(
     @Headers('x-mh-v3-user-id') userId: string,
-    cancelSubscriptionDto: CancelSubscriptionDto,
+    @Body() cancelSubscriptionDto: CancelSubscriptionDto,
   ) {
     if (!userId)
       throw new HttpException(
