@@ -36,6 +36,9 @@ import { TimezoneModule } from './common/timezone/timezone.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { RewardPointsModule } from './modules/reward-points/reward-points.module';
 import { PostsModule } from './modules/posts/posts.module';
+import { AxiosModule } from './utils/axios/axios.module';
+import { MoEngageModule } from './utils/moengage/moengage.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -69,6 +72,9 @@ import { PostsModule } from './modules/posts/posts.module';
     AuthModule,
     RewardPointsModule,
     PostsModule,
+    AxiosModule,
+    MoEngageModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [
@@ -85,6 +91,6 @@ import { PostsModule } from './modules/posts/posts.module';
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(RequestContextMiddleware).forRoutes('*');
+    consumer.apply(RequestContextMiddleware).forRoutes('*'); // FIXME: either make interceptor global or apply middle ware on selected routes
   }
 }

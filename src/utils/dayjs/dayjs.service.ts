@@ -90,4 +90,8 @@ export class DayjsService {
   convertToLocalTime(date: Date | string): string {
     return dayjs(date).tz(this.getCurrentTimezone()).format('hh:mm A');
   }
+
+  getDay(startDate: string): string {
+    return dayjs(startDate).tz(this.getCurrentTimezone()).format('dddd');
+  }
 }
