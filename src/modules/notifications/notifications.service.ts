@@ -44,7 +44,7 @@ export class NotificationsService {
           if (!user.mongoId) {
             continue;
           }
-          const { predictedStartDate } =
+          const { predictedStartDate, currentWeek } =
             this.userService.calculateCurrentPregnancyWeek(
               user.expectedDueDate,
             );
@@ -53,10 +53,12 @@ export class NotificationsService {
             this.dayjsService.getCurrentDay() ===
             this.dayjsService.getDay(predictedStartDate)
           ) {
-            this.moEngageService.trackEvent(
+            await this.moEngageService.trackEvent(
               user.mongoId,
               'APP_WEEK_UPDATE',
-              {},
+              {
+                'Current Pregnancy Week': currentWeek,
+              },
             );
           }
         }
