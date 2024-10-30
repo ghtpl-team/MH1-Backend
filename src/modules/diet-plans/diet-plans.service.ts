@@ -412,7 +412,11 @@ export class DietPlansService {
     }
   }
 
-  async fetchDietPlan(userId: number, weekNumber: number) {
+  async fetchDietPlan(
+    userId: number,
+    weekNumber: number,
+    internalRequest: boolean = false,
+  ) {
     try {
       const userMedicalHistory = await this.em.findOne(MedicalRecord, {
         user: userId,
@@ -440,6 +444,15 @@ export class DietPlansService {
       }
 
       if (!this.canShowDietChart(userMedicalHistory, userPreferences)) {
+        if (internalRequest) {
+          return {
+            isSent: false,
+            isReviewed: false,
+            isMedicalHistoryFilled: true,
+            isDietPlanCreated: false,
+          };
+        }
+
         return {
           success: false,
           isMedicalHistoryFilled: true,
@@ -488,6 +501,17 @@ export class DietPlansService {
         SYSTEM_SETTING.dietReviewTime2,
         true,
       ) as any;
+
+      if (internalRequest) {
+        return {
+          isSent,
+          isReviewed,
+          reviewCountdown,
+          isSentCountdown,
+          isMedicalHistoryFilled: true,
+          isDietPlanCreated: true,
+        };
+      }
 
       const parsedDietPlan = this.parseDietPlan(dietPlanRaw);
 

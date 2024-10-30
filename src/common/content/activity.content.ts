@@ -40,7 +40,11 @@ export function pregnancyCoachOverview() {
         bgColor: '#9CC688',
       },
       heading: 'Follow the diet plan for today',
+      headingLocked: 'Answer simple questions and get a personalised diet plan',
+      headingWait: 'Your diet conditions are under review by the doctor',
+      subHeading: 'Your diet plan will be available in the next 1 hour',
       image: getImageUrl('/uploads/Group_31225_82a898d162.png'),
+      imageLocked: getImageUrl('/uploads/Group_31225_98e4209bca.png'),
     },
     mindCard: {
       type: 'mind',
