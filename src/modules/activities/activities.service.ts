@@ -459,12 +459,14 @@ export class ActivitiesService {
               {
                 ...staticContent.nutritionCard,
                 ...(!dietStatus.isMedicalHistoryFilled && {
+                  isLocked: true,
                   heading: staticContent.nutritionCard.headingLocked,
                   image: staticContent.nutritionCard.imageLocked,
                 }),
                 ...(dietStatus.isDietPlanCreated &&
                   !dietStatus.isReviewed && {
-                    heading: staticContent.nutritionCard.headingLocked,
+                    isReviewing: true,
+                    heading: staticContent.nutritionCard.headingWait,
                     image: staticContent.nutritionCard.imageLocked,
                     subHeading: staticContent.nutritionCard.subHeading,
                   }),
