@@ -3,8 +3,8 @@ import { ReminderType } from 'src/entities/schedules.entity';
 
 export const SYSTEM_SETTING = {
   symptomReviewTime: 1000 * 60 * 60,
-  dietReviewTime1: 1000 * 60 * 30 * 0,
-  dietReviewTime2: 1000 * 60 * 30,
+  dietReviewTime1: 0,
+  dietReviewTime2: 1000 * 60 * 60,
   freeBookingCount: 2,
   defaultReminders: {
     [ReminderType.FITNESS_REMINDER]: '08:00:00',
