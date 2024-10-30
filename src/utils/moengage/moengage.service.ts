@@ -124,8 +124,13 @@ export class MoEngageService {
       };
 
       const response = await this.axiosInstance.post(
-        `${this.baseUrl}/apps/${this.config.appId}/customers/${userId}`,
+        `${this.baseUrl}/customer/${this.config.appId}`,
         payload,
+        {
+          headers: {
+            Authorization: `Basic ${Buffer.from(this.config.appId + ':' + this.config.apiKey).toString('base64')}`,
+          },
+        },
       );
 
       this.logger.debug(
