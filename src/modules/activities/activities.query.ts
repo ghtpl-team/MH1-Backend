@@ -60,9 +60,9 @@ export const MIND_ACTIVITIES = gql`
 `;
 
 export const FITNESS_ACTIVITIES = gql`
-  query GetFitnessActivities($weekNumber: Int!) {
+  query GetFitnessActivities($start: Int!, $end: Int!) {
     fitnessActivities(
-      filters: { week: { lte: $weekNumber } }
+      filters: { week: { gte: $start, lte: $end } }
       pagination: { pageSize: 45 }
     ) {
       data {
