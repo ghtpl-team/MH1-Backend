@@ -478,6 +478,8 @@ export class DietPlansService {
         if (weekNumber === 0) weekNumber = 8;
       } else if (pregnancyComplications.includes(PregnancyComplications.GDM)) {
         dietType = DietType.GDM;
+      } else {
+        weekNumber = Math.max(weekNumber, 5);
       }
 
       const dietPlanRaw: DietChartsRawResponse = await this.graphqlClient.query(
