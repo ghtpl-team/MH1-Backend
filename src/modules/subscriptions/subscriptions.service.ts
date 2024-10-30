@@ -6,6 +6,7 @@ import {
   Inject,
   Injectable,
   Logger,
+  MethodNotAllowedException,
 } from '@nestjs/common';
 import { RazorpayService } from 'src/utils/razorpay/razorpay.service';
 import {
@@ -63,6 +64,18 @@ export class SubscriptionsService {
 
   async subscribe(subscriptionDto: CreateSubscriptionDto, userId: number) {
     try {
+      const existingActiveSub = await this.em.findOne(Subscriptions, {
+        status: Status.ACTIVE,
+        user: userId,
+        subscriptionStatus: SubscriptionStatus.ACTIVE,
+      });
+
+      if (existingActiveSub) {
+        throw new MethodNotAllowedException(
+          'User already has an active subscription',
+        );
+      }
+
       const plan = await this.em.findOneOrFail(
         SubscriptionPlans,
         {
