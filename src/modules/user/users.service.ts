@@ -185,6 +185,7 @@ export class UsersService {
     userData: User[],
     subscriptionStatus: string,
     isDietFormFilled: boolean,
+    expireAt: string,
   ) {
     const expectedDate = userData[0].expectedDueDate;
     const { userPreferences } = userData[0];
@@ -204,6 +205,7 @@ export class UsersService {
       isDietFormFilled,
       isSubscribed:
         subscriptionStatus === SubscriptionStatus.ACTIVE ? true : false,
+      subscriptionExpireAt: expireAt,
       userSettings: userData[0].userPreferences
         ? {
             id: userData[0].userPreferences.id,
@@ -243,17 +245,20 @@ export class UsersService {
 
   private async cachedData(userId: number) {
     try {
-      let subscriptionStatus = await this.cacheService.get(userId.toString());
-      if (!subscriptionStatus) {
-        subscriptionStatus = await this.userSubscriptionStatus(userId);
-      }
+      // let subscriptionStatus = await this.cacheService.get(userId.toString());
+      // if (!subscriptionStatus) {
+      //   subscriptionStatus = await this.userSubscriptionStatus(userId);
+      // }
+
+      const { subscriptionStatus, expireAt } =
+        await this.userSubscriptionStatus(userId);
 
       const isDietFormFilled: boolean = (await this.cacheService.get(
         `diet-plan-form-${userId}`,
       ))
         ? true
         : await this.checkIfUserMedicalHistoryAvailable(userId);
-      return [subscriptionStatus, isDietFormFilled];
+      return [subscriptionStatus, isDietFormFilled, expireAt];
     } catch (error) {
       throw error;
     }
@@ -267,7 +272,7 @@ export class UsersService {
           user: userId,
         },
         {
-          populate: ['id', 'subscriptionStatus'],
+          populate: ['id', 'subscriptionStatus', 'expiryDate'],
           orderBy: {
             updatedAt: QueryOrder.DESC,
             createdAt: QueryOrder.DESC,
@@ -276,14 +281,22 @@ export class UsersService {
       );
       if (!subscriptionInfo) {
         await this.cacheService.set(userId.toString(), 'missing');
-        return 'missing';
+        return {
+          subscriptionStatus: 'missing',
+          expireAt: '',
+        };
       }
 
       await this.cacheService.set(
         userId.toString(),
         subscriptionInfo.subscriptionStatus,
       );
-      return subscriptionInfo.subscriptionStatus;
+      return {
+        subscriptionStatus: subscriptionInfo.subscriptionStatus,
+        expireAt: subscriptionInfo.expiryDate
+          ? this.dayjsService.epochToDate(parseInt(subscriptionInfo.expiryDate))
+          : '',
+      };
     } catch (error) {
       throw error;
     }
@@ -329,13 +342,14 @@ export class UsersService {
         .execute();
 
       if (userData && userData.length) {
-        const [subscriptionStatus, isDietFormFilled] =
+        const [subscriptionStatus, isDietFormFilled, expireAt] =
           await this.cachedData(id);
 
         return this.parseUserData(
           userData,
           subscriptionStatus as string,
           isDietFormFilled as boolean,
+          expireAt as string,
         );
       }
       throw new HttpException(

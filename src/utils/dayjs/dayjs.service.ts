@@ -94,4 +94,11 @@ export class DayjsService {
   getDay(startDate: string): string {
     return dayjs(startDate).tz(this.getCurrentTimezone()).format('dddd');
   }
+
+  epochToDate(epochTime: number): string {
+    return dayjs
+      .unix(epochTime)
+      .tz(this.getCurrentTimezone())
+      .format('YYYY-MM-DD');
+  }
 }
