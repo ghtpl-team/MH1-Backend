@@ -28,6 +28,7 @@ export class WebhooksController {
     @Body() body: SubscriptionWebhookPayload,
     @Req() req: RawBodyRequest<Request>,
     @Headers('x-razorpay-signature') signature: string,
+    @Headers('x-razorpay-event-id') eventId: string,
   ) {
     const rawBody = req.rawBody.toString();
     console.log('Webhook Raw Body', rawBody);
@@ -37,6 +38,7 @@ export class WebhooksController {
       rawBody,
       body,
       signature,
+      eventId,
     );
   }
 }

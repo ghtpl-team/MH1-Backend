@@ -8,6 +8,7 @@ import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Subscriptions } from 'src/entities/subscriptions.entity';
 import { BillingLedger } from 'src/entities/billing-ledger.entity';
+import { WebhookEvents } from 'src/entities/webhook-events.entity';
 
 @Injectable()
 export class WebhooksService {
@@ -27,10 +28,40 @@ export class WebhooksService {
     }
   }
 
+  async isWebhookProcessed(
+    webhookPayload: SubscriptionWebhookPayload,
+    eventId: string,
+  ) {
+    try {
+      // Check if webhook event has been processed before
+      const webhookEvent = await this.em.findOne(WebhookEvents, {
+        eventId,
+      });
+
+      if (webhookEvent) {
+        // Event already processed - return success without processing
+        return true;
+      }
+
+      // Create webhook event record
+      const newWebhookEvent = this.em.create(WebhookEvents, {
+        eventId,
+        event: webhookPayload.event,
+        payload: webhookPayload,
+      });
+
+      await this.em.persistAndFlush(newWebhookEvent);
+      return false;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async resolveRazorPayWebhook(
     rawBody: any,
     webhookPayload: SubscriptionWebhookPayload,
     signature: string,
+    eventId: string,
   ) {
     try {
       const isValid = this.razorPayService.verifyWebhookSignature(
@@ -45,6 +76,17 @@ export class WebhooksService {
         );
       }
 
+      const isProcessed = await this.isWebhookProcessed(
+        webhookPayload,
+        eventId,
+      );
+
+      if (isProcessed) {
+        return {
+          status: 'success',
+          message: 'Webhook event already processed',
+        };
+      }
       if (webhookPayload.payload?.subscription) {
         const updateCount = await this.em.nativeUpdate(
           Subscriptions,
@@ -115,6 +157,11 @@ export class WebhooksService {
           }
         }
       }
+
+      return {
+        status: 'success',
+        message: 'Webhook event processed',
+      };
     } catch (error) {
       throw error;
     }
