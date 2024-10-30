@@ -32,6 +32,9 @@ export class Subscriptions extends BaseClass {
   @Property({ type: 'jsonb', nullable: true })
   notes?: Record<string, string>;
 
+  @Property({ nullable: true })
+  expiryDate?: string;
+
   @Index()
   @Enum({
     items: () => SubscriptionStatus,
