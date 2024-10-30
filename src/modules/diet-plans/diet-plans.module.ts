@@ -8,5 +8,6 @@ import { DayjsModule } from 'src/utils/dayjs/dayjs.module';
   imports: [DayjsModule],
   controllers: [DietPlansController],
   providers: [DietPlansService, GraphQLClientService],
+  exports: [DietPlansService],
 })
 export class DietPlansModule {}
