@@ -60,6 +60,7 @@ import {
 } from 'src/entities/activity-watch-history.entity';
 import { User } from 'src/entities/user.entity';
 import { DayjsService } from 'src/utils/dayjs/dayjs.service';
+import { DietPlansService } from '../diet-plans/diet-plans.service';
 
 @Injectable()
 export class ActivitiesService {
@@ -70,6 +71,7 @@ export class ActivitiesService {
     private readonly em: EntityManager,
     private readonly rewardPointService: RewardPointsService,
     private readonly dayjsService: DayjsService,
+    private readonly dietPlanService: DietPlansService,
   ) {}
 
   private parseMindActivities(
@@ -398,6 +400,7 @@ export class ActivitiesService {
   private parsePregnancyCoachData(
     coachDataRaw: GetPregnancyCoachRaw,
     activityHistory: Partial<ScheduledTask>[],
+    dietStatus: Record<any, any>,
   ) {
     const ParsedDoctor = this.parseDoctorInfo(
       coachDataRaw.activities.data[0]?.attributes?.hms_doctor?.data?.attributes,
@@ -424,7 +427,10 @@ export class ActivitiesService {
     const parsedActivityOverview = {
       weekNumber: data.week,
       docInfo: ParsedDoctor,
-      divider: staticContent.divider,
+      divider:
+        !dietStatus.isMedicalHistoryFilled || dietStatus.isDietPlanCreated
+          ? staticContent.divider
+          : staticContent.divider.filter((data) => data.label != 'Nutrition'),
       activities: [
         {
           ...staticContent.waterActivityCard,
@@ -432,6 +438,10 @@ export class ActivitiesService {
             activityHistory,
             ReminderType.WATER_REMINDER,
           ),
+          points:
+            SYSTEM_SETTING.activityPoints[
+              RewardPointsEarnedType.WATER_GOAL_ACHIEVED
+            ],
         },
         {
           ...staticContent.fitnessCard,
@@ -439,18 +449,51 @@ export class ActivitiesService {
             activityHistory,
             ReminderType.FITNESS_REMINDER,
           ),
+          points:
+            SYSTEM_SETTING.activityPoints[
+              RewardPointsEarnedType.FITNESS_GOAL_ACHIEVED
+            ],
         },
-        {
-          ...staticContent.nutritionCard,
-          ...this.findStatusByType(activityHistory, ReminderType.DIET_REMINDER),
-        },
+        ...(!dietStatus.isMedicalHistoryFilled || dietStatus.isDietPlanCreated
+          ? [
+              {
+                ...staticContent.nutritionCard,
+                ...(!dietStatus.isMedicalHistoryFilled && {
+                  heading: staticContent.nutritionCard.headingLocked,
+                  image: staticContent.nutritionCard.imageLocked,
+                }),
+                ...(dietStatus.isDietPlanCreated &&
+                  !dietStatus.isReviewed && {
+                    heading: staticContent.nutritionCard.headingLocked,
+                    image: staticContent.nutritionCard.imageLocked,
+                    subHeading: staticContent.nutritionCard.subHeading,
+                  }),
+                ...this.findStatusByType(
+                  activityHistory,
+                  ReminderType.DIET_REMINDER,
+                ),
+                points:
+                  SYSTEM_SETTING.activityPoints[
+                    RewardPointsEarnedType.NUTRITION_GOAL_ACHIEVED
+                  ],
+              },
+            ]
+          : []),
         {
           ...staticContent.mindCard,
           ...this.findStatusByType(activityHistory, ReminderType.MIND_REMINDER),
+          points:
+            SYSTEM_SETTING.activityPoints[
+              RewardPointsEarnedType.MIND_GOAL_ACHIEVED
+            ],
         },
         {
           ...parsedSoulActivity,
           ...this.findStatusByType(activityHistory, ReminderType.SOUL_REMINDER),
+          points:
+            SYSTEM_SETTING.activityPoints[
+              RewardPointsEarnedType.SOUL_GOAL_ACHIEVED
+            ],
         },
       ],
     };
@@ -471,9 +514,16 @@ export class ActivitiesService {
       if (!coachDataRaw.activities?.data)
         throw new HttpException('No Data Available', HttpStatus.NOT_FOUND);
 
+      const dietStatus = await this.dietPlanService.fetchDietPlan(
+        userId,
+        1,
+        true,
+      );
+
       const parsedData = this.parsePregnancyCoachData(
         coachDataRaw,
         activityHistory as ScheduledTask[],
+        dietStatus,
       );
       return parsedData;
     } catch (error) {
