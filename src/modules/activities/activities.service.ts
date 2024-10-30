@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { GraphQLClientService } from 'src/utils/graphql/graphql.service';
 import {
   ACTIVITY_HISTORY,
@@ -52,6 +58,8 @@ import {
   ActivityWatchHistory,
   ActivityType,
 } from 'src/entities/activity-watch-history.entity';
+import { User } from 'src/entities/user.entity';
+import { DayjsService } from 'src/utils/dayjs/dayjs.service';
 
 @Injectable()
 export class ActivitiesService {
@@ -61,6 +69,7 @@ export class ActivitiesService {
     private readonly graphqlClient: GraphQLClientService,
     private readonly em: EntityManager,
     private readonly rewardPointService: RewardPointsService,
+    private readonly dayjsService: DayjsService,
   ) {}
 
   private parseMindActivities(
@@ -281,11 +290,62 @@ export class ActivitiesService {
     }
   }
 
+  private async getFitnessActivityRange(userId: number) {
+    try {
+      const totalWeeks = 42;
+      const userData = await this.em.findOne(User, {
+        id: userId,
+        status: Status.ACTIVE,
+      });
+
+      if (!userData) throw new NotFoundException("user doesn't exist");
+
+      console.log(userData.createdAt, userData.expectedDueDate);
+
+      // Calculate current week since start
+      const weekSinceStart = Math.floor(
+        this.dayjsService.getDiff(
+          userData.createdAt,
+          this.dayjsService.getCurrentDate(),
+          'weeks',
+        ),
+      );
+
+      // Calculate total pregnancy duration in weeks
+      const totalRemainingWeeks = Math.max(
+        Math.ceil(
+          this.dayjsService.getDiff(
+            userData.expectedDueDate,
+            userData.createdAt,
+            'weeks',
+          ),
+        ),
+        1,
+      );
+
+      // Calculate how many videos should be shown per week
+      const videosPerWeek = Math.ceil(totalWeeks / totalRemainingWeeks);
+      const remainder = totalWeeks % totalRemainingWeeks;
+
+      // Calculate the range of videos to show for current week
+      const startWeek = videosPerWeek * weekSinceStart;
+      const endWeek = Math.min(
+        videosPerWeek * (weekSinceStart + 1) +
+          (weekSinceStart < remainder ? 1 : 0),
+        totalWeeks,
+      );
+      return [startWeek, endWeek];
+    } catch (error) {}
+  }
+
   async fetchFitnessActivities(weekNumber: number, userId: number) {
     try {
+      const weekLimit = await this.getFitnessActivityRange(userId);
+      console.log(weekLimit);
       const fitnessActivityRaw: FitnessActivitiesRaw =
         await this.graphqlClient.query(FITNESS_ACTIVITIES, {
-          weekNumber: weekNumber,
+          start: weekLimit[0],
+          end: weekLimit[1],
         });
 
       const showConsentForm = await this.isConsentFormAcknowledged(userId);
