@@ -60,6 +60,9 @@ export class NotificationsService {
                 'Current Pregnancy Week': currentWeek,
               },
             );
+            await this.moEngageService.updateUserAttributes(user.mongoId, {
+              'Current Pregnancy Week': currentWeek,
+            });
           }
         }
 
