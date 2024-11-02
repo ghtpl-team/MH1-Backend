@@ -34,7 +34,7 @@ export class User extends BaseClass {
   phone!: string;
 
   @Index()
-  @Property({ unique: true })
+  @Property()
   deviceId!: string;
 
   @Index()
