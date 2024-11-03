@@ -313,6 +313,8 @@ export class ActivitiesService {
         ),
       );
 
+      console.log(weekSinceStart);
+
       // Calculate total pregnancy duration in weeks
       const totalRemainingWeeks = Math.max(
         Math.ceil(
@@ -325,9 +327,13 @@ export class ActivitiesService {
         1,
       );
 
+      console.log(totalRemainingWeeks);
+
       // Calculate how many videos should be shown per week
       const videosPerWeek = Math.ceil(totalWeeks / totalRemainingWeeks);
       const remainder = totalWeeks % totalRemainingWeeks;
+
+      console.log(videosPerWeek, remainder);
 
       // Calculate the range of videos to show for current week
       const startWeek = videosPerWeek * weekSinceStart;
