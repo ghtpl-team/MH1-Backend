@@ -307,8 +307,8 @@ export class ActivitiesService {
       // Calculate current week since start
       const weekSinceStart = Math.floor(
         this.dayjsService.getDiff(
-          userData.createdAt,
           this.dayjsService.getCurrentDate(),
+          userData.createdAt,
           'weeks',
         ),
       );
