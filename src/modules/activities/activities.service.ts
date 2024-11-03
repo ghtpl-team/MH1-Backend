@@ -346,8 +346,8 @@ export class ActivitiesService {
       console.log(weekLimit);
       const fitnessActivityRaw: FitnessActivitiesRaw =
         await this.graphqlClient.query(FITNESS_ACTIVITIES, {
-          start: weekLimit[0],
-          end: weekLimit[1],
+          start: Math.max(weekLimit[0], 4),
+          end: Math.max(weekLimit[1], 5),
         });
 
       const showConsentForm = await this.isConsentFormAcknowledged(userId);
