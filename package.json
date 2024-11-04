@@ -52,6 +52,7 @@
     "graphql": "^16.9.0",
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
+    "newrelic": "^12.6.0",
     "passport": "^0.7.0",
     "passport-custom": "^1.1.1",
     "passport-jwt": "^4.0.1",
