@@ -9,13 +9,11 @@ import { CustomStrategy } from './custom.strategy';
 import { CustomAuthGuard } from './custom-auth.guard';
 import { StaticAuthGuard } from './static-auth.guard';
 import { StaticStrategy } from './static.strategy';
-import { MoEngageModule } from 'src/utils/moengage/moengage.module';
 
 @Module({
   imports: [
     UsersModule,
     PassportModule,
-    MoEngageModule,
     JwtModule.register({
       secret: new ConfigService().get('JWT_SECRET'),
       signOptions: {

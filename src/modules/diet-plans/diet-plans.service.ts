@@ -444,6 +444,19 @@ export class DietPlansService {
       );
 
       if (!userMedicalHistory) {
+        try {
+          await this.moEngageService.updateUserAttributes(
+            userPreferences.user.mongoId,
+            {
+              AUTO_DIET_CHART_READY: DietChartStatus.AWAITING_INPUT,
+            },
+          );
+        } catch (error) {
+          this.logger.error(
+            'Failed to update user attribute of diet status on moengage',
+          );
+        }
+
         return {
           success: false,
           isMedicalHistoryFilled: false,
@@ -462,12 +475,18 @@ export class DietPlansService {
           };
         }
 
-        await this.moEngageService.updateUserAttributes(
-          userPreferences.user.mongoId,
-          {
-            AUTO_DIET_CHART_READY: DietChartStatus.REJECTED,
-          },
-        );
+        try {
+          await this.moEngageService.updateUserAttributes(
+            userPreferences.user.mongoId,
+            {
+              AUTO_DIET_CHART_READY: DietChartStatus.REJECTED,
+            },
+          );
+        } catch (error) {
+          this.logger.error(
+            'Failed to update user attribute of diet status on moengage',
+          );
+        }
 
         return {
           success: false,
@@ -532,12 +551,18 @@ export class DietPlansService {
       }
 
       if (!isReviewed) {
-        await this.moEngageService.updateUserAttributes(
-          userPreferences.user.mongoId,
-          {
-            AUTO_DIET_CHART_READY: DietChartStatus.PREPARING,
-          },
-        );
+        try {
+          await this.moEngageService.updateUserAttributes(
+            userPreferences.user.mongoId,
+            {
+              AUTO_DIET_CHART_READY: DietChartStatus.PREPARING,
+            },
+          );
+        } catch (error) {
+          this.logger.error(
+            'Failed to update user attribute of diet status on moengage',
+          );
+        }
       }
 
       const parsedDietPlan = this.parseDietPlan(dietPlanRaw);
