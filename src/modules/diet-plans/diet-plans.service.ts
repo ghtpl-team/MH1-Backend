@@ -43,6 +43,8 @@ import { Status } from 'src/entities/base.entity';
 import { processTimeStatus } from 'src/common/utils/date-time.utils';
 import { SYSTEM_SETTING } from 'src/configs/system.config';
 import { DayjsService } from 'src/utils/dayjs/dayjs.service';
+import { MoEngageService } from 'src/utils/moengage/moengage.service';
+import { DietChartStatus } from 'src/common/interfaces/common.interface';
 
 @Injectable()
 export class DietPlansService {
@@ -50,6 +52,7 @@ export class DietPlansService {
     private readonly graphqlClient: GraphQLClientService,
     private readonly em: EntityManager,
     private readonly dayjsService: DayjsService,
+    private readonly moEngageService: MoEngageService,
     @Inject(CACHE_MANAGER) private readonly cacheService: Cache,
   ) {}
 
@@ -430,11 +433,30 @@ export class DietPlansService {
           status: Status.ACTIVE,
         },
         {
-          populate: ['allergies', 'avoidedFoods', 'id', 'dietPreference'],
+          populate: [
+            'allergies',
+            'avoidedFoods',
+            'id',
+            'dietPreference',
+            'user.mongoId',
+          ],
         },
       );
 
       if (!userMedicalHistory) {
+        try {
+          await this.moEngageService.updateUserAttributes(
+            userPreferences.user.mongoId,
+            {
+              AUTO_DIET_CHART_READY: DietChartStatus.AWAITING_INPUT,
+            },
+          );
+        } catch (error) {
+          this.logger.error(
+            'Failed to update user attribute of diet status on moengage',
+          );
+        }
+
         return {
           success: false,
           isMedicalHistoryFilled: false,
@@ -451,6 +473,19 @@ export class DietPlansService {
             isMedicalHistoryFilled: true,
             isDietPlanCreated: false,
           };
+        }
+
+        try {
+          await this.moEngageService.updateUserAttributes(
+            userPreferences.user.mongoId,
+            {
+              AUTO_DIET_CHART_READY: DietChartStatus.REJECTED,
+            },
+          );
+        } catch (error) {
+          this.logger.error(
+            'Failed to update user attribute of diet status on moengage',
+          );
         }
 
         return {
@@ -513,6 +548,21 @@ export class DietPlansService {
           isMedicalHistoryFilled: true,
           isDietPlanCreated: true,
         };
+      }
+
+      if (!isReviewed) {
+        try {
+          await this.moEngageService.updateUserAttributes(
+            userPreferences.user.mongoId,
+            {
+              AUTO_DIET_CHART_READY: DietChartStatus.PREPARING,
+            },
+          );
+        } catch (error) {
+          this.logger.error(
+            'Failed to update user attribute of diet status on moengage',
+          );
+        }
       }
 
       const parsedDietPlan = this.parseDietPlan(dietPlanRaw);

@@ -39,3 +39,10 @@ export interface GenericButton {
   bgColor: string;
   textColor: string;
 }
+
+export enum DietChartStatus {
+  'AWAITING_INPUT' = 'AWAITING_INPUT',
+  'PREPARING' = 'PREPARING',
+  'READY' = 'READY',
+  'REJECTED' = 'REJECTED',
+}
