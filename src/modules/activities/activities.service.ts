@@ -352,7 +352,7 @@ export class ActivitiesService {
       console.log(weekLimit);
       const fitnessActivityRaw: FitnessActivitiesRaw =
         await this.graphqlClient.query(FITNESS_ACTIVITIES, {
-          start: Math.max(weekLimit[0], 4),
+          start: 4, // Math.max(weekLimit[0], 4) #FIXME: static
           end: Math.max(weekLimit[1], 5),
         });
 
