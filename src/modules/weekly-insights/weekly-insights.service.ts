@@ -175,15 +175,17 @@ export class WeeklyInsightsService {
 
       const msgCount = [1, 3, 7];
       const parsedCards: ParsedCard[] = [];
+
       [scanCard, counselingCard].forEach((card, index) => {
         if (card) {
+          const waChatText = `Hello, I want to book ${card?.title?.replace('Your doctor', '').replace('suggests ', '').replace('recommends', '').trim()}`;
           parsedCards.push({
             id: generateId(),
             title: card.title,
             image: getImageUrl(card.image.data.attributes.url),
             type: 'TITLE_DOC_BTN' as const,
             ctaButton: card.button,
-            chatUrl: this.configService.get('HP_SUPPORT_CHAT_URL'),
+            chatUrl: this.configService.get('HP_SUPPORT_CHAT_URL') + waChatText,
             bgColor: index
               ? PersonalisedCardColor['Session Card']
               : PersonalisedCardColor['Scan Card'],
