@@ -6,7 +6,7 @@ export const DoctorDetails = {
   experienceYears: 10,
 };
 
-const SERVER_URL = 'https://mh-dev.oicharts.in/images/videos/mind-activities';
+const SERVER_URL = `${process.env.MEDIA_SERVER_BASE_URL}/images/videos/mind-activities`;
 
 export const MindActivityVideos = {
   1: `${SERVER_URL}/body-scan.mp4`,
