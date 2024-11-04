@@ -7,7 +7,7 @@ export const MIND_ACTIVITIES = gql`
         attributes {
           heading
           subHeading
-          mind_activities {
+          mind_activities(sort: "rank:asc") {
             data {
               id
               attributes {
