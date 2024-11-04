@@ -2,12 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { UsersService } from '../user/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from '../user/dto/users.dto';
+import { MoEngageService } from 'src/utils/moengage/moengage.service';
+import { DietChartStatus } from 'src/common/interfaces/common.interface';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly moEngageService: MoEngageService,
   ) {}
 
   async getNewTokenWithJwtToken(v1Token: string, reqBody: CreateUserDto) {
@@ -66,6 +69,10 @@ export class AuthService {
     }
 
     await this.userService.upsert(user.id, userData);
+
+    await this.moEngageService.updateUserAttributes(userData.mongoId, {
+      AUTO_DIET_CHART_READY: DietChartStatus.AWAITING_INPUT,
+    });
 
     return user;
   }
