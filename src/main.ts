@@ -48,4 +48,5 @@ async function bootstrap() {
 
   await app.listen(process.env.APP_PORT || 3005);
 }
+require('newrelic');
 bootstrap();
