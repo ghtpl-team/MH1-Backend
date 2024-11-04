@@ -29,7 +29,7 @@ import {
   ParsedFeedbackForm,
   ParsedFitnessActivity,
 } from './activities.interface';
-import { getImageUrl } from 'src/common/utils/helper.utils';
+import { getImageUrl, nthNumber } from 'src/common/utils/helper.utils';
 import { pregnancyCoachOverview } from 'src/common/content/activity.content';
 import { EntityManager, QueryOrder } from '@mikro-orm/mysql';
 
@@ -154,7 +154,7 @@ export class ActivitiesService {
   } {
     let consentForm;
     const activities = response.fitnessActivities?.data
-      ?.map((item) => {
+      ?.map((item, index) => {
         const attrs = item?.attributes;
         if (!attrs) return null;
         consentForm = this.parseConsentForm(
@@ -165,7 +165,9 @@ export class ActivitiesService {
           name: attrs.name ?? '',
           videoUrl: getImageUrl(attrs.videoUrl?.data?.attributes?.url) ?? '',
           thumbnailUrl: getImageUrl(attrs.thumbnail?.data?.attributes?.url),
-          subHeading: attrs.subHeading ?? '',
+          subHeading:
+            `Let's get started on your ${nthNumber(index + 1)} exercise` ??
+            attrs.subHeading,
           duration: attrs?.duration ?? 10,
           description: {
             benefits: attrs.description?.benefits ?? '',
