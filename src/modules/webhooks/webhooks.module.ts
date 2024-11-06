@@ -4,8 +4,10 @@ import { WebhooksService } from './webhooks.service';
 import { RazorpayService } from 'src/utils/razorpay/razorpay.service';
 import { ConfigService } from '@nestjs/config';
 import { SubscriptionsService } from 'src/modules/subscriptions/subscriptions.service';
+import { IapModule } from 'src/utils/iap/iap.module';
 
 @Module({
+  imports: [IapModule],
   controllers: [WebhooksController],
   providers: [
     WebhooksService,

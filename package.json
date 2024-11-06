@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.11.4",
+    "@apple/app-store-server-library": "^1.4.0",
     "@mikro-orm/core": "^6.3.4",
     "@mikro-orm/migrations": "^6.3.4",
     "@mikro-orm/mysql": "^6.3.4",
