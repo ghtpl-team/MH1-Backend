@@ -1,5 +1,11 @@
 import { EntityManager } from '@mikro-orm/mysql';
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { RazorpayService } from 'src/utils/razorpay/razorpay.service';
 import { SubscriptionWebhookPayload } from './webhooks.interface';
 import { WebhookCreateDto } from './dto/webhooks.dto';
@@ -9,14 +15,19 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Subscriptions } from 'src/entities/subscriptions.entity';
 import { BillingLedger } from 'src/entities/billing-ledger.entity';
 import { WebhookEvents } from 'src/entities/webhook-events.entity';
+import { IAPService } from 'src/utils/iap/iap.service';
+import { ResponseBodyV2DecodedPayload } from '@apple/app-store-server-library/dist/models/ResponseBodyV2DecodedPayload';
 
 @Injectable()
 export class WebhooksService {
+  private readonly logger = new Logger(WebhooksService.name);
+
   constructor(
     private readonly em: EntityManager,
     private readonly razorPayService: RazorpayService,
     private readonly subscriptionService: SubscriptionsService,
     @Inject(CACHE_MANAGER) private readonly cacheService: Cache,
+    private readonly iapService: IAPService,
   ) {}
 
   async create(webhookCreateDto: WebhookCreateDto) {
@@ -29,7 +40,9 @@ export class WebhooksService {
   }
 
   async isWebhookProcessed(
-    webhookPayload: SubscriptionWebhookPayload,
+    webhookPayload: Partial<
+      SubscriptionWebhookPayload & ResponseBodyV2DecodedPayload
+    >,
     eventId: string,
   ) {
     try {
@@ -164,6 +177,37 @@ export class WebhooksService {
       };
     } catch (error) {
       throw error;
+    }
+  }
+
+  async resolveAppleNotification(signedPayload: string) {
+    try {
+      const notification = await this.iapService.verifyAndDecodeNotification(
+        'ios',
+        signedPayload,
+      );
+      if (!notification)
+        throw new HttpException(
+          'Webhook Signature Validation Failed',
+          HttpStatus.BAD_REQUEST,
+        );
+
+      const isProcessed = await this.isWebhookProcessed(
+        notification,
+        notification.notificationUUID,
+      );
+
+      if (isProcessed) {
+        return {
+          status: 'success',
+          message: 'Webhook event already processed',
+        };
+      }
+
+      const subscriptionData = notification?.data?.signedTransactionInfo;
+      console.log(subscriptionData);
+    } catch (error) {
+      this.logger.error("can't resolve apple notification", error);
     }
   }
 }

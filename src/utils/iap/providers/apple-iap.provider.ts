@@ -134,39 +134,73 @@ export class AppleIAPProvider {
     }
   }
 
-  async handleServerNotification(signedPayload: string): Promise<void> {
+  async sendTestNotification() {
+    try {
+      const { testNotificationToken } =
+        await this.apiClient.requestTestNotification();
+      return {
+        success: true,
+        notificationToken: testNotificationToken,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async verifyAndDecodeNotification(
+    signedPayload: string,
+  ): Promise<ResponseBodyV2DecodedPayload> {
     try {
       const notification =
         await this.signedDataVerifier.verifyAndDecodeNotification(
           signedPayload,
         );
 
-      console.log(JSON.stringify(notification, null, 2));
+      return notification;
 
-      switch (notification.notificationType) {
-        case 'SUBSCRIBED':
-          await this.handleNewSubscription(notification);
-          break;
-        case 'DID_RENEW':
-          await this.handleRenewal(notification);
-          break;
-        case 'DID_FAIL_TO_RENEW':
-          await this.handleFailedRenewal(notification);
-          break;
-        case 'EXPIRED':
-          await this.handleExpiration(notification);
-          break;
-        default:
-          this.logger.warn(
-            `Unhandled notification type: ${notification.notificationType}`,
-          );
-      }
+      //   const isProcessed = await this.isWebhookProcessed(
+      //     webhookPayload,
+      //     eventId,
+      //   );
+
+      //   if (isProcessed) {
+      //     return {
+      //       status: 'success',
+      //       message: 'Webhook event already processed',
+      //     };
+      //   }
+      //   const subscriptionData =
+      //     await this.signedDataVerifier.verifyAndDecodeTransaction(
+      //       notification.data.signedTransactionInfo,
+      //     );
+
+      //   console.log(JSON.stringify(notification, null, 2));
+      //   console.log(subscriptionData);
+
+      //   switch (notification.notificationType) {
+      //     case 'SUBSCRIBED':
+      //       await this.handleNewSubscription(notification);
+      //       break;
+      //     case 'DID_RENEW':
+      //       await this.handleRenewal(notification);
+      //       break;
+      //     case 'DID_FAIL_TO_RENEW':
+      //       await this.handleFailedRenewal(notification);
+      //       break;
+      //     case 'EXPIRED':
+      //       await this.handleExpiration(notification);
+      //       break;
+      //     default:
+      //       this.logger.warn(
+      //         `Unhandled notification type: ${notification.notificationType}`,
+      //       );
+      //   }
     } catch (error) {
       this.logger.error(
         `Failed to handle server notification: ${error.message}`,
         error.stack,
       );
-      throw error;
+      return null;
     }
   }
 

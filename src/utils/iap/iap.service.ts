@@ -6,13 +6,10 @@ import { AppleIAPProvider } from './providers/apple-iap.provider';
 export class IAPService {
   constructor(private readonly iapProviderFactory: IAPProviderFactory) {}
 
-  async handleWebhook(
-    platform: 'ios' | 'android',
-    payload: any,
-  ): Promise<void> {
+  async verifyAndDecodeNotification(platform: 'ios' | 'android', payload: any) {
     const provider = this.iapProviderFactory.getProvider(
       platform,
     ) as unknown as AppleIAPProvider;
-    await provider.handleServerNotification(payload?.signedPayload);
+    return provider.verifyAndDecodeNotification(payload);
   }
 }
