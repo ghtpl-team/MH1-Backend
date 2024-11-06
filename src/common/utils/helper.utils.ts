@@ -1,5 +1,7 @@
 import 'dotenv/config';
-import { LogLevel } from '@nestjs/common/services/logger.service';
+import { Logger, LogLevel } from '@nestjs/common/services/logger.service';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 export function getImageUrl(str: string, fromStrapi: boolean = true) {
   const baseUrl = fromStrapi
@@ -43,4 +45,42 @@ export function nthNumber(number: number) {
     default:
       return number + 'th';
   }
+}
+
+export function loadRootCAs(): Buffer[] {
+  const logger = new Logger('LoadRootCAs');
+
+  try {
+    try {
+      const localCerts = loadLocalCertificates();
+      if (localCerts.length > 0) {
+        logger.log('Loaded root CAs from local files');
+        return localCerts;
+      }
+    } catch (error) {
+      logger.warn(
+        'Failed to load local certificates, falling back to download',
+      );
+    }
+  } catch (error) {
+    logger.error('Failed to load root CAs:', error);
+    throw new Error('Failed to load Apple root CAs');
+  }
+}
+
+function loadLocalCertificates(): Buffer[] {
+  const certPaths = [
+    join(__dirname, '../../../certs/AppleRootCA-G3.cer'),
+    join(__dirname, '../../../certs/AppleRootCA-G2.cer'),
+  ];
+
+  return certPaths
+    .map((path) => {
+      try {
+        return readFileSync(path);
+      } catch {
+        return null;
+      }
+    })
+    .filter((cert): cert is Buffer => cert !== null);
 }

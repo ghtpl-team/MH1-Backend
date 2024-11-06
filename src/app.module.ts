@@ -39,6 +39,7 @@ import { PostsModule } from './modules/posts/posts.module';
 import { AxiosModule } from './utils/axios/axios.module';
 import { MoEngageModule } from './utils/moengage/moengage.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { IapModule } from './utils/iap/iap.module';
 
 @Module({
   imports: [
@@ -75,6 +76,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
     AxiosModule,
     MoEngageModule,
     NotificationsModule,
+    IapModule,
   ],
   controllers: [AppController],
   providers: [

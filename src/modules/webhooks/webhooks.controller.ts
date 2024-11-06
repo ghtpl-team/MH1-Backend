@@ -11,12 +11,16 @@ import { SubscriptionWebhookPayload } from './webhooks.interface';
 import { WebhookCreateDto } from './dto/webhooks.dto';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { Request } from 'express';
+import { IAPService } from 'src/utils/iap/iap.service';
 
 @Controller('webhooks')
 @ApiTags('Webhooks')
 @ApiBearerAuth()
 export class WebhooksController {
-  constructor(private readonly razorPayWebhookService: WebhooksService) {}
+  constructor(
+    private readonly razorPayWebhookService: WebhooksService,
+    private readonly iapService: IAPService,
+  ) {}
 
   @Post()
   async createWebhook(@Body() reqBody: WebhookCreateDto) {
@@ -40,5 +44,10 @@ export class WebhooksController {
       signature,
       eventId,
     );
+  }
+
+  @Post('iap/subscription')
+  async resolveIAPWebhook(@Body() body: any) {
+    return this.iapService.handleWebhook('ios', body);
   }
 }

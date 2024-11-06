@@ -64,6 +64,14 @@ export class Subscriptions extends BaseClass {
   @Property({ type: 'numeric' })
   remainingCount?: number = 0;
 
+  @Index()
+  @Enum({
+    items: () => PlatformType,
+    nativeEnumName: 'platform',
+    nullable: true,
+  })
+  platform?: PlatformType = PlatformType.ANDROID;
+
   @OneToOne(
     () => SubscriptionUsage,
     (subscriptionUsage) => subscriptionUsage.currentSubscription,
@@ -81,4 +89,17 @@ export enum SubscriptionStatus {
   PAUSED = 'paused',
   EXPIRED = 'expired',
   COMPLETED = 'completed',
+}
+
+export enum AppleSubscriptionStatus {
+  ACTIVE = 1,
+  EXPIRED = 2,
+  IN_BILLING_RETRY = 3,
+  GRACE_PERIOD = 4,
+  REVOKED = 5,
+}
+
+export enum PlatformType {
+  IOS = 'ios',
+  ANDROID = 'android',
 }
