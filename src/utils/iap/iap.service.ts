@@ -10,6 +10,6 @@ export class IAPService {
     const provider = this.iapProviderFactory.getProvider(
       platform,
     ) as unknown as AppleIAPProvider;
-    return provider.verifyAndDecodeNotification(payload);
+    return provider.verifyAndDecodeNotification(payload?.signedPayload);
   }
 }
