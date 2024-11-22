@@ -164,14 +164,16 @@ export class UsersService {
 
   async upsert(id: number, userData: CreateUserDto) {
     try {
-      console.log(userData);
+
       const upsertResult = await this.em.nativeUpdate(
         User,
         {
           id,
         },
         {
-          expectedDueDate: userData.expectedDueDate ?? '1990-10-02',
+          expectedDueDate: userData?.expectedDueDate
+            ? userData?.expectedDueDate
+            : '1990-10-02',
           mongoId: userData.mongoId,
         },
       );
