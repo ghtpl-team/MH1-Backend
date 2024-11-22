@@ -164,6 +164,7 @@ export class UsersService {
 
   async upsert(id: number, userData: CreateUserDto) {
     try {
+      console.log(userData);
       const upsertResult = await this.em.nativeUpdate(
         User,
         {
