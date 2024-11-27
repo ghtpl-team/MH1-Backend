@@ -152,8 +152,8 @@ export class SubscriptionsService {
 
       if (!subscriptionData) {
         this.logger.debug('Waiting for subscription to become active');
-        // Wait for 3 seconds (adjust time as needed)
-        await new Promise((resolve) => setTimeout(resolve, 10000));
+        // Wait for 60 seconds (adjust time as needed)
+        await new Promise((resolve) => setTimeout(resolve, 60000));
 
         // Try one more time after delay
         subscriptionData = await this.em.findOne(Subscriptions, {
