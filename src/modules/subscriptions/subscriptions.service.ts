@@ -145,14 +145,26 @@ export class SubscriptionsService {
 
   async cancel(userId: number, cancelSubscriptionDto: CancelSubscriptionDto) {
     try {
-      const subscriptionData = await this.em.findOne(Subscriptions, {
+      let subscriptionData = await this.em.findOne(Subscriptions, {
         user: userId,
         subscriptionStatus: SubscriptionStatus.ACTIVE,
       });
 
-      if (!subscriptionData)
-        this.logger.debug('Need to wait till subscription is active');
+      if (!subscriptionData) {
+        this.logger.debug('Waiting for subscription to become active');
+        // Wait for 3 seconds (adjust time as needed)
+        await new Promise((resolve) => setTimeout(resolve, 10000));
 
+        // Try one more time after delay
+        subscriptionData = await this.em.findOne(Subscriptions, {
+          user: userId,
+          subscriptionStatus: SubscriptionStatus.ACTIVE,
+        });
+
+        if (!subscriptionData) {
+          throw new Error('Subscription not found after waiting');
+        }
+      }
       const updateRpSubscription =
         await this.razorPayService.cancelSubscription(
           subscriptionData.razorPaySubscriptionId,
