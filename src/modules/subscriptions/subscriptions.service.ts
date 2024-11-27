@@ -151,7 +151,7 @@ export class SubscriptionsService {
       });
 
       if (!subscriptionData) {
-        return new HttpException(
+        throw new HttpException(
           'Wait for subscription to become active.this might take 5-10 minutes',
           HttpStatus.NOT_FOUND,
         );
@@ -191,7 +191,7 @@ export class SubscriptionsService {
         'error occurred while canceling the subscription',
         error?.stack || error,
       );
-      return error;
+      throw error;
     }
   }
 
