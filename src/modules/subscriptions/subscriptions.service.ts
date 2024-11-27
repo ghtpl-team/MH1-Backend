@@ -165,7 +165,6 @@ export class SubscriptionsService {
         },
         {
           updatedAt: new Date(),
-          subscriptionStatus: SubscriptionStatus.CANCELLED,
           reasonOfCancellation: cancelSubscriptionDto.reasonOfCancellation,
         },
       );
