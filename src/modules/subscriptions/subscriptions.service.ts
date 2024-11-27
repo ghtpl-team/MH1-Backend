@@ -151,7 +151,7 @@ export class SubscriptionsService {
       });
 
       if (!subscriptionData)
-        throw new HttpException('No active subscription', HttpStatus.NOT_FOUND);
+        this.logger.debug('Need to wait till subscription is active');
 
       const updateRpSubscription =
         await this.razorPayService.cancelSubscription(
