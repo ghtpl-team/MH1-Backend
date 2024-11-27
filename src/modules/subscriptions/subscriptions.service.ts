@@ -151,8 +151,9 @@ export class SubscriptionsService {
       });
 
       if (!subscriptionData) {
-        throw new Error(
+        return new HttpException(
           'Wait for subscription to become active.this might take 5-10 minutes',
+          HttpStatus.NOT_FOUND,
         );
       }
       const updateRpSubscription =
