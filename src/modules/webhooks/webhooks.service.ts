@@ -6,7 +6,10 @@ import { WebhookCreateDto } from './dto/webhooks.dto';
 import { SubscriptionsService } from 'src/modules/subscriptions/subscriptions.service';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Subscriptions } from 'src/entities/subscriptions.entity';
+import {
+  Subscriptions,
+  SubscriptionStatus,
+} from 'src/entities/subscriptions.entity';
 import { BillingLedger } from 'src/entities/billing-ledger.entity';
 import { WebhookEvents } from 'src/entities/webhook-events.entity';
 
@@ -88,56 +91,53 @@ export class WebhooksService {
         };
       }
       if (webhookPayload.payload?.subscription) {
-        const updateCount = await this.em.nativeUpdate(
+        const subscriptionDetails = await this.em.findOne(
           Subscriptions,
           {
             razorPaySubscriptionId:
               webhookPayload.payload?.subscription?.entity?.id,
           },
           {
-            subscriptionStatus:
-              webhookPayload?.payload?.subscription?.entity?.status,
-            remainingCount:
-              webhookPayload?.payload?.subscription?.entity?.remaining_count,
-            expiryDate:
-              webhookPayload?.payload?.subscription?.entity?.current_end ??
-              undefined,
+            populate: [
+              'id',
+              'razorPaySubscriptionId',
+              'user',
+              'subscriptionStatus',
+              'totalBillingCycle',
+            ],
           },
         );
 
-        if (updateCount) {
-          const subscriptionDetails = await this.em.findOne(
-            Subscriptions,
-            {
-              razorPaySubscriptionId:
-                webhookPayload.payload?.subscription?.entity?.id,
-            },
-            {
-              populate: [
-                'id',
-                'razorPaySubscriptionId',
-                'user',
-                'subscriptionStatus',
-                'totalBillingCycle',
-                'remainingCount',
-              ],
-            },
-          );
+        const updatedSubscription = await this.em.assign(subscriptionDetails, {
+          subscriptionStatus:
+            subscriptionDetails.subscriptionStatus ===
+            SubscriptionStatus.CANCELLED
+              ? SubscriptionStatus.CANCELLED
+              : webhookPayload?.payload?.subscription?.entity?.status,
+          remainingCount:
+            webhookPayload?.payload?.subscription?.entity?.remaining_count,
+          expiryDate:
+            webhookPayload?.payload?.subscription?.entity?.current_end ??
+            undefined,
+        });
 
+        await this.em.persistAndFlush(updatedSubscription);
+
+        if (updatedSubscription) {
           const totalPaid =
-            subscriptionDetails.totalBillingCycle -
-            (subscriptionDetails.remainingCount ??
-              subscriptionDetails.totalBillingCycle);
+            updatedSubscription.totalBillingCycle -
+            (updatedSubscription.remainingCount ??
+              updatedSubscription.totalBillingCycle);
           await this.subscriptionService.resetUsage(
-            subscriptionDetails.user.id,
-            subscriptionDetails,
+            updatedSubscription.user.id,
+            updatedSubscription,
             webhookPayload.payload?.payment ? true : false,
             totalPaid,
           );
 
           await this.cacheService.set(
-            subscriptionDetails.user.id.toString(),
-            subscriptionDetails.subscriptionStatus,
+            updatedSubscription.user.id.toString(),
+            updatedSubscription.subscriptionStatus,
             3000000,
           );
 
@@ -149,8 +149,8 @@ export class WebhooksService {
               currency: currency,
               razorpayPaymentId: id,
               paymentResponse: webhookPayload.payload.payment.entity,
-              user: subscriptionDetails.user.id,
-              subscription: subscriptionDetails.id,
+              user: updatedSubscription.user.id,
+              subscription: updatedSubscription.id,
             });
 
             await this.em.persistAndFlush(paymentData);

@@ -607,6 +607,7 @@ export class ActivitiesService {
           },
           {
             isActivityLocked: true,
+            updatedAt: new Date(),
           },
         );
       }

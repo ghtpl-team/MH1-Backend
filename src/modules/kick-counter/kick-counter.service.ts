@@ -92,6 +92,7 @@ export class KickCounterService {
         },
         {
           status: Status.DELETED,
+          updatedAt: new Date(),
         },
       );
 

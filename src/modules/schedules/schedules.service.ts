@@ -35,6 +35,7 @@ export class SchedulesService {
         { id: scheduleId },
         {
           user: userId,
+          updatedAt: new Date(),
           reminderTime: reminderCreateDto.reminderTime,
           scheduledBy: reminderCreateDto.isActive
             ? ScheduledBy.USER

@@ -277,6 +277,7 @@ export class MedicationSchedulesService {
         id,
       },
       {
+        updatedAt: new Date(),
         ...updateMedicationScheduleDto,
         ...(updateMedicationScheduleDto.frequency === Frequency.DAILY && {
           selectedDays: undefined,
@@ -310,6 +311,7 @@ export class MedicationSchedulesService {
         },
         {
           status: Status.DELETED,
+          updatedAt: new Date(),
         },
       );
     });
@@ -323,6 +325,7 @@ export class MedicationSchedulesService {
       },
       {
         status: Status.DELETED,
+        updatedAt: new Date(),
       },
     );
 

@@ -164,6 +164,7 @@ export class SubscriptionsService {
           id: subscriptionData.id,
         },
         {
+          updatedAt: new Date(),
           subscriptionStatus: SubscriptionStatus.CANCELLED,
           reasonOfCancellation: cancelSubscriptionDto.reasonOfCancellation,
         },
@@ -233,6 +234,7 @@ export class SubscriptionsService {
           user: userId,
         },
         {
+          updatedAt: new Date(),
           usedFreeBookings: currentUsage,
           eligibleFreeBookings: 0,
         },
@@ -276,6 +278,7 @@ export class SubscriptionsService {
             eligibleFreeBookings: Math.min(2, Math.max(1, totalPaid)),
           }),
           currentSubscription: subscription.id,
+          updatedAt: new Date(),
         },
       );
 
@@ -309,6 +312,7 @@ export class SubscriptionsService {
         },
         {
           subscriptionStatus: SubscriptionStatus.ACTIVE,
+          updatedAt: new Date(),
         },
       );
 

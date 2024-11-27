@@ -228,6 +228,7 @@ export class DietPlansService {
             ...(formData?.avoidedIngredients && {
               avoidedFoods: formData.avoidedIngredients,
             }),
+            updatedAt: new Date(),
           },
         );
 

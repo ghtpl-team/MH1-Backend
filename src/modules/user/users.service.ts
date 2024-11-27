@@ -164,7 +164,6 @@ export class UsersService {
 
   async upsert(id: number, userData: CreateUserDto) {
     try {
-
       const upsertResult = await this.em.nativeUpdate(
         User,
         {
@@ -175,6 +174,7 @@ export class UsersService {
             ? userData?.expectedDueDate
             : '1990-10-02',
           mongoId: userData.mongoId,
+          updatedAt: new Date(),
         },
       );
 
