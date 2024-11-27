@@ -117,7 +117,7 @@ export class WebhooksService {
           remainingCount:
             webhookPayload?.payload?.subscription?.entity?.remaining_count,
           expiryDate:
-            webhookPayload?.payload?.subscription?.entity?.current_end ??
+            webhookPayload?.payload?.subscription?.entity?.current_end?.toString() ??
             undefined,
         });
 
