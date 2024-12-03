@@ -76,6 +76,13 @@ export class SubscriptionsService {
         );
       }
 
+      const previousSubscriptionCount = await this.em.count(Subscriptions, {
+        status: Status.ACTIVE,
+        subscriptionStatus: {
+          $not: SubscriptionStatus.CREATED,
+        },
+      });
+
       const plan = await this.em.findOneOrFail(
         SubscriptionPlans,
         {
@@ -101,7 +108,7 @@ export class SubscriptionsService {
 
       await this.em.flush();
 
-      return savedSubscriptionInfo;
+      return { ...savedSubscriptionInfo, previousSubscriptionCount };
     } catch (error) {
       throw error;
     }
