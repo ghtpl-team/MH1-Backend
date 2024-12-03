@@ -78,8 +78,14 @@ export class SubscriptionsService {
 
       const previousSubscriptionCount = await this.em.count(Subscriptions, {
         status: Status.ACTIVE,
+        user: userId,
         subscriptionStatus: {
-          $not: SubscriptionStatus.CREATED,
+          $in: [
+            SubscriptionStatus.ACTIVE,
+            SubscriptionStatus.CANCELLED,
+            SubscriptionStatus.COMPLETED,
+            SubscriptionStatus.HALTED,
+          ],
         },
       });
 
