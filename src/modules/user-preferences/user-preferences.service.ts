@@ -40,6 +40,7 @@ export class UserPreferencesService {
         ...createUserPreferencesObj,
         ...(userPreferencesData.isActivityLocked !== undefined && {
           isActivityLocked: false,
+          updatedAt: new Date(),
         }),
       };
 

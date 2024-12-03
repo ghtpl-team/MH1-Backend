@@ -173,6 +173,7 @@ export class SymptomsService {
         },
         {
           symptoms: updateData.symptoms,
+          updatedAt: new Date(),
         },
       );
       return {

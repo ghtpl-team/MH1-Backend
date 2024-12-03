@@ -76,6 +76,13 @@ export class SubscriptionsService {
         );
       }
 
+      const previousSubscriptionCount = await this.em.count(Subscriptions, {
+        status: Status.ACTIVE,
+        subscriptionStatus: {
+          $not: SubscriptionStatus.CREATED,
+        },
+      });
+
       const plan = await this.em.findOneOrFail(
         SubscriptionPlans,
         {
@@ -101,7 +108,7 @@ export class SubscriptionsService {
 
       await this.em.flush();
 
-      return savedSubscriptionInfo;
+      return { ...savedSubscriptionInfo, previousSubscriptionCount };
     } catch (error) {
       throw error;
     }
@@ -150,9 +157,12 @@ export class SubscriptionsService {
         subscriptionStatus: SubscriptionStatus.ACTIVE,
       });
 
-      if (!subscriptionData)
-        throw new HttpException('No active subscription', HttpStatus.NOT_FOUND);
-
+      if (!subscriptionData) {
+        throw new HttpException(
+          'Wait for subscription to become active.this might take 5-10 minutes',
+          HttpStatus.NOT_FOUND,
+        );
+      }
       const updateRpSubscription =
         await this.razorPayService.cancelSubscription(
           subscriptionData.razorPaySubscriptionId,
@@ -164,7 +174,7 @@ export class SubscriptionsService {
           id: subscriptionData.id,
         },
         {
-          subscriptionStatus: SubscriptionStatus.CANCELLED,
+          updatedAt: new Date(),
           reasonOfCancellation: cancelSubscriptionDto.reasonOfCancellation,
         },
       );
@@ -188,7 +198,7 @@ export class SubscriptionsService {
         'error occurred while canceling the subscription',
         error?.stack || error,
       );
-      return error;
+      throw error;
     }
   }
 
@@ -233,6 +243,7 @@ export class SubscriptionsService {
           user: userId,
         },
         {
+          updatedAt: new Date(),
           usedFreeBookings: currentUsage,
           eligibleFreeBookings: 0,
         },
@@ -276,6 +287,7 @@ export class SubscriptionsService {
             eligibleFreeBookings: Math.min(2, Math.max(1, totalPaid)),
           }),
           currentSubscription: subscription.id,
+          updatedAt: new Date(),
         },
       );
 
@@ -309,6 +321,7 @@ export class SubscriptionsService {
         },
         {
           subscriptionStatus: SubscriptionStatus.ACTIVE,
+          updatedAt: new Date(),
         },
       );
 

@@ -93,6 +93,7 @@ export class JournalsService {
         },
         {
           status: Status.DELETED,
+          updatedAt: new Date(),
         },
       );
       return `${updateResponse} journal entry deleted successfully`;
@@ -113,6 +114,7 @@ export class JournalsService {
         },
         {
           isJournalLocked: updateData.isLocked,
+          updatedAt: new Date(),
         },
       );
       if (updateResObj === 0)
@@ -132,6 +134,7 @@ export class JournalsService {
         },
         {
           ...reqBody,
+          updatedAt: new Date(),
         },
       );
       if (updateStatus)

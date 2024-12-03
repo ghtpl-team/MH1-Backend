@@ -176,6 +176,7 @@ export class ArticlesService {
         },
         {
           status: Status.DELETED,
+          updatedAt: new Date(),
         },
       );
 

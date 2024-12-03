@@ -170,8 +170,11 @@ export class UsersService {
           id,
         },
         {
-          expectedDueDate: userData.expectedDueDate,
+          expectedDueDate: userData?.expectedDueDate
+            ? userData?.expectedDueDate
+            : '1990-10-02',
           mongoId: userData.mongoId,
+          updatedAt: new Date(),
         },
       );
 
