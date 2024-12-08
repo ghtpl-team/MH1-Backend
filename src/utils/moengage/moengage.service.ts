@@ -123,7 +123,7 @@ export class MoEngageService {
         attributes,
       };
 
-      const response = await this.axiosInstance.post(
+      const response: any = await this.axiosService.post(
         `${this.baseUrl}/customer/${this.config.appId}`,
         payload,
         {

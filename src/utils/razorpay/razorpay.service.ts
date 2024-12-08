@@ -82,7 +82,10 @@ export class RazorpayService {
 
   async cancelSubscription(id: string) {
     try {
-      const response = await this.razorpayInstance.subscriptions.cancel(id);
+      const response = await this.razorpayInstance.subscriptions.cancel(
+        id,
+        true,
+      );
       return response;
     } catch (error) {
       throw error;
