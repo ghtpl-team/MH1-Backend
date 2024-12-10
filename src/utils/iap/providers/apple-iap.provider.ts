@@ -156,6 +156,8 @@ export class AppleIAPProvider {
           signedPayload,
         );
 
+      console.log(JSON.stringify(notification, null, 2));
+
       return notification;
 
       //   const isProcessed = await this.isWebhookProcessed(
