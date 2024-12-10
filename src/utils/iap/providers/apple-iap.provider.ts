@@ -15,7 +15,6 @@ import {
   SubscriptionStatus,
 } from 'src/entities/subscriptions.entity';
 import { EntityManager } from '@mikro-orm/mysql';
-import { WebhooksService } from 'src/modules/webhooks/webhooks.service';
 import { WebhookEvents } from 'src/entities/webhook-events.entity';
 
 @Injectable()
@@ -41,7 +40,6 @@ export class AppleIAPProvider {
   constructor(
     private configService: ConfigService,
     private readonly em: EntityManager,
-    private readonly webhookService: WebhooksService,
   ) {
     this.apiClient = new AppStoreServerAPIClient(
       this.encodedKey,
