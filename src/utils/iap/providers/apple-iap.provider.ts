@@ -15,6 +15,7 @@ import {
   SubscriptionStatus,
 } from 'src/entities/subscriptions.entity';
 import { EntityManager } from '@mikro-orm/mysql';
+import { WebhooksService } from 'src/modules/webhooks/webhooks.service';
 import { WebhookEvents } from 'src/entities/webhook-events.entity';
 
 @Injectable()
@@ -40,6 +41,7 @@ export class AppleIAPProvider {
   constructor(
     private configService: ConfigService,
     private readonly em: EntityManager,
+    private readonly webhookService: WebhooksService,
   ) {
     this.apiClient = new AppStoreServerAPIClient(
       this.encodedKey,
@@ -152,60 +154,12 @@ export class AppleIAPProvider {
     signedPayload: string,
   ): Promise<ResponseBodyV2DecodedPayload> {
     try {
-      const notification =
+      const webhookPayload =
         await this.signedDataVerifier.verifyAndDecodeNotification(
           signedPayload,
         );
 
-      const event = await this.em.create(WebhookEvents, {
-        event: notification.notificationType,
-        payload: notification,
-        eventId: notification.notificationUUID,
-      });
-
-      this.em.persistAndFlush([event]);
-
-      console.log(JSON.stringify(notification, null, 2));
-
-      return notification;
-
-      //   const isProcessed = await this.isWebhookProcessed(
-      //     webhookPayload,
-      //     eventId,
-      //   );
-
-      //   if (isProcessed) {
-      //     return {
-      //       status: 'success',
-      //       message: 'Webhook event already processed',
-      //     };
-      //   }
-      //   const subscriptionData =
-      //     await this.signedDataVerifier.verifyAndDecodeTransaction(
-      //       notification.data.signedTransactionInfo,
-      //     );
-
-      //   console.log(JSON.stringify(notification, null, 2));
-      //   console.log(subscriptionData);
-
-      //   switch (notification.notificationType) {
-      //     case 'SUBSCRIBED':
-      //       await this.handleNewSubscription(notification);
-      //       break;
-      //     case 'DID_RENEW':
-      //       await this.handleRenewal(notification);
-      //       break;
-      //     case 'DID_FAIL_TO_RENEW':
-      //       await this.handleFailedRenewal(notification);
-      //       break;
-      //     case 'EXPIRED':
-      //       await this.handleExpiration(notification);
-      //       break;
-      //     default:
-      //       this.logger.warn(
-      //         `Unhandled notification type: ${notification.notificationType}`,
-      //       );
-      //   }
+      return webhookPayload;
     } catch (error) {
       this.logger.error(
         `Failed to handle server notification: ${error.message}`,
@@ -215,31 +169,170 @@ export class AppleIAPProvider {
     }
   }
 
+  async handleNotification(notification: ResponseBodyV2DecodedPayload) {
+    try {
+      switch (notification.notificationType) {
+        case 'SUBSCRIBED':
+          await this.handleNewSubscription(notification);
+          break;
+        case 'DID_RENEW':
+          await this.handleRenewal(notification);
+          break;
+        case 'DID_CHANGE_RENEWAL_STATUS':
+          await this.handleRenewal(notification);
+          break;
+        case 'DID_FAIL_TO_RENEW':
+          await this.handleFailedRenewal(notification);
+          break;
+        case 'EXPIRED':
+          await this.handleExpiration(notification);
+          break;
+        default:
+          this.logger.warn(
+            `Unhandled notification type: ${notification.notificationType}`,
+          );
+      }
+    } catch (error) {
+      this.logger.error(
+        `Failed to handle notification: ${error.message}`,
+        error.stack,
+      );
+    }
+  }
+
   private async handleNewSubscription(
     notification: ResponseBodyV2DecodedPayload,
   ): Promise<void> {
-    // Implement subscription creation logic
-    this.logger.log('New subscription:', notification);
+    try {
+      const subscriptionData = notification?.data;
+      const transactionInfo =
+        await this.signedDataVerifier.verifyAndDecodeTransaction(
+          subscriptionData?.signedTransactionInfo,
+        );
+
+      const renewableInfo =
+        await this.signedDataVerifier.verifyAndDecodeRenewalInfo(
+          subscriptionData?.signedRenewalInfo,
+        );
+
+      const events = [
+        this.em.create(WebhookEvents, {
+          event: notification.notificationType,
+          payload: transactionInfo,
+          eventId: notification.notificationUUID,
+        }),
+        this.em.create(WebhookEvents, {
+          event: notification.notificationType,
+          payload: renewableInfo,
+          eventId: notification.notificationUUID,
+        }),
+      ];
+      await this.em.persistAndFlush(events);
+      return;
+    } catch (error) {
+      this.logger.error('Error handling new subscription', error.stack);
+    }
   }
 
   private async handleRenewal(
     notification: ResponseBodyV2DecodedPayload,
   ): Promise<void> {
-    // Implement renewal logic
-    this.logger.log('Subscription renewed:', notification);
+    try {
+      const subscriptionData = notification?.data;
+      const transactionInfo =
+        await this.signedDataVerifier.verifyAndDecodeTransaction(
+          subscriptionData?.signedTransactionInfo,
+        );
+
+      const renewableInfo =
+        await this.signedDataVerifier.verifyAndDecodeRenewalInfo(
+          subscriptionData?.signedRenewalInfo,
+        );
+
+      const events = [
+        this.em.create(WebhookEvents, {
+          event: notification.notificationType,
+          payload: transactionInfo,
+          eventId: notification.notificationUUID,
+        }),
+        this.em.create(WebhookEvents, {
+          event: notification.notificationType,
+          payload: renewableInfo,
+          eventId: notification.notificationUUID,
+        }),
+      ];
+      await this.em.persistAndFlush(events);
+      return;
+    } catch (error) {
+      this.logger.error('Error handling renewal', error.stack);
+    }
   }
 
   private async handleFailedRenewal(
     notification: ResponseBodyV2DecodedPayload,
   ): Promise<void> {
-    // Implement failed renewal logic
-    this.logger.log('Renewal failed:', notification);
+    try {
+      const subscriptionData = notification?.data;
+      const transactionInfo =
+        await this.signedDataVerifier.verifyAndDecodeTransaction(
+          subscriptionData?.signedTransactionInfo,
+        );
+
+      const renewableInfo =
+        await this.signedDataVerifier.verifyAndDecodeRenewalInfo(
+          subscriptionData?.signedRenewalInfo,
+        );
+
+      const events = [
+        this.em.create(WebhookEvents, {
+          event: notification.notificationType,
+          payload: transactionInfo,
+          eventId: notification.notificationUUID,
+        }),
+        this.em.create(WebhookEvents, {
+          event: notification.notificationType,
+          payload: renewableInfo,
+          eventId: notification.notificationUUID,
+        }),
+      ];
+      await this.em.persistAndFlush(events);
+      return;
+    } catch (error) {
+      this.logger.error('Error handling failed renewal', error.stack);
+    }
   }
 
   private async handleExpiration(
     notification: ResponseBodyV2DecodedPayload,
   ): Promise<void> {
-    // Implement expiration logic
-    this.logger.log('Subscription expired:', notification);
+    try {
+      const subscriptionData = notification?.data;
+      const transactionInfo =
+        await this.signedDataVerifier.verifyAndDecodeTransaction(
+          subscriptionData?.signedTransactionInfo,
+        );
+
+      const renewableInfo =
+        await this.signedDataVerifier.verifyAndDecodeRenewalInfo(
+          subscriptionData?.signedRenewalInfo,
+        );
+
+      const events = [
+        this.em.create(WebhookEvents, {
+          event: notification.notificationType,
+          payload: transactionInfo,
+          eventId: notification.notificationUUID,
+        }),
+        this.em.create(WebhookEvents, {
+          event: notification.notificationType,
+          payload: renewableInfo,
+          eventId: notification.notificationUUID,
+        }),
+      ];
+      await this.em.persistAndFlush(events);
+      return;
+    } catch (error) {
+      this.logger.error('Error handling expiration', error.stack);
+    }
   }
 }

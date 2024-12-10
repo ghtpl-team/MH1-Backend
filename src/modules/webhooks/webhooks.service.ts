@@ -204,8 +204,12 @@ export class WebhooksService {
         };
       }
 
-      const subscriptionData = notification?.data?.signedTransactionInfo;
-      console.log(subscriptionData);
+      const data = await this.iapService.handleSubscriptionNotification(
+        'ios',
+        notification,
+      );
+
+      return data;
     } catch (error) {
       this.logger.error("can't resolve apple notification", error);
     }

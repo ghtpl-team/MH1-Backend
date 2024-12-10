@@ -12,4 +12,14 @@ export class IAPService {
     ) as unknown as AppleIAPProvider;
     return provider.verifyAndDecodeNotification(payload?.signedPayload);
   }
+
+  async handleSubscriptionNotification(
+    platform: 'ios' | 'android',
+    payload: any,
+  ) {
+    const provider = this.iapProviderFactory.getProvider(
+      platform,
+    ) as unknown as AppleIAPProvider;
+    return provider.handleNotification(payload);
+  }
 }
