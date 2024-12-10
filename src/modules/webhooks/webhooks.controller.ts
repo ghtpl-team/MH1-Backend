@@ -48,6 +48,6 @@ export class WebhooksController {
 
   @Post('iap/subscription')
   async resolveIAPWebhook(@Body() body: any) {
-    return this.iapService.verifyAndDecodeNotification('ios', body);
+    return this.razorPayWebhookService.resolveAppleNotification(body);
   }
 }
