@@ -158,7 +158,9 @@ export class AppleIAPProvider {
         );
 
       const event = await this.em.create(WebhookEvents, {
-        payload: JSON.stringify(notification),
+        event: notification.notificationType,
+        payload: notification,
+        eventId: notification.notificationUUID,
       });
 
       this.em.persistAndFlush([event]);
