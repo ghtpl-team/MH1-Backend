@@ -15,6 +15,7 @@ import {
   SubscriptionStatus,
 } from 'src/entities/subscriptions.entity';
 import { EntityManager } from '@mikro-orm/mysql';
+import { WebhookEvents } from 'src/entities/webhook-events.entity';
 
 @Injectable()
 export class AppleIAPProvider {
@@ -155,6 +156,12 @@ export class AppleIAPProvider {
         await this.signedDataVerifier.verifyAndDecodeNotification(
           signedPayload,
         );
+
+      const event = await this.em.create(WebhookEvents, {
+        payload: JSON.stringify(notification),
+      });
+
+      this.em.persistAndFlush([event]);
 
       console.log(JSON.stringify(notification, null, 2));
 
