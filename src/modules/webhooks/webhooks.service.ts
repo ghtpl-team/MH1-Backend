@@ -193,7 +193,7 @@ export class WebhooksService {
         );
 
       const isProcessed = await this.isWebhookProcessed(
-        notification,
+        { ...notification, event: notification.notificationUUID },
         notification.notificationUUID,
       );
 
